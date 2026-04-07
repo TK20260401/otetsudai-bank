@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おてつだいバンク — モックアップ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #333;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+  }
+  /* Presentation Header */
+  .pres-header {
+    text-align: center;
+    margin-bottom: 60px;
+    color: #fff;
+  }
+  .pres-header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #f59e0b, #f97316, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .pres-header .tagline {
+    font-size: 18px;
+    color: #94a3b8;
+    margin-bottom: 24px;
+  }
+  .pres-header .meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 13px;
+    color: #64748b;
+  }
+  .pres-header .meta span {
+    background: rgba(255,255,255,0.08);
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  /* Section titles */
+  .section-title {
+    text-align: center;
+    color: #e2e8f0;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 60px 0 32px;
+  }
+  .section-desc {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    margin-top: -20px;
+    margin-bottom: 32px;
+  }
+  /* Phone frame */
+  .screen-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  .screen-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .screen-name {
+    color: #f8fafc;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .screen-route {
+    color: #64748b;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-bottom: 16px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 10px;
+    border-radius: 4px;
+  }
+  .phone {
+    width: 375px;
+    height: 780px;
+    background: #fff;
+    border-radius: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 3px #222,
+      0 0 0 6px #444,
+      0 20px 60px rgba(0,0,0,0.4);
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #222;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+  .phone-screen {
+    height: 100%;
+    overflow-y: auto;
+    padding: 44px 0 0;
+    background: linear-gradient(180deg, #fffbeb 0%, #fff7ed 50%, #fff 100%);
+  }
+  .phone-screen::-webkit-scrollbar { width: 0; }
+  /* Screen inner */
+  .s-pad { padding: 16px 20px; }
+
+  /* === Common Components === */
+  .m-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px 16px;
+  }
+  .m-header-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #92400e;
+  }
+  .m-header-sub {
+    font-size: 12px;
+    color: #a16207;
+  }
+  .m-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: default;
+    transition: all 0.2s;
+  }
+  .m-btn-primary {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+  }
+  .m-btn-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+  }
+  .m-btn-outline {
+    background: #fff;
+    color: #92400e;
+    border: 1.5px solid #fbbf24;
+  }
+  .m-btn-ghost {
+    background: transparent;
+    color: #a16207;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .m-btn-icon {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 0;
+  }
+  .m-btn-sm { padding: 5px 12px; font-size: 12px; }
+  .m-btn-lg { padding: 14px 24px; font-size: 16px; width: 100%; justify-content: center; }
+  .m-card {
+    background: #fff;
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 20px 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .m-card-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: #78350f;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .m-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .m-badge-amber {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+  .m-badge-red {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  .m-badge-green {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  .m-badge-gray {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+  .m-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #fde68a;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fffbeb;
+    color: #78350f;
+    outline: none;
+  }
+  .m-input::placeholder { color: #d4a462; }
+  .m-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #78350f;
+    margin-bottom: 6px;
+  }
+  .m-progress {
+    height: 10px;
+    background: #fef3c7;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .m-progress-bar {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s;
+  }
+  .m-progress-amber .m-progress-bar { background: linear-gradient(90deg, #f59e0b, #f97316); }
+  .m-progress-green .m-progress-bar { background: linear-gradient(90deg, #22c55e, #16a34a); }
+  .m-divider {
+    border: none;
+    border-top: 1px solid #fde68a;
+    margin: 16px 20px;
+  }
+  .m-stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 0 20px;
+    margin-bottom: 16px;
+  }
+  .m-stat {
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .m-stat-value {
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .m-stat-label {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .m-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .m-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .m-tab-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 20px 16px;
+    background: #fef3c7;
+    border-radius: 12px;
+    padding: 3px;
+  }
+  .m-tab {
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #a16207;
+    border-radius: 10px;
+    cursor: default;
+  }
+  .m-tab.active {
+    background: #fff;
+    color: #92400e;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .m-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #fef3c7;
+  }
+  .m-list-item:last-child { border-bottom: none; }
+
+  /* Approval item */
+  .m-approval {
+    background: linear-gradient(135deg, #fffbeb, #fef9c3);
+    border: 1px solid #fde68a;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+
+  /* Piggy bank */
+  .m-piggy {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7, #fde68a);
+    border: 2px solid #f59e0b;
+    border-radius: 24px;
+    padding: 24px 20px;
+    margin: 0 20px 16px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .m-piggy::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 50%);
+    pointer-events: none;
+  }
+  .m-piggy-amount {
+    font-size: 36px;
+    font-weight: 800;
+    color: #92400e;
+    position: relative;
+  }
+  .m-piggy-icon {
+    font-size: 56px;
+    margin-bottom: 8px;
+    position: relative;
+    animation: piggy-bounce 2s ease-in-out infinite;
+  }
+  @keyframes piggy-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .m-wallet-box {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+  .m-wallet-label {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .m-wallet-value {
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  /* Task card for child */
+  .m-task-card {
+    background: #fff;
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .m-task-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  .m-task-desc {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+
+  /* Dialog overlay */
+  .m-dialog-backdrop {
+    background: rgba(0,0,0,0.15);
+    border-radius: 0 0 40px 40px;
+    padding: 60px 16px 20px;
+    margin: 0 -0px;
+  }
+  .m-dialog {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .m-dialog-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+  }
+  .m-field { margin-bottom: 12px; }
+
+  /* Login screen special */
+  .login-bg {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 30%, #fde68a 100%) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 32px 24px;
+    width: calc(100% - 40px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    border: 1px solid #fde68a;
+  }
+  .login-icon {
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .login-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #92400e;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: #a16207;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid #fde68a;
+    border-radius: 14px;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    color: #78350f;
+    margin-bottom: 10px;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+  }
+  .login-btn:hover {
+    background: #fffbeb;
+    border-color: #f59e0b;
+  }
+  .login-btn-role {
+    font-size: 11px;
+    color: #a16207;
+    background: #fef3c7;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-left: auto;
+  }
+  .login-pin {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .login-pin-dot {
+    width: 48px;
+    height: 56px;
+    border: 2px solid #fde68a;
+    border-radius: 12px;
+    background: #fffbeb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #92400e;
+    font-weight: 700;
+  }
+  .login-pin-dot.filled {
+    background: #fef3c7;
+    border-color: #f59e0b;
+  }
+
+  /* Feature badges */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    color: #e2e8f0;
+  }
+  .feature-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feature-card p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .pres-footer {
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 60px;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Presentation Header -->
+<div class="pres-header">
+  <h1>🏦 おてつだいバンク</h1>
+  <p class="tagline">お手伝い × マネー教育 — 子どもの「やる気」と「お金力」を育てるアプリ</p>
+  <div class="meta">
+    <span>MVP v1.0</span>
+    <span>Next.js 16 + Supabase</span>
+    <span>対象: 6〜15歳</span>
+    <span>2026年4月</span>
+  </div>
+</div>
+
+<!-- Value Proposition -->
+<div class="section-title">💡 プロダクトの特長</div>
+<div class="feature-grid">
+  <div class="feature-card">
+    <h3>🎯 お手伝い → 報酬</h3>
+    <p>タスクを完了して親に報告。親が承認するとコインが自動的にウォレットに入金されます。</p>
+  </div>
+  <div class="feature-card">
+    <h3>🐷 使う＆貯める分割</h3>
+    <p>報酬は「つかえるお金」と「ちょきん」に自動分割。分割比率はカスタマイズ可能。</p>
+  </div>
+  <div class="feature-card">
+    <h3>👨‍👩‍👧‍👦 家族で使える</h3>
+    <p>1つの家族アカウントで親も子も管理。PINログインで子どもでも簡単にアクセス。</p>
+  </div>
+  <div class="feature-card">
+    <h3>📊 見える化</h3>
+    <p>残高・貯蓄率・週間タスク達成数をリアルタイム表示。子どもの成長が一目でわかる。</p>
+  </div>
+</div>
+
+<!-- Screens -->
+<div class="section-title">📱 画面デザイン</div>
+<div class="section-desc">全4画面 — タップして確認できるインタラクティブモックアップ</div>
+
+<div class="screen-grid">
+
+  <!-- ========== Screen 1: Login ========== -->
+  <div class="screen-wrapper">
+    <div class="screen-name">ログイン</div>
+    <div class="screen-route">/</div>
+    <div class="phone">
+      <div class="phone-screen login-bg">
+        <div class="login-card">
+          <div class="login-icon">🏦</div>
+          <div class="login-title">おてつだいバンク</div>
+          <div class="login-sub">お手伝いでコインをためよう！</div>
+
+          <div style="font-size:14px;font-weight:700;color:#78350f;margin-bottom:10px;">だれかな？</div>
+
+          <div class="login-btn">
+            <span style="font-size:24px;">👨‍👩‍👧‍👦</span>
+            <span>山田 太郎</span>
+            <span class="login-btn-role">おやこうざ</span>
+          </div>
+          <div class="login-btn" style="border-color:#f59e0b;background:#fffbeb;">
+            <span style="font-size:24px;">🧒</span>
+            <span>山田 花子</span>
+            <span class="login-btn-role">こどもこうざ</span>
+          </div>
+          <div class="login-btn">
+            <span style="font-size:24px;">🧒</span>
+            <span>山田 次郎</span>
+            <span class="login-btn-role">こどもこうざ</span>
+          </div>
+
+          <div style="text-align:center;margin-top:16px;">
+            <div style="font-size:13px;font-weight:600;color:#78350f;margin-bottom:8px;">PINをいれてね 🔑</div>
+            <div class="login-pin">
+              <div class="login-pin-dot filled">●</div>
+              <div class="login-pin-dot filled">●</div>
+              <div class="login-pin-dot filled">●</div>
+              <div class="login-pin-dot">_</div>
+            </div>
+            <div class="m-btn m-btn-primary m-btn-lg" style="margin-top:12px;">ログイン</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Screen 2: Parent Dashboard ========== -->
+  <div class="screen-wrapper">
+    <div class="screen-name">親ダッシュボード</div>
+    <div class="screen-route">/parent</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="m-header">
+          <div>
+            <div class="m-header-title">🏦 おやダッシュボード</div>
+            <div class="m-header-sub">山田 太郎 さん</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <div class="m-btn m-btn-outline m-btn-sm">📋 タスク管理</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="m-stat-row">
+          <div class="m-stat">
+            <div class="m-stat-value" style="color:#f59e0b;">12</div>
+            <div class="m-stat-label">承認済み</div>
+          </div>
+          <div class="m-stat">
+            <div class="m-stat-value" style="color:#22c55e;">¥2,450</div>
+            <div class="m-stat-label">総獲得</div>
+          </div>
+          <div class="m-stat">
+            <div class="m-stat-value" style="color:#3b82f6;">5</div>
+            <div class="m-stat-label">今週</div>
+          </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="m-card">
+          <div class="m-card-header">
+            ⏳ 承認待ち
+            <span class="m-badge m-badge-red">2</span>
+          </div>
+
+          <div class="m-approval">
+            <div class="m-row">
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#1f2937;">食器洗い</div>
+                <div style="font-size:12px;color:#9ca3af;margin-top:2px;">🧒 花子 ・ ¥100 ・ 04/07</div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <div class="m-btn m-btn-success m-btn-sm">✓ 承認</div>
+                <div class="m-btn m-btn-outline m-btn-sm" style="color:#ef4444;border-color:#fecaca;">✗</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="m-approval">
+            <div class="m-row">
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#1f2937;">洗濯物たたみ</div>
+                <div style="font-size:12px;color:#9ca3af;margin-top:2px;">🧒 次郎 ・ ¥150 ・ 04/07</div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <div class="m-btn m-btn-success m-btn-sm">✓ 承認</div>
+                <div class="m-btn m-btn-outline m-btn-sm" style="color:#ef4444;border-color:#fecaca;">✗</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="m-divider">
+
+        <!-- Children -->
+        <div style="font-size:16px;font-weight:700;color:#78350f;padding:0 20px;margin-bottom:12px;">💰 こどもの残高</div>
+
+        <div class="m-card">
+          <div class="m-row" style="margin-bottom:10px;">
+            <span style="font-size:16px;font-weight:700;">🧒 花子</span>
+            <span style="font-size:20px;font-weight:800;color:#92400e;">¥1,250</span>
+          </div>
+          <div class="m-cols-2" style="margin-bottom:10px;">
+            <div style="background:#eff6ff;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:11px;color:#3b82f6;font-weight:600;">💳 つかえるお金</div>
+              <div style="font-size:18px;font-weight:800;color:#2563eb;">¥625</div>
+            </div>
+            <div style="background:#f0fdf4;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:11px;color:#16a34a;font-weight:600;">🏦 ちょきん</div>
+              <div style="font-size:18px;font-weight:800;color:#16a34a;">¥625</div>
+            </div>
+          </div>
+          <div class="m-row" style="font-size:11px;color:#9ca3af;">
+            <span>貯蓄率</span>
+            <div class="m-progress m-progress-green" style="flex:1;margin:0 8px;">
+              <div class="m-progress-bar" style="width:50%"></div>
+            </div>
+            <span style="font-weight:700;color:#16a34a;">50%</span>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-row" style="margin-bottom:10px;">
+            <span style="font-size:16px;font-weight:700;">🧒 次郎</span>
+            <span style="font-size:20px;font-weight:800;color:#92400e;">¥1,000</span>
+          </div>
+          <div class="m-cols-2" style="margin-bottom:10px;">
+            <div style="background:#eff6ff;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:11px;color:#3b82f6;font-weight:600;">💳 つかえるお金</div>
+              <div style="font-size:18px;font-weight:800;color:#2563eb;">¥500</div>
+            </div>
+            <div style="background:#f0fdf4;border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:11px;color:#16a34a;font-weight:600;">🏦 ちょきん</div>
+              <div style="font-size:18px;font-weight:800;color:#16a34a;">¥500</div>
+            </div>
+          </div>
+          <div class="m-row" style="font-size:11px;color:#9ca3af;">
+            <span>貯蓄率</span>
+            <div class="m-progress m-progress-green" style="flex:1;margin:0 8px;">
+              <div class="m-progress-bar" style="width:50%"></div>
+            </div>
+            <span style="font-weight:700;color:#16a34a;">50%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Screen 3: Task Management ========== -->
+  <div class="screen-wrapper">
+    <div class="screen-name">タスク管理</div>
+    <div class="screen-route">/parent/tasks</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="m-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="m-btn m-btn-ghost">←</div>
+            <div class="m-header-title">📋 タスク管理</div>
+          </div>
+          <div class="m-btn m-btn-primary m-btn-sm">＋ 新規</div>
+        </div>
+
+        <!-- Task list -->
+        <div class="m-card">
+          <div class="m-row">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#1f2937;">
+                食器洗い
+                <span class="m-badge m-badge-amber" style="margin-left:6px;">毎日</span>
+              </div>
+              <div style="font-size:13px;color:#f59e0b;font-weight:700;margin-top:4px;">¥100</div>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <div class="m-btn-icon">✏️</div>
+              <div class="m-btn-icon">⏸</div>
+              <div class="m-btn-icon">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-row">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#1f2937;">
+                洗濯物たたみ
+                <span class="m-badge m-badge-amber" style="margin-left:6px;">毎日</span>
+              </div>
+              <div style="font-size:13px;color:#f59e0b;font-weight:700;margin-top:4px;">¥150</div>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <div class="m-btn-icon">✏️</div>
+              <div class="m-btn-icon">⏸</div>
+              <div class="m-btn-icon">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-row">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#1f2937;">
+                芝刈り
+                <span class="m-badge m-badge-amber" style="margin-left:6px;">毎週</span>
+              </div>
+              <div style="font-size:13px;margin-top:4px;">
+                <span style="color:#f59e0b;font-weight:700;">¥1,000</span>
+                <span style="color:#9ca3af;margin-left:8px;">🧒 花子</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <div class="m-btn-icon">✏️</div>
+              <div class="m-btn-icon">⏸</div>
+              <div class="m-btn-icon">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card" style="opacity:0.5;">
+          <div class="m-row">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:#1f2937;">
+                ゴミ出し
+                <span class="m-badge m-badge-amber" style="margin-left:6px;">毎週</span>
+                <span class="m-badge m-badge-gray" style="margin-left:4px;">停止中</span>
+              </div>
+              <div style="font-size:13px;color:#f59e0b;font-weight:700;margin-top:4px;">¥200</div>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <div class="m-btn-icon">✏️</div>
+              <div class="m-btn-icon">▶️</div>
+              <div class="m-btn-icon">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="m-divider">
+
+        <!-- Dialog mockup -->
+        <div class="m-dialog-backdrop">
+          <div class="m-dialog">
+            <div class="m-dialog-title">あたらしいタスク</div>
+
+            <div class="m-field">
+              <div class="m-label">タスク名</div>
+              <div class="m-input" style="color:#78350f;">お風呂そうじ</div>
+            </div>
+            <div class="m-field">
+              <div class="m-label">せつめい</div>
+              <div class="m-input" style="height:48px;">バスタブをピカピカに</div>
+            </div>
+            <div class="m-cols-2 m-field">
+              <div>
+                <div class="m-label">ごほうび (¥)</div>
+                <div class="m-input" style="color:#78350f;">200</div>
+              </div>
+              <div>
+                <div class="m-label">くりかえし</div>
+                <div class="m-input" style="color:#78350f;">毎週 ▼</div>
+              </div>
+            </div>
+            <div class="m-field">
+              <div class="m-label">だれのタスク？</div>
+              <div class="m-input" style="color:#78350f;">みんな ▼</div>
+            </div>
+            <div class="m-btn m-btn-primary m-btn-lg">作成する</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Screen 4: Child Dashboard ========== -->
+  <div class="screen-wrapper">
+    <div class="screen-name">子ども画面</div>
+    <div class="screen-route">/child/[childId]</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="m-header">
+          <div class="m-header-title">🧒 花子 のバンク</div>
+          <div class="m-btn m-btn-ghost">ログアウト</div>
+        </div>
+
+        <!-- Piggy Bank -->
+        <div class="m-piggy">
+          <div class="m-piggy-icon">🐷</div>
+          <div class="m-piggy-amount">¥1,250</div>
+          <div style="font-size:12px;color:#a16207;margin-bottom:16px;position:relative;">ぜんぶのおかね</div>
+
+          <div class="m-cols-2" style="margin-bottom:16px;position:relative;">
+            <div class="m-wallet-box">
+              <div class="m-wallet-label" style="color:#3b82f6;">💳 つかえるお金</div>
+              <div class="m-wallet-value" style="color:#2563eb;">¥625</div>
+            </div>
+            <div class="m-wallet-box">
+              <div class="m-wallet-label" style="color:#16a34a;">🏦 ちょきん</div>
+              <div class="m-wallet-value" style="color:#16a34a;">¥625</div>
+            </div>
+          </div>
+
+          <div class="m-row" style="font-size:11px;color:#92400e;position:relative;">
+            <span>もくひょう ¥5,000</span>
+            <span style="font-weight:700;">25%</span>
+          </div>
+          <div class="m-progress m-progress-amber" style="position:relative;">
+            <div class="m-progress-bar" style="width:25%"></div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="m-tab-bar">
+          <div class="m-tab active">📋 おてつだい</div>
+          <div class="m-tab">📜 りれき</div>
+        </div>
+
+        <!-- Task list -->
+        <div class="m-task-card">
+          <div>
+            <div class="m-task-title">食器洗い</div>
+            <div style="display:flex;gap:6px;">
+              <span class="m-badge m-badge-amber">¥100</span>
+              <span class="m-badge m-badge-gray">まいにち</span>
+            </div>
+          </div>
+          <div class="m-btn m-btn-success" style="font-size:14px;padding:10px 16px;">できた！✓</div>
+        </div>
+
+        <div class="m-task-card">
+          <div>
+            <div class="m-task-title">洗濯物たたみ</div>
+            <div style="display:flex;gap:6px;">
+              <span class="m-badge m-badge-amber">¥150</span>
+              <span class="m-badge m-badge-gray">まいにち</span>
+            </div>
+          </div>
+          <div class="m-btn m-btn-success" style="font-size:14px;padding:10px 16px;">できた！✓</div>
+        </div>
+
+        <div class="m-task-card">
+          <div>
+            <div class="m-task-title">芝刈り</div>
+            <div class="m-task-desc">庭のしばを刈る</div>
+            <div style="display:flex;gap:6px;">
+              <span class="m-badge m-badge-amber">¥1,000</span>
+              <span class="m-badge m-badge-gray">まいしゅう</span>
+            </div>
+          </div>
+          <div class="m-btn m-btn-success" style="font-size:14px;padding:10px 16px;">できた！✓</div>
+        </div>
+
+        <div class="m-task-card">
+          <div>
+            <div class="m-task-title">床掃除</div>
+            <div style="display:flex;gap:6px;">
+              <span class="m-badge m-badge-amber">¥300</span>
+              <span class="m-badge m-badge-gray">まいしゅう</span>
+            </div>
+          </div>
+          <div class="m-btn m-btn-success" style="font-size:14px;padding:10px 16px;">できた！✓</div>
+        </div>
+
+        <hr class="m-divider">
+
+        <!-- History section -->
+        <div class="m-card">
+          <div class="m-card-header">📜 さいきんのりれき</div>
+          <div class="m-list-item">
+            <div>
+              <div style="font-size:13px;font-weight:600;">💰 食器洗い 承認</div>
+              <div style="font-size:11px;color:#9ca3af;">2026/04/06</div>
+            </div>
+            <span style="font-weight:800;color:#22c55e;font-size:14px;">+¥100</span>
+          </div>
+          <div class="m-list-item">
+            <div>
+              <div style="font-size:13px;font-weight:600;">💰 洗濯物たたみ 承認</div>
+              <div style="font-size:11px;color:#9ca3af;">2026/04/05</div>
+            </div>
+            <span style="font-weight:800;color:#22c55e;font-size:14px;">+¥150</span>
+          </div>
+          <div class="m-list-item">
+            <div>
+              <div style="font-size:13px;font-weight:600;">💰 芝刈り 承認</div>
+              <div style="font-size:11px;color:#9ca3af;">2026/04/04</div>
+            </div>
+            <span style="font-weight:800;color:#22c55e;font-size:14px;">+¥1,000</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="pres-footer">
+  <p>おてつだいバンク Mockup v1.0 — 2026-04-07</p>
+  <p style="margin-top:4px;">Next.js 16 + Supabase + shadcn/ui ｜ Deployed on Vercel</p>
+  <p style="margin-top:8px;color:#475569;">
+    <a href="https://otetsudai-bank-beta.vercel.app" style="color:#f59e0b;text-decoration:none;">
+      🔗 ライブデモ: otetsudai-bank-beta.vercel.app
+    </a>
+  </p>
+</div>
+
+</body>
+</html>
