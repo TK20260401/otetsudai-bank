@@ -6,6 +6,9 @@ import { supabase } from "@/lib/supabase";
 import { getSession, clearSession } from "@/lib/session";
 import type { Task, Wallet, Transaction } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getTaskIcon } from "@/lib/task-icons";
+import ChatWidget from "@/components/chat-widget";
+import { R, AutoRuby } from "@/components/ruby-text";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -88,7 +91,7 @@ export default function ChildDashboard({
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-2xl animate-pulse">よみこみ中...</div>
+        <div className="text-2xl animate-pulse">よみこみ<R k="中" r="ちゅう" />...</div>
       </div>
     );
   }
@@ -118,6 +121,7 @@ export default function ChildDashboard({
         >
           ログアウト
         </Button>
+
       </div>
 
       {/* Piggy Bank */}
@@ -131,7 +135,7 @@ export default function ChildDashboard({
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/70 rounded-xl p-3">
               <p className="text-xs text-blue-500 font-semibold">
-                💳 つかえるお金
+                💳 つかえるお<R k="金" r="かね" />
               </p>
               <p className="text-xl font-bold text-blue-600">
                 ¥{wallet?.spending_balance.toLocaleString() || 0}
@@ -139,7 +143,7 @@ export default function ChildDashboard({
             </div>
             <div className="bg-white/70 rounded-xl p-3">
               <p className="text-xs text-green-500 font-semibold">
-                🏦 ちょきん
+                🏦 <R k="貯" r="ちょ" /><R k="金" r="きん" />
               </p>
               <p className="text-xl font-bold text-green-600">
                 ¥{wallet?.saving_balance.toLocaleString() || 0}
@@ -151,7 +155,7 @@ export default function ChildDashboard({
           <div className="mt-4">
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="text-muted-foreground">
-                ちょきんもくひょう ¥{savingGoal.toLocaleString()}
+                <R k="貯金目標" r="ちょきんもくひょう" /> ¥{savingGoal.toLocaleString()}
               </span>
               <span className="font-semibold">{savingPercent}%</span>
             </div>
@@ -163,7 +167,7 @@ export default function ChildDashboard({
       <Tabs defaultValue="tasks" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="tasks">📋 おてつだい</TabsTrigger>
-          <TabsTrigger value="history">📜 りれき</TabsTrigger>
+          <TabsTrigger value="history">📜 <R k="履歴" r="りれき" /></TabsTrigger>
         </TabsList>
 
         {/* Tasks */}
@@ -179,24 +183,27 @@ export default function ChildDashboard({
               <Card key={task.id} className="border-amber-200">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-lg">{task.title}</p>
-                      {task.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {task.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200">
-                          ¥{task.reward_amount.toLocaleString()}
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          {task.recurrence === "daily"
-                            ? "まいにち"
-                            : task.recurrence === "weekly"
-                              ? "まいしゅう"
-                              : "1かい"}
-                        </Badge>
+                    <div className="flex items-start gap-3">
+                      <span className="text-3xl mt-0.5">{getTaskIcon(task.title)}</span>
+                      <div>
+                        <p className="font-semibold text-lg"><AutoRuby text={task.title} /></p>
+                        {task.description && (
+                          <p className="text-sm text-muted-foreground">
+                            <AutoRuby text={task.description} />
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200">
+                            ¥{task.reward_amount.toLocaleString()}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {task.recurrence === "daily"
+                              ? <><R k="毎日" r="まいにち" /></>
+                              : task.recurrence === "weekly"
+                                ? <><R k="毎週" r="まいしゅう" /></>
+                                : <>1<R k="回" r="かい" /></>}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                     <Button
@@ -217,12 +224,12 @@ export default function ChildDashboard({
         <TabsContent value="history" className="mt-3">
           <Card className="border-amber-200">
             <CardHeader>
-              <CardTitle className="text-base">さいきんのりれき</CardTitle>
+              <CardTitle className="text-base"><R k="最近" r="さいきん" />の<R k="履歴" r="りれき" /></CardTitle>
             </CardHeader>
             <CardContent>
               {transactions.length === 0 ? (
                 <p className="text-muted-foreground text-center py-4">
-                  まだりれきがないよ
+                  まだ<R k="履歴" r="りれき" />がないよ
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -238,7 +245,7 @@ export default function ChildDashboard({
                             : tx.type === "spend"
                               ? "🛒"
                               : "🏦"}{" "}
-                          {tx.description || tx.type}
+                          <AutoRuby text={tx.description || tx.type} />
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(tx.created_at).toLocaleDateString("ja-JP")}
@@ -258,6 +265,7 @@ export default function ChildDashboard({
           </Card>
         </TabsContent>
       </Tabs>
+      <ChatWidget role="child" />
     </div>
   );
 }

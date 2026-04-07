@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -91,6 +92,11 @@ export default function LoginPage() {
           <p className="text-sm text-muted-foreground">
             お手伝いでコインをためよう！
           </p>
+          <Link href="/help">
+            <Button variant="outline" size="sm" className="mt-2 border-amber-300 text-amber-600 hover:bg-amber-50">
+              📖 つかいかた
+            </Button>
+          </Link>
         </CardHeader>
         <CardContent className="space-y-4">
           {!selectedFamily ? (

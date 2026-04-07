@@ -8,6 +8,7 @@ import { getSession, clearSession } from "@/lib/session";
 import type { User, TaskLog, Task, Wallet } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ChatWidget from "@/components/chat-widget";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -282,6 +283,7 @@ export default function ParentDashboard() {
           );
         })}
       </div>
+      <ChatWidget role="parent" />
     </div>
   );
 }

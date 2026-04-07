@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { getSession } from "@/lib/session";
 import type { Task, User } from "@/lib/types";
+import { getTaskIcon } from "@/lib/task-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -275,6 +276,7 @@ export default function TaskManagement() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
+                        <span className="text-2xl">{getTaskIcon(task.title)}</span>
                         <span className="font-semibold text-lg">
                           {task.title}
                         </span>
