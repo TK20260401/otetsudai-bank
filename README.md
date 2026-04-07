@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# おてつだいバンク — お手伝い×マネー教育アプリ
+
+## 概要
+
+**子どものお手伝いを「見える化」し、お金の管理を楽しく学べるファミリー向けWebアプリ**
+
+お手伝いを完了→親が承認→コインが貯まる。「つかえるお金」と「ちょきん」に自動分配され、子どもが自然にお金の使い方・貯め方を体験できる。
+
+**URL**: （Vercelデプロイ予定）
+
+## 機能一覧
+
+| 機能 | 内容 |
+| --- | --- |
+| ログイン | 家族選択→メンバー選択→PIN認証（PINなしも可） |
+| 親ダッシュボード | 承認待ちタスク一覧、承認/却下ワンタップ、子ども別残高・貯蓄率表示、週間統計 |
+| タスク管理 | タスクCRUD（名前・説明・報酬額・繰り返し設定・担当子ども指定）、有効/無効切替 |
+| 子どもダッシュボード | 貯金箱UI（つかえるお金/ちょきん分離表示）、貯蓄目標プログレスバー |
+| おてつだい実行 | アクティブタスク一覧から「できた！」ボタンで完了申請 |
+| 取引履歴 | 獲得・使用の履歴をタブ切替で確認 |
+| ウォレット | 報酬を分配比率（split_ratio）で「つかえるお金」「ちょきん」に自動振り分け |
+| セッション管理 | localStorage方式、ロール別ルーティング（parent/child） |
+| レスポンシブ | モバイル/タブレット/PC対応 |
+
+## DBテーブル（Supabase）
+
+| テーブル | 用途 |
+| --- | --- |
+| `otetsudai_families` | 家族マスター |
+| `otetsudai_users` | ユーザー（parent/child、PIN認証） |
+| `otetsudai_tasks` | お手伝いタスク定義（報酬額・繰り返し・担当） |
+| `otetsudai_task_logs` | タスク完了ログ（pending→approved/rejected） |
+| `otetsudai_wallets` | 子ども別ウォレット（spending/saving残高・分配比率） |
+| `otetsudai_transactions` | 取引履歴（earn/spend/save） |
+
+## 技術スタック
+
+| Technology | Version | Purpose |
+| --- | --- | --- |
+| Next.js (App Router) | 16.2.2 | フレームワーク |
+| React | 19.2.4 | UI構築 |
+| Tailwind CSS | 4.x | スタイリング |
+| shadcn/ui | 4.1.2 | UIコンポーネント（Card, Button, Dialog, Tabs, Progress等） |
+| Supabase | 2.x | DB（PostgreSQL）・認証 |
+| TypeScript | 5.x | 型安全 |
+| Vercel | — | ホスティング |
+
+## ページ構成
+
+```
+app/
+├── page.tsx                    ← ログイン（家族→メンバー→PIN）
+├── parent/
+│   ├── page.tsx                ← 親ダッシュボード（承認・残高一覧）
+│   └── tasks/
+│       └── page.tsx            ← タスク管理（CRUD）
+└── child/
+    └── [childId]/
+        └── page.tsx            ← 子どもダッシュボード（貯金箱・おてつだい・履歴）
+```
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+cd otetsudai-bank
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` に以下の環境変数が必要:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
