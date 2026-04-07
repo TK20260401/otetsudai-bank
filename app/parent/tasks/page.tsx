@@ -68,7 +68,7 @@ export default function TaskManagement() {
 
   useEffect(() => {
     if (!session || session.role !== "parent") {
-      router.push("/");
+      router.push("/login");
       return;
     }
     loadData();

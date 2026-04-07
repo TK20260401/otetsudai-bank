@@ -4,16 +4,24 @@ import { useEffect, useState, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getSession, clearSession } from "@/lib/session";
-import type { Task, Wallet, Transaction } from "@/lib/types";
+import type { Task, Wallet, Transaction, SpendRequest, SavingGoal, Badge as BadgeType } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTaskIcon } from "@/lib/task-icons";
 import ChatWidget from "@/components/chat-widget";
+import CommonHeader from "@/components/common-header";
 import { R, AutoRuby } from "@/components/ruby-text";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import SavingGoalSection from "@/components/saving-goal";
+import BadgeDisplay from "@/components/badge-display";
+import CoinAnimation from "@/components/coin-animation";
+import { checkAndAwardBadges } from "@/lib/badges";
 
 export default function ChildDashboard({
   params,
@@ -27,6 +35,15 @@ export default function ChildDashboard({
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [submitting, setSubmitting] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [spendOpen, setSpendOpen] = useState(false);
+  const [spendAmount, setSpendAmount] = useState("");
+  const [spendPurpose, setSpendPurpose] = useState("");
+  const [spendError, setSpendError] = useState("");
+  const [spendSuccess, setSpendSuccess] = useState(false);
+  const [rejectedSpends, setRejectedSpends] = useState<SpendRequest[]>([]);
+  const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
+  const [badges, setBadges] = useState<BadgeType[]>([]);
+  const [showCoinAnim, setShowCoinAnim] = useState(false);
 
   const session = getSession();
 
@@ -55,6 +72,31 @@ export default function ChildDashboard({
     setTasks(taskRes.data || []);
     setWallet(walletRes.data);
 
+    // 却下された支出申請を取得
+    const { data: rejects } = await supabase
+      .from("otetsudai_spend_requests")
+      .select("*")
+      .eq("child_id", childId)
+      .eq("status", "rejected")
+      .order("created_at", { ascending: false })
+      .limit(5);
+    setRejectedSpends((rejects as SpendRequest[]) || []);
+
+    // 貯金目標を取得
+    const { data: goals } = await supabase
+      .from("otetsudai_saving_goals")
+      .select("*")
+      .eq("child_id", childId)
+      .order("created_at", { ascending: false });
+    setSavingGoals((goals as SavingGoal[]) || []);
+
+    // バッジ取得
+    const { data: badgeData } = await supabase
+      .from("otetsudai_badges")
+      .select("*")
+      .eq("child_id", childId);
+    setBadges((badgeData as BadgeType[]) || []);
+
     // Filter transactions by this child's wallet
     if (walletRes.data) {
       setTransactions(
@@ -69,7 +111,7 @@ export default function ChildDashboard({
 
   useEffect(() => {
     if (!session || session.role !== "child") {
-      router.push("/");
+      router.push("/login");
       return;
     }
     loadData();
@@ -85,7 +127,37 @@ export default function ChildDashboard({
     });
 
     setSubmitting(null);
+    setShowCoinAnim(true);
+    await checkAndAwardBadges(childId);
     loadData();
+  }
+
+  async function handleSpendRequest() {
+    const amount = parseInt(spendAmount);
+    if (!amount || amount <= 0) { setSpendError("きんがくをいれてね"); return; }
+    if (!spendPurpose.trim()) { setSpendError("なにに つかうか いれてね"); return; }
+    if (!wallet || amount > wallet.spending_balance) { setSpendError("おかねが たりないよ"); return; }
+    setSpendError("");
+
+    const res = await fetch("/api/spend-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        child_id: childId,
+        wallet_id: wallet.id,
+        amount,
+        purpose: spendPurpose.trim(),
+      }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      setSpendError(data.error || "しっぱいしたよ");
+      return;
+    }
+    setSpendSuccess(true);
+    setSpendAmount("");
+    setSpendPurpose("");
+    setTimeout(() => { setSpendOpen(false); setSpendSuccess(false); }, 2000);
   }
 
   if (loading) {
@@ -99,35 +171,24 @@ export default function ChildDashboard({
   const total = wallet
     ? wallet.spending_balance + wallet.saving_balance
     : 0;
-  const savingGoal = 5000;
-  const savingPercent = wallet
-    ? Math.min(Math.round((wallet.saving_balance / savingGoal) * 100), 100)
-    : 0;
 
   return (
     <div className="min-h-screen p-4 max-w-md mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-amber-800">
-          🧒 {session?.name} のバンク
-        </h1>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            clearSession();
-            router.push("/");
-          }}
-        >
-          ログアウト
-        </Button>
+      <CommonHeader title={`🧒 ${session?.name} のバンク`} />
 
-      </div>
+      {/* バッジ表示 */}
+      {badges.length > 0 && (
+        <div className="mb-3">
+          <BadgeDisplay badges={badges} />
+        </div>
+      )}
 
       {/* Piggy Bank */}
       <Card className="mb-4 border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50">
         <CardContent className="p-6 text-center">
-          <div className="text-6xl mb-2">🐷</div>
+          <div className={`text-6xl mb-2 transition-transform duration-500 ${total >= 5000 ? "scale-125" : total >= 1000 ? "scale-110" : "scale-100"}`}>
+            {total >= 5000 ? "🐷🌟" : total >= 1000 ? "🐷✨" : "🐷"}
+          </div>
           <p className="text-3xl font-bold text-amber-700">
             ¥{total.toLocaleString()}
           </p>
@@ -140,6 +201,13 @@ export default function ChildDashboard({
               <p className="text-xl font-bold text-blue-600">
                 ¥{wallet?.spending_balance.toLocaleString() || 0}
               </p>
+              <Button
+                size="sm"
+                className="mt-1 w-full bg-blue-500 hover:bg-blue-600 text-white text-xs h-7"
+                onClick={() => { setSpendOpen(true); setSpendError(""); setSpendSuccess(false); }}
+              >
+                🛒 つかう
+              </Button>
             </div>
             <div className="bg-white/70 rounded-xl p-3">
               <p className="text-xs text-green-500 font-semibold">
@@ -151,18 +219,51 @@ export default function ChildDashboard({
             </div>
           </div>
 
-          {/* Saving Goal */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-muted-foreground">
-                <R k="貯金目標" r="ちょきんもくひょう" /> ¥{savingGoal.toLocaleString()}
-              </span>
-              <span className="font-semibold">{savingPercent}%</span>
-            </div>
-            <Progress value={savingPercent} className="h-3" />
-          </div>
         </CardContent>
       </Card>
+
+      {/* 貯金目標 */}
+      <SavingGoalSection
+        childId={childId}
+        savingBalance={wallet?.saving_balance || 0}
+        goals={savingGoals}
+        onUpdate={loadData}
+      />
+
+      {/* きょうやること */}
+      {(() => {
+        const todayTasks = tasks.filter((t) =>
+          t.recurrence === "daily" || (t.recurrence === "weekly" && new Date(t.created_at).getDay() === new Date().getDay())
+        );
+        if (todayTasks.length === 0) return null;
+        return (
+          <Card className="mb-4 border-amber-300">
+            <CardContent className="p-4">
+              <p className="text-base font-bold text-amber-800 mb-2">
+                ☀️ きょうやること
+              </p>
+              <div className="space-y-2">
+                {todayTasks.map((task) => (
+                  <div key={task.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{getTaskIcon(task.title)}</span>
+                      <span className="text-sm font-medium"><AutoRuby text={task.title} /></span>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-green-500 hover:bg-green-600 text-white text-xs h-8"
+                      onClick={() => handleComplete(task)}
+                      disabled={submitting === task.id}
+                    >
+                      {submitting === task.id ? "..." : "できた！"}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       <Tabs defaultValue="tasks" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -265,6 +366,74 @@ export default function ChildDashboard({
           </Card>
         </TabsContent>
       </Tabs>
+      {/* 却下された支出申請の通知 */}
+      {rejectedSpends.length > 0 && (
+        <Card className="mt-4 border-red-200 bg-red-50">
+          <CardContent className="p-4">
+            <p className="text-sm font-semibold text-red-600 mb-2">❌ <R k="却下" r="きゃっか" />されたリクエスト</p>
+            {rejectedSpends.map((sr) => (
+              <div key={sr.id} className="text-sm mb-1">
+                <span className="text-red-500">¥{sr.amount.toLocaleString()}</span>
+                <span className="text-muted-foreground ml-1">{sr.purpose}</span>
+                {sr.reject_reason && (
+                  <p className="text-xs text-red-400 ml-4">→ {sr.reject_reason}</p>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* つかうダイアログ */}
+      <Dialog open={spendOpen} onOpenChange={setSpendOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>🛒 おかねをつかう</DialogTitle>
+          </DialogHeader>
+          {spendSuccess ? (
+            <div className="text-center py-4">
+              <div className="text-4xl mb-2">📨</div>
+              <p className="font-semibold text-green-600">おやに おねがいしたよ！</p>
+              <p className="text-sm text-muted-foreground"><R k="承認" r="しょうにん" />をまってね</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <Label><R k="金額" r="きんがく" />（えん）</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={spendAmount}
+                  onChange={(e) => setSpendAmount(e.target.value)}
+                  placeholder="100"
+                  className="text-xl text-center h-12"
+                />
+              </div>
+              <div>
+                <Label>なにに つかう？</Label>
+                <Input
+                  value={spendPurpose}
+                  onChange={(e) => setSpendPurpose(e.target.value)}
+                  placeholder="れい: おかしを かいたい"
+                  className="h-12"
+                />
+              </div>
+              {spendError && <p className="text-destructive text-sm text-center">{spendError}</p>}
+              <p className="text-xs text-muted-foreground text-center">
+                つかえるお<R k="金" r="かね" />: ¥{wallet?.spending_balance.toLocaleString() || 0}
+              </p>
+              <Button
+                className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white text-lg"
+                onClick={handleSpendRequest}
+              >
+                おやに おねがいする
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <CoinAnimation show={showCoinAnim} onComplete={() => setShowCoinAnim(false)} />
       <ChatWidget role="child" />
     </div>
   );

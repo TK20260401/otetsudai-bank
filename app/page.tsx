@@ -1,204 +1,68 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import type { Family, User } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [families, setFamilies] = useState<Family[]>([]);
-  const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
-  const [members, setMembers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    supabase
-      .from("otetsudai_families")
-      .select("*")
-      .then(({ data }) => {
-        setFamilies(data || []);
-        setLoading(false);
-      });
-  }, []);
-
-  async function handleFamilySelect(family: Family) {
-    setSelectedFamily(family);
-    setSelectedUser(null);
-    setPin("");
-    setError("");
-    const { data } = await supabase
-      .from("otetsudai_users")
-      .select("*")
-      .eq("family_id", family.id);
-    setMembers(data || []);
-  }
-
-  function handleUserSelect(user: User) {
-    setSelectedUser(user);
-    setPin("");
-    setError("");
-  }
-
-  function handleLogin() {
-    if (!selectedUser) return;
-
-    if (selectedUser.pin && selectedUser.pin !== pin) {
-      setError("PINが違います");
-      return;
-    }
-
-    localStorage.setItem(
-      "otetsudai_session",
-      JSON.stringify({
-        userId: selectedUser.id,
-        familyId: selectedFamily!.id,
-        role: selectedUser.role,
-        name: selectedUser.name,
-      })
-    );
-
-    if (selectedUser.role === "parent") {
-      router.push("/parent");
-    } else {
-      router.push(`/child/${selectedUser.id}`);
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-2xl animate-pulse">Loading...</div>
-      </div>
-    );
-  }
-
+export default function LandingPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
-      <Card className="w-full max-w-md shadow-xl border-amber-200">
-        <CardHeader className="text-center">
-          <div className="text-5xl mb-2">🏦</div>
-          <CardTitle className="text-2xl font-bold text-amber-800">
+    <div className="min-h-screen flex flex-col">
+      {/* Hero */}
+      <section className="flex-1 flex items-center justify-center p-6">
+        <div className="max-w-lg text-center">
+          <div className="text-7xl mb-4">🏦</div>
+          <h1 className="text-4xl font-extrabold text-amber-800 mb-2">
             おてつだいバンク
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            お手伝いでコインをためよう！
+          </h1>
+          <p className="text-lg text-amber-700 mb-1">
+            おてつだいで コインを ためよう！
           </p>
-          <Link href="/help">
-            <Button variant="outline" size="sm" className="mt-2 border-amber-300 text-amber-600 hover:bg-amber-50">
-              📖 つかいかた
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {!selectedFamily ? (
-            <>
-              <Label className="text-base font-semibold">
-                おうちをえらんでね
-              </Label>
-              <div className="grid gap-2">
-                {families.map((f) => (
-                  <Button
-                    key={f.id}
-                    variant="outline"
-                    className="h-14 text-lg border-amber-300 hover:bg-amber-100"
-                    onClick={() => handleFamilySelect(f)}
-                  >
-                    🏠 {f.name}
-                  </Button>
-                ))}
-              </div>
-            </>
-          ) : !selectedUser ? (
-            <>
-              <div className="flex items-center gap-2 mb-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedFamily(null);
-                    setMembers([]);
-                  }}
-                >
-                  ← もどる
-                </Button>
-                <span className="font-semibold text-amber-700">
-                  {selectedFamily.name}
-                </span>
-              </div>
-              <Label className="text-base font-semibold">だれかな？</Label>
-              <div className="grid gap-2">
-                {members.map((m) => (
-                  <Button
-                    key={m.id}
-                    variant="outline"
-                    className="h-14 text-lg border-amber-300 hover:bg-amber-100"
-                    onClick={() => handleUserSelect(m)}
-                  >
-                    {m.role === "parent" ? "👨‍👩‍👧‍👦" : "🧒"} {m.name}
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      ({m.role === "parent" ? "おやこうざ" : "こどもこうざ"})
-                    </span>
-                  </Button>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-2 mb-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedUser(null)}
-                >
-                  ← もどる
-                </Button>
-                <span className="font-semibold text-amber-700">
-                  {selectedUser.name}
-                </span>
-              </div>
-              {selectedUser.pin ? (
-                <>
-                  <Label htmlFor="pin" className="text-base font-semibold">
-                    PINをいれてね 🔑
-                  </Label>
-                  <Input
-                    id="pin"
-                    type="password"
-                    maxLength={4}
-                    placeholder="4けたのPIN"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                    className="text-center text-2xl tracking-widest h-14"
-                  />
-                </>
-              ) : (
-                <p className="text-center text-muted-foreground">
-                  PINなしでログインします
-                </p>
-              )}
-              {error && (
-                <p className="text-destructive text-sm text-center">{error}</p>
-              )}
-              <Button
-                className="w-full h-12 text-lg bg-amber-500 hover:bg-amber-600 text-white"
-                onClick={handleLogin}
-              >
-                ログイン
-              </Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
+          <p className="text-sm text-muted-foreground mb-8">
+            お手伝い × マネー教育アプリ — 日本の家庭のための BusyKid
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+            <Link href="/signup">
+              <button className="w-full sm:w-auto px-8 py-4 rounded-xl text-lg font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-lg transition-all hover:scale-105">
+                ✨ はじめる
+              </button>
+            </Link>
+            <Link href="/login">
+              <button className="w-full sm:w-auto px-8 py-4 rounded-xl text-lg font-bold border-2 border-amber-300 text-amber-700 hover:bg-amber-50 transition-all">
+                🔑 ログイン
+              </button>
+            </Link>
+          </div>
+
+          {/* Features */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+            <div className="bg-white/80 rounded-xl p-4 border border-amber-100 shadow-sm">
+              <div className="text-3xl mb-2">📋</div>
+              <h3 className="font-bold text-amber-800 mb-1">おてつだいリスト</h3>
+              <p className="text-xs text-muted-foreground">
+                お手伝いごとにごほうびを設定。毎日・毎週のくりかえしもOK
+              </p>
+            </div>
+            <div className="bg-white/80 rounded-xl p-4 border border-amber-100 shadow-sm">
+              <div className="text-3xl mb-2">🐷</div>
+              <h3 className="font-bold text-amber-800 mb-1">ちょきんばこ</h3>
+              <p className="text-xs text-muted-foreground">
+                かせいだコインを「つかえるお金」と「ちょきん」に自動分割
+              </p>
+            </div>
+            <div className="bg-white/80 rounded-xl p-4 border border-amber-100 shadow-sm">
+              <div className="text-3xl mb-2">✅</div>
+              <h3 className="font-bold text-amber-800 mb-1">おやが承認</h3>
+              <p className="text-xs text-muted-foreground">
+                おてつだい完了もお金をつかうのも、おやの承認があってはじめてOK
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center py-4 text-xs text-muted-foreground">
+        <Link href="/help" className="hover:text-amber-600">📖 つかいかた</Link>
+        <span className="mx-2">|</span>
+        おてつだいバンク v0.2
+      </footer>
     </div>
   );
 }

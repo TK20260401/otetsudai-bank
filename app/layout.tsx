@@ -14,7 +14,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "おてつだいバンク",
-  description: "お手伝い×マネー教育アプリ",
+  description: "お手伝い×マネー教育アプリ — BusyKid日本版",
+  manifest: "/manifest.json",
+  themeColor: "#f59e0b",
 };
 
 export default function RootLayout({

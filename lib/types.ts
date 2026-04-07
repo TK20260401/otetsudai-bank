@@ -56,3 +56,34 @@ export type Transaction = {
   task_log_id: string | null;
   created_at: string;
 };
+
+export type SpendRequest = {
+  id: string;
+  child_id: string;
+  wallet_id: string;
+  amount: number;
+  purpose: string;
+  status: "pending" | "approved" | "rejected";
+  reject_reason: string | null;
+  created_at: string;
+  approved_at: string | null;
+  approved_by: string | null;
+  // joined
+  child?: User;
+};
+
+export type Badge = {
+  id: string;
+  child_id: string;
+  badge_type: string;
+  earned_at: string;
+};
+
+export type SavingGoal = {
+  id: string;
+  child_id: string;
+  title: string;
+  target_amount: number;
+  is_achieved: boolean;
+  created_at: string;
+};
