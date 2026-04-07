@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おてつだいバンク — ワイヤーフレーム</title>
+<style>
+  :root {
+    --wire-bg: #fafafa;
+    --wire-border: #bbb;
+    --wire-text: #333;
+    --wire-light: #ddd;
+    --wire-accent: #888;
+    --phone-w: 360px;
+    --phone-h: 720px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', sans-serif;
+    background: #f0f0f0;
+    color: var(--wire-text);
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #222;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 48px;
+  }
+  .screen-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    justify-content: center;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .screen-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .screen-label {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #444;
+    text-align: center;
+  }
+  .screen-sublabel {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .phone-frame {
+    width: var(--phone-w);
+    height: var(--phone-h);
+    background: #fff;
+    border: 2px solid var(--wire-border);
+    border-radius: 32px;
+    padding: 48px 16px 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 12px;
+  }
+  .phone-content {
+    height: 100%;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  /* Wireframe elements */
+  .w-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--wire-light);
+    margin-bottom: 16px;
+  }
+  .w-header-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .w-header-sub {
+    font-size: 11px;
+    color: var(--wire-accent);
+  }
+  .w-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: 1.5px solid var(--wire-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--wire-text);
+    background: #fff;
+    cursor: default;
+    text-align: center;
+  }
+  .w-btn-primary {
+    background: #e0e0e0;
+    border-color: #aaa;
+    font-weight: 600;
+  }
+  .w-btn-full {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+  }
+  .w-btn-sm {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+  .w-card {
+    border: 1.5px solid var(--wire-border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  .w-card-header {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #555;
+  }
+  .w-placeholder {
+    background: repeating-linear-gradient(
+      45deg,
+      #f5f5f5,
+      #f5f5f5 8px,
+      #eee 8px,
+      #eee 16px
+    );
+    border: 1px dashed var(--wire-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--wire-accent);
+    font-size: 12px;
+    min-height: 48px;
+    padding: 8px;
+    text-align: center;
+  }
+  .w-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--wire-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #aaa;
+    background: #fafafa;
+  }
+  .w-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--wire-border);
+    border-radius: 10px;
+    font-size: 10px;
+    color: var(--wire-accent);
+  }
+  .w-divider {
+    border: none;
+    border-top: 1px dashed var(--wire-light);
+    margin: 12px 0;
+  }
+  .w-stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .w-stat {
+    border: 1px solid var(--wire-border);
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+  }
+  .w-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #555;
+  }
+  .w-stat-label {
+    font-size: 10px;
+    color: #999;
+    margin-top: 2px;
+  }
+  .w-progress {
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    margin: 6px 0;
+    overflow: hidden;
+  }
+  .w-progress-bar {
+    height: 100%;
+    background: #bbb;
+    border-radius: 4px;
+  }
+  .w-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .w-cols-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .w-tab-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1.5px solid var(--wire-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .w-tab {
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--wire-accent);
+    border-right: 1px solid var(--wire-light);
+  }
+  .w-tab:last-child { border-right: none; }
+  .w-tab.active {
+    background: #e8e8e8;
+    color: var(--wire-text);
+  }
+  .w-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 12px;
+  }
+  .w-list-item:last-child { border-bottom: none; }
+  .w-annotation {
+    position: relative;
+    margin-left: 4px;
+  }
+  .w-annotation::after {
+    content: attr(data-note);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fffde7;
+    border: 1px solid #fdd835;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    color: #795548;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 24px 0;
+  }
+  .flow-arrow svg { width: 32px; height: 32px; }
+  /* Navigation map */
+  .nav-map {
+    max-width: 800px;
+    margin: 0 auto 48px;
+    padding: 32px;
+    background: #fff;
+    border: 2px solid var(--wire-border);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .nav-map h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #444;
+  }
+  .nav-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .nav-node {
+    padding: 10px 20px;
+    border: 2px solid var(--wire-border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    background: #fafafa;
+    min-width: 120px;
+  }
+  .nav-node.parent-color { border-color: #90a4ae; background: #eceff1; }
+  .nav-node.child-color { border-color: #a5d6a7; background: #e8f5e9; }
+  .nav-arrow {
+    font-size: 22px;
+    color: #bbb;
+  }
+  .nav-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mt-4 { margin-top: 4px; }
+  .text-center { text-align: center; }
+  .text-xs { font-size: 11px; color: #999; }
+</style>
+</head>
+<body>
+
+<h1>おてつだいバンク — Wireframe</h1>
+<p class="subtitle">画面遷移 &amp; レイアウト設計 ｜ MVP v1.0 ｜ 2026-04-07</p>
+
+<!-- Navigation Map -->
+<div class="nav-map">
+  <h2>画面遷移フロー</h2>
+  <div class="nav-flow">
+    <div class="nav-node">
+      ログイン<br><span class="text-xs">/</span>
+    </div>
+    <div class="nav-arrow">→</div>
+    <div class="nav-branch">
+      <div class="nav-node parent-color">
+        親ダッシュボード<br><span class="text-xs">/parent</span>
+      </div>
+      <div class="nav-arrow">↕</div>
+      <div class="nav-node parent-color">
+        タスク管理<br><span class="text-xs">/parent/tasks</span>
+      </div>
+    </div>
+    <div style="width: 1px; height: 80px; border-left: 2px dashed #ccc; margin: 0 8px;"></div>
+    <div class="nav-node child-color">
+      子どもバンク<br><span class="text-xs">/child/[id]</span>
+    </div>
+  </div>
+  <p class="text-xs text-center" style="margin-top: 16px;">
+    親(parent)ロールでログイン → 左ルート ｜ 子(child)ロールでログイン → 右ルート
+  </p>
+</div>
+
+<div class="screen-grid">
+
+  <!-- Screen 1: Login -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Screen 1</div>
+    <div class="screen-sublabel">ログイン / 家族選択</div>
+    <div class="phone-frame">
+      <div class="phone-content">
+        <!-- Step indicators -->
+        <div class="text-center mb-16">
+          <div class="w-placeholder" style="width:64px;height:64px;margin:0 auto 8px;border-radius:50%;">ICON</div>
+          <div style="font-size:18px;font-weight:700;">おてつだいバンク</div>
+          <div class="text-xs">お手伝いでコインをためよう！</div>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">おうちをえらんでね</div>
+
+        <div class="w-btn w-btn-full mb-8">🏠 山田家</div>
+        <div class="w-btn w-btn-full mb-8" style="border-style:dashed;color:#bbb;">🏠 （他の家族）</div>
+
+        <hr class="w-divider">
+
+        <div class="text-xs text-center mb-8">▼ 家族選択後 ▼</div>
+
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;">だれかな？</div>
+        <div class="w-btn w-btn-full mb-8">👨‍👩‍👧‍👦 山田 太郎 <span class="w-badge" style="margin-left:8px;">おや</span></div>
+        <div class="w-btn w-btn-full mb-8">🧒 山田 花子 <span class="w-badge" style="margin-left:8px;">こども</span></div>
+        <div class="w-btn w-btn-full mb-8">🧒 山田 次郎 <span class="w-badge" style="margin-left:8px;">こども</span></div>
+
+        <hr class="w-divider">
+
+        <div class="text-xs text-center mb-8">▼ PIN入力（親のみ） ▼</div>
+        <div class="w-input mb-12" style="text-align:center;font-size:20px;letter-spacing:12px;">● ● ● ●</div>
+        <div class="w-btn w-btn-full w-btn-primary">ログイン</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Parent Dashboard -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Screen 2</div>
+    <div class="screen-sublabel">親ダッシュボード</div>
+    <div class="phone-frame">
+      <div class="phone-content">
+        <div class="w-header">
+          <div>
+            <div class="w-header-title">🏦 おやダッシュボード</div>
+            <div class="w-header-sub">山田 太郎 さん</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <div class="w-btn w-btn-sm">📋 タスク管理</div>
+            <div class="w-btn w-btn-sm">OUT</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="w-stat-row">
+          <div class="w-stat">
+            <div class="w-stat-value">12</div>
+            <div class="w-stat-label">承認済み</div>
+          </div>
+          <div class="w-stat">
+            <div class="w-stat-value">¥2,450</div>
+            <div class="w-stat-label">総獲得</div>
+          </div>
+          <div class="w-stat">
+            <div class="w-stat-value">5</div>
+            <div class="w-stat-label">今週</div>
+          </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="w-card">
+          <div class="w-card-header">⏳ 承認待ち <span class="w-badge" style="background:#fee;border-color:#f88;">2</span></div>
+
+          <div style="background:#fafaf0;border:1px solid #eee;border-radius:8px;padding:10px;margin-bottom:8px;">
+            <div class="w-row">
+              <div>
+                <div style="font-size:13px;font-weight:600;">食器洗い</div>
+                <div class="text-xs">🧒 花子 ・ ¥100</div>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <div class="w-btn w-btn-sm w-btn-primary">✓ 承認</div>
+                <div class="w-btn w-btn-sm">✗</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fafaf0;border:1px solid #eee;border-radius:8px;padding:10px;">
+            <div class="w-row">
+              <div>
+                <div style="font-size:13px;font-weight:600;">洗濯物たたみ</div>
+                <div class="text-xs">🧒 次郎 ・ ¥150</div>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <div class="w-btn w-btn-sm w-btn-primary">✓ 承認</div>
+                <div class="w-btn w-btn-sm">✗</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="w-divider">
+
+        <!-- Children Wallets -->
+        <div style="font-size:14px;font-weight:700;margin-bottom:8px;">💰 こどもの残高</div>
+
+        <div class="w-card">
+          <div class="w-row mb-8">
+            <span style="font-weight:600;">🧒 花子</span>
+            <span style="font-weight:700;">¥1,250</span>
+          </div>
+          <div class="w-cols-2 mb-8">
+            <div style="background:#f0f4ff;border-radius:6px;padding:6px;text-align:center;">
+              <div class="text-xs">つかえるお金</div>
+              <div style="font-weight:700;color:#4477bb;">¥625</div>
+            </div>
+            <div style="background:#f0fff0;border-radius:6px;padding:6px;text-align:center;">
+              <div class="text-xs">ちょきん</div>
+              <div style="font-weight:700;color:#44aa44;">¥625</div>
+            </div>
+          </div>
+          <div class="w-row" style="font-size:10px;">
+            <span>貯蓄率</span>
+            <div class="w-progress" style="flex:1;margin:0 8px;">
+              <div class="w-progress-bar" style="width:50%"></div>
+            </div>
+            <span>50%</span>
+          </div>
+        </div>
+
+        <div class="w-card">
+          <div class="w-row mb-8">
+            <span style="font-weight:600;">🧒 次郎</span>
+            <span style="font-weight:700;">¥1,000</span>
+          </div>
+          <div class="w-cols-2 mb-8">
+            <div style="background:#f0f4ff;border-radius:6px;padding:6px;text-align:center;">
+              <div class="text-xs">つかえるお金</div>
+              <div style="font-weight:700;color:#4477bb;">¥500</div>
+            </div>
+            <div style="background:#f0fff0;border-radius:6px;padding:6px;text-align:center;">
+              <div class="text-xs">ちょきん</div>
+              <div style="font-weight:700;color:#44aa44;">¥500</div>
+            </div>
+          </div>
+          <div class="w-row" style="font-size:10px;">
+            <span>貯蓄率</span>
+            <div class="w-progress" style="flex:1;margin:0 8px;">
+              <div class="w-progress-bar" style="width:50%"></div>
+            </div>
+            <span>50%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Task Management -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Screen 3</div>
+    <div class="screen-sublabel">タスク作成・管理（親）</div>
+    <div class="phone-frame">
+      <div class="phone-content">
+        <div class="w-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="w-btn w-btn-sm">← もどる</div>
+            <div class="w-header-title">📋 タスク管理</div>
+          </div>
+          <div class="w-btn w-btn-sm w-btn-primary">＋ 新規</div>
+        </div>
+
+        <!-- Task list -->
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">食器洗い <span class="w-badge">毎日</span></div>
+              <div class="text-xs mt-4">¥100</div>
+            </div>
+            <div style="display:flex;gap:2px;">
+              <div class="w-btn w-btn-sm">✏️</div>
+              <div class="w-btn w-btn-sm">⏸</div>
+              <div class="w-btn w-btn-sm">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">洗濯物たたみ <span class="w-badge">毎日</span></div>
+              <div class="text-xs mt-4">¥150</div>
+            </div>
+            <div style="display:flex;gap:2px;">
+              <div class="w-btn w-btn-sm">✏️</div>
+              <div class="w-btn w-btn-sm">⏸</div>
+              <div class="w-btn w-btn-sm">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">芝刈り <span class="w-badge">毎週</span></div>
+              <div class="text-xs mt-4">¥1,000 ・ 🧒 花子</div>
+            </div>
+            <div style="display:flex;gap:2px;">
+              <div class="w-btn w-btn-sm">✏️</div>
+              <div class="w-btn w-btn-sm">⏸</div>
+              <div class="w-btn w-btn-sm">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-card" style="opacity:0.5;">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">ゴミ出し <span class="w-badge">毎週</span> <span class="w-badge">停止中</span></div>
+              <div class="text-xs mt-4">¥200</div>
+            </div>
+            <div style="display:flex;gap:2px;">
+              <div class="w-btn w-btn-sm">✏️</div>
+              <div class="w-btn w-btn-sm">▶️</div>
+              <div class="w-btn w-btn-sm">🗑</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="w-divider">
+
+        <!-- Create dialog mockup -->
+        <div style="font-size:12px;color:#999;text-align:center;margin-bottom:8px;">▼ 新規作成ダイアログ ▼</div>
+        <div class="w-card" style="border:2px solid #888;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">あたらしいタスク</div>
+          <div class="mb-8">
+            <div class="text-xs mb-4" style="color:#555;font-weight:600;">タスク名</div>
+            <div class="w-input">例：お風呂そうじ</div>
+          </div>
+          <div class="mb-8">
+            <div class="text-xs mb-4" style="color:#555;font-weight:600;">せつめい（任意）</div>
+            <div class="w-input" style="height:48px;">どうやるか書いてね</div>
+          </div>
+          <div class="w-cols-2 mb-8">
+            <div>
+              <div class="text-xs mb-4" style="color:#555;font-weight:600;">ごほうび (¥)</div>
+              <div class="w-input">100</div>
+            </div>
+            <div>
+              <div class="text-xs mb-4" style="color:#555;font-weight:600;">くりかえし</div>
+              <div class="w-input">▼ 毎日</div>
+            </div>
+          </div>
+          <div class="mb-12">
+            <div class="text-xs mb-4" style="color:#555;font-weight:600;">だれのタスク？</div>
+            <div class="w-input">▼ みんな</div>
+          </div>
+          <div class="w-btn w-btn-full w-btn-primary">作成する</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Child Dashboard -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Screen 4</div>
+    <div class="screen-sublabel">子ども向け画面</div>
+    <div class="phone-frame">
+      <div class="phone-content">
+        <div class="w-header">
+          <div class="w-header-title">🧒 花子 のバンク</div>
+          <div class="w-btn w-btn-sm">OUT</div>
+        </div>
+
+        <!-- Piggy Bank -->
+        <div class="w-card" style="text-align:center;background:#fefcf0;">
+          <div style="font-size:48px;margin-bottom:4px;">🐷</div>
+          <div style="font-size:28px;font-weight:700;color:#555;">¥1,250</div>
+          <div class="text-xs mb-12">ぜんぶのおかね</div>
+
+          <div class="w-cols-2 mb-12">
+            <div style="background:#fff;border-radius:10px;padding:8px;border:1px solid #eee;">
+              <div class="text-xs">💳 つかえるお金</div>
+              <div style="font-size:18px;font-weight:700;color:#4477bb;">¥625</div>
+            </div>
+            <div style="background:#fff;border-radius:10px;padding:8px;border:1px solid #eee;">
+              <div class="text-xs">🏦 ちょきん</div>
+              <div style="font-size:18px;font-weight:700;color:#44aa44;">¥625</div>
+            </div>
+          </div>
+
+          <div class="w-row" style="font-size:10px;">
+            <span>もくひょう ¥5,000</span>
+            <span>25%</span>
+          </div>
+          <div class="w-progress">
+            <div class="w-progress-bar" style="width:25%"></div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="w-tab-bar">
+          <div class="w-tab active">📋 おてつだい</div>
+          <div class="w-tab">📜 りれき</div>
+        </div>
+
+        <!-- Task list -->
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">食器洗い</div>
+              <div style="margin-top:4px;">
+                <span class="w-badge">¥100</span>
+                <span class="w-badge" style="margin-left:4px;">まいにち</span>
+              </div>
+            </div>
+            <div class="w-btn w-btn-primary" style="padding:8px 12px;">できた！✓</div>
+          </div>
+        </div>
+
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">洗濯物たたみ</div>
+              <div style="margin-top:4px;">
+                <span class="w-badge">¥150</span>
+                <span class="w-badge" style="margin-left:4px;">まいにち</span>
+              </div>
+            </div>
+            <div class="w-btn w-btn-primary" style="padding:8px 12px;">できた！✓</div>
+          </div>
+        </div>
+
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">芝刈り</div>
+              <div class="text-xs mt-4">庭のしばを刈る</div>
+              <div style="margin-top:4px;">
+                <span class="w-badge">¥1,000</span>
+                <span class="w-badge" style="margin-left:4px;">まいしゅう</span>
+              </div>
+            </div>
+            <div class="w-btn w-btn-primary" style="padding:8px 12px;">できた！✓</div>
+          </div>
+        </div>
+
+        <div class="w-card">
+          <div class="w-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">床掃除</div>
+              <div style="margin-top:4px;">
+                <span class="w-badge">¥300</span>
+                <span class="w-badge" style="margin-left:4px;">まいしゅう</span>
+              </div>
+            </div>
+            <div class="w-btn w-btn-primary" style="padding:8px 12px;">できた！✓</div>
+          </div>
+        </div>
+
+        <hr class="w-divider">
+        <div class="text-xs text-center mb-8">▼ りれきタブ ▼</div>
+
+        <div class="w-card">
+          <div class="w-card-header">さいきんのりれき</div>
+          <div class="w-list-item">
+            <div>
+              <div style="font-size:12px;">💰 食器洗い 承認</div>
+              <div class="text-xs">2026/04/06</div>
+            </div>
+            <span style="font-weight:700;color:#44aa44;">+¥100</span>
+          </div>
+          <div class="w-list-item">
+            <div>
+              <div style="font-size:12px;">💰 洗濯物たたみ 承認</div>
+              <div class="text-xs">2026/04/05</div>
+            </div>
+            <span style="font-weight:700;color:#44aa44;">+¥150</span>
+          </div>
+          <div class="w-list-item">
+            <div>
+              <div style="font-size:12px;">💰 芝刈り 承認</div>
+              <div class="text-xs">2026/04/04</div>
+            </div>
+            <span style="font-weight:700;color:#44aa44;">+¥1,000</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;margin-top:48px;padding:24px;">
+  <p class="text-xs">おてつだいバンク Wireframe v1.0 — Generated 2026-04-07</p>
+  <p class="text-xs" style="margin-top:4px;">Tech: Next.js 16 + Supabase + shadcn/ui</p>
+</div>
+
+</body>
+</html>
