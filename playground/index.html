@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f59e0b">
+  <title>おてつだいバンク</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app"></div>
+
+  <script type="module">
+    /**
+     * エントリポイント
+     * ────────────────
+     * ルート登録 → 動的 import でページモジュールを遅延読込。
+     * ページ追加時はここに 1 行足すだけ。
+     */
+    import { registerRoute, initRouter } from './js/router.js';
+
+    registerRoute('login',  () => import('./js/pages/login.js'));
+    registerRoute('parent', () => import('./js/pages/parent-dashboard.js'));
+    registerRoute('tasks',  () => import('./js/pages/task-manager.js'));
+    registerRoute('child',  () => import('./js/pages/child-bank.js'));
+
+    initRouter();
+  </script>
+</body>
+</html>
