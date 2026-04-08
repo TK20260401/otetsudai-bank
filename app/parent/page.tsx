@@ -26,6 +26,9 @@ export default function ParentDashboard() {
   const [loading, setLoading] = useState(true);
   const [editingRatio, setEditingRatio] = useState<string | null>(null);
   const [tempRatio, setTempRatio] = useState(30);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const session = getSession();
 
@@ -400,6 +403,62 @@ export default function ParentDashboard() {
             </Card>
           );
         })}
+      </div>
+
+      {/* アカウント削除 */}
+      <div className="mt-8 pt-4 border-t border-gray-200">
+        {!showDeleteConfirm ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-red-400 hover:text-red-600 hover:bg-red-50"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            🗑️ アカウントを削除する
+          </Button>
+        ) : (
+          <Card className="border-red-300 bg-red-50">
+            <CardContent className="p-4">
+              <p className="text-sm font-semibold text-red-600 mb-2">⚠️ アカウント削除</p>
+              <p className="text-xs text-red-500 mb-3">
+                削除すると、家族の全データ（クエスト・ウォレット・履歴）が失われます。この操作は取り消せません。
+              </p>
+              <p className="text-xs text-muted-foreground mb-2">
+                確認のため「削除する」と入力してください：
+              </p>
+              <Input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="削除する"
+                className="mb-3 text-sm"
+              />
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}>
+                  キャンセル
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  disabled={deleteConfirmText !== "削除する" || deleting}
+                  onClick={async () => {
+                    if (!session) return;
+                    setDeleting(true);
+                    await fetch("/api/account", {
+                      method: "DELETE",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ family_id: session.familyId, auth_id: session.authId }),
+                    });
+                    await supabase.auth.signOut();
+                    clearSession();
+                    router.push("/login");
+                  }}
+                >
+                  {deleting ? "削除中..." : "完全に削除する"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

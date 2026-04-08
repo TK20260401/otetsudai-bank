@@ -58,10 +58,14 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="text-center py-4 text-xs text-muted-foreground">
+      <footer className="text-center py-4 text-xs text-muted-foreground space-x-2">
         <Link href="/help" className="hover:text-emerald-600">📖 つかいかた</Link>
-        <span className="mx-2">|</span>
-        おこづかいクエスト v0.3
+        <span>|</span>
+        <Link href="/privacy" className="hover:text-emerald-600">プライバシーポリシー</Link>
+        <span>|</span>
+        <Link href="/terms" className="hover:text-emerald-600">利用規約</Link>
+        <span>|</span>
+        おこづかいクエスト v0.4
       </footer>
     </div>
   );

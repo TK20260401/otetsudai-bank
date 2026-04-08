@@ -54,7 +54,7 @@ export default function SignupPage() {
       return;
     }
 
-    // 3. 親ユーザーレコード作成
+    // 3. 親ユーザーレコード作成（auth_id紐付け）
     const { data: parentData, error: parentError } = await supabase
       .from("otetsudai_users")
       .insert({
@@ -62,6 +62,7 @@ export default function SignupPage() {
         role: "parent",
         name: parentName,
         pin: null,
+        auth_id: authData.user?.id || null,
       })
       .select()
       .single();
@@ -79,6 +80,7 @@ export default function SignupPage() {
         familyId: familyData.id,
         role: "parent",
         name: parentName,
+        authId: authData.user?.id,
       })
     );
 

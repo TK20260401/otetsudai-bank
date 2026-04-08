@@ -48,12 +48,19 @@ export default function LoginPage() {
     setError("");
   }
 
-  function handleLogin() {
+  async function handleLogin() {
     if (!selectedUser) return;
 
-    if (selectedUser.pin && selectedUser.pin !== pin) {
-      setError("PINが違います");
-      return;
+    // PIN照合（サーバーサイドハッシュ比較）
+    if (selectedUser.pin) {
+      const { data: valid } = await supabase.rpc("verify_pin", {
+        p_user_id: selectedUser.id,
+        p_pin: pin,
+      });
+      if (!valid) {
+        setError("PINが違います");
+        return;
+      }
     }
 
     localStorage.setItem(

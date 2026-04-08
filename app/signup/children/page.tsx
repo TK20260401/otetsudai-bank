@@ -72,6 +72,11 @@ export default function ChildrenSignupPage() {
         return;
       }
 
+      // PINをサーバーサイドでハッシュ化
+      if (child.pin) {
+        await supabase.rpc("set_pin_hash", { p_user_id: childData.id, p_pin: child.pin });
+      }
+
       // ウォレット作成（デフォルト: 貯金30%）
       await supabase.from("otetsudai_wallets").insert({
         child_id: childData.id,

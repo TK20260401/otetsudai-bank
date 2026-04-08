@@ -3,6 +3,7 @@ export type Session = {
   familyId: string;
   role: "parent" | "child";
   name: string;
+  authId?: string; // Supabase Auth UID（親のみ）
 };
 
 export function getSession(): Session | null {
@@ -14,6 +15,10 @@ export function getSession(): Session | null {
   } catch {
     return null;
   }
+}
+
+export function setSession(session: Session) {
+  localStorage.setItem("otetsudai_session", JSON.stringify(session));
 }
 
 export function clearSession() {
