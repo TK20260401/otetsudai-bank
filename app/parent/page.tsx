@@ -9,7 +9,7 @@ import type { User, TaskLog, Task, Wallet, SpendRequest } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import ChatWidget from "@/components/chat-widget";
+
 import CommonHeader from "@/components/common-header";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -169,13 +169,13 @@ export default function ParentDashboard() {
   return (
     <div className="min-h-screen p-4 max-w-2xl mx-auto">
       <CommonHeader
-        title="🏦 おやダッシュボード"
+        title="⚔️ クエストマスター"
         userName={session?.name}
         pendingCount={pendingLogs.length + pendingSpends.length}
         rightActions={
           <Link href="/parent/tasks">
             <Button variant="outline" size="sm" className="border-amber-300">
-              📋 タスク管理
+              📋 クエスト管理
             </Button>
           </Link>
         }
@@ -401,7 +401,6 @@ export default function ParentDashboard() {
           );
         })}
       </div>
-      <ChatWidget role="parent" />
     </div>
   );
 }

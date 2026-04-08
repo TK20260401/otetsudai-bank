@@ -7,20 +7,27 @@ import { Input } from "@/components/ui/input";
 type Message = { role: "user" | "assistant"; content: string };
 
 const CHILD_SUGGESTIONS = [
-  "おてつだいのコツをおしえて",
+  "クエストのコツをおしえて",
   "ちょきんってなに？",
-  "なにをしたらいい？",
+  "バッジをあつめたい！",
   "ごほうびのつかいかた",
 ];
 
 const PARENT_SUGGESTIONS = [
-  "年齢別おすすめのお手伝いは？",
+  "年齢別おすすめのクエストは？",
   "報酬の金額の目安を教えて",
   "お金の教育で大切なことは？",
   "子どものやる気を引き出すには？",
 ];
 
-export default function ChatWidget({ role }: { role: "parent" | "child" }) {
+const GUEST_SUGGESTIONS = [
+  "このアプリはなに？",
+  "はじめかたをおしえて",
+  "どんな機能がある？",
+  "親はなにができる？",
+];
+
+export default function ChatWidget({ role }: { role: "parent" | "child" | "guest" }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -28,7 +35,7 @@ export default function ChatWidget({ role }: { role: "parent" | "child" }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const isChild = role === "child";
-  const suggestions = isChild ? CHILD_SUGGESTIONS : PARENT_SUGGESTIONS;
+  const suggestions = role === "child" ? CHILD_SUGGESTIONS : role === "parent" ? PARENT_SUGGESTIONS : GUEST_SUGGESTIONS;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -94,16 +101,18 @@ export default function ChatWidget({ role }: { role: "parent" | "child" }) {
             <span
               className="inline-block w-2 h-2 rounded-full bg-green-400"
             ></span>
-            {isChild ? "🪙 コインくん" : "💼 おてつだいアドバイザー"}
+            {role === "child" ? "🪙 コインくん" : role === "parent" ? "💼 クエストアドバイザー" : "⚔️ クエストガイド"}
           </div>
 
           {/* メッセージ */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2" style={{ minHeight: 200 }}>
             {messages.length === 0 && (
               <div className="text-center text-sm text-gray-400 py-4">
-                {isChild
+                {role === "child"
                   ? "コインくんになんでもきいてね！🪙"
-                  : "お手伝い教育についてご相談ください"}
+                  : role === "parent"
+                    ? "クエスト教育についてご相談ください"
+                    : "おこづかいクエストについて何でもきいてね！"}
               </div>
             )}
             {messages.map((msg, i) => (

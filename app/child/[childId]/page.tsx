@@ -7,7 +7,7 @@ import { getSession, clearSession } from "@/lib/session";
 import type { Task, Wallet, Transaction, SpendRequest, SavingGoal, Badge as BadgeType } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTaskIcon } from "@/lib/task-icons";
-import ChatWidget from "@/components/chat-widget";
+
 import CommonHeader from "@/components/common-header";
 import { R, AutoRuby } from "@/components/ruby-text";
 import { Button } from "@/components/ui/button";
@@ -240,7 +240,7 @@ export default function ChildDashboard({
           <Card className="mb-4 border-amber-300">
             <CardContent className="p-4">
               <p className="text-base font-bold text-amber-800 mb-2">
-                ☀️ きょうやること
+                ☀️ きょうのクエスト
               </p>
               <div className="space-y-2">
                 {todayTasks.map((task) => (
@@ -255,7 +255,7 @@ export default function ChildDashboard({
                       onClick={() => handleComplete(task)}
                       disabled={submitting === task.id}
                     >
-                      {submitting === task.id ? "..." : "できた！"}
+                      {submitting === task.id ? "..." : "クリア！"}
                     </Button>
                   </div>
                 ))}
@@ -267,7 +267,7 @@ export default function ChildDashboard({
 
       <Tabs defaultValue="tasks" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="tasks">📋 おてつだい</TabsTrigger>
+          <TabsTrigger value="tasks">⚔️ クエスト</TabsTrigger>
           <TabsTrigger value="history">📜 <R k="履歴" r="りれき" /></TabsTrigger>
         </TabsList>
 
@@ -276,7 +276,7 @@ export default function ChildDashboard({
           {tasks.length === 0 ? (
             <Card className="border-amber-200">
               <CardContent className="p-6 text-center text-muted-foreground">
-                いまできるおてつだいはないよ 😴
+                いまできるクエストはないよ 😴
               </CardContent>
             </Card>
           ) : (
@@ -312,7 +312,7 @@ export default function ChildDashboard({
                       onClick={() => handleComplete(task)}
                       disabled={submitting === task.id}
                     >
-                      {submitting === task.id ? "..." : "できた！✓"}
+                      {submitting === task.id ? "..." : "クリア！⚔️"}
                     </Button>
                   </div>
                 </CardContent>
@@ -434,7 +434,6 @@ export default function ChildDashboard({
       </Dialog>
 
       <CoinAnimation show={showCoinAnim} onComplete={() => setShowCoinAnim(false)} />
-      <ChatWidget role="child" />
     </div>
   );
 }

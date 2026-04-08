@@ -1,11 +1,11 @@
 {
-  "name": "おてつだいバンク",
-  "short_name": "おてつだいバンク",
-  "description": "お手伝い×マネー教育アプリ",
+  "name": "おこづかいクエスト",
+  "short_name": "おこづかいクエスト",
+  "description": "お手伝い＝クエスト！マネー冒険アプリ",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fffbeb",
-  "theme_color": "#f59e0b",
+  "theme_color": "#059669",
   "icons": [
     {
       "src": "/icon-192.png",

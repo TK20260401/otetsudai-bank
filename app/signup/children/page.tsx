@@ -131,6 +131,9 @@ export default function ChildrenSignupPage() {
                   placeholder="4けたPIN（なしでもOK）"
                   className="tracking-widest"
                 />
+                <p className="text-[10px] text-muted-foreground">
+                  ログインするときにつかう4けたのあんしょうばんごうです。おこさまといっしょにきめてください
+                </p>
               </div>
             </div>
           ))}

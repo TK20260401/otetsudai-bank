@@ -90,9 +90,9 @@ export default function SignupPage() {
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-xl border-amber-200">
         <CardHeader className="text-center">
-          <div className="text-5xl mb-2">✨</div>
-          <CardTitle className="text-2xl font-bold text-amber-800">
-            おてつだいバンクをはじめよう
+          <div className="text-5xl mb-2">⚔️</div>
+          <CardTitle className="text-2xl font-bold text-emerald-800">
+            おこづかいクエストをはじめよう
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             ステップ {step}/2

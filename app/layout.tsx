@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import GlobalChat from "@/components/global-chat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,10 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "おてつだいバンク",
-  description: "お手伝い×マネー教育アプリ — BusyKid日本版",
+  title: "おこづかいクエスト",
+  description: "お手伝い＝クエスト！稼いで、貯めて、増やすマネー冒険アプリ",
   manifest: "/manifest.json",
-  themeColor: "#f59e0b",
+  themeColor: "#059669",
 };
 
 export default function RootLayout({
@@ -29,8 +30,9 @@ export default function RootLayout({
       lang="ja"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-gradient-to-b from-amber-50 to-orange-50">
+      <body className="min-h-full flex flex-col bg-gradient-to-b from-emerald-50 to-amber-50">
         {children}
+        <GlobalChat />
       </body>
     </html>
   );

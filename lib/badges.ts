@@ -1,23 +1,22 @@
 import { supabase } from "@/lib/supabase";
 
 export const BADGE_DEFINITIONS: Record<string, { emoji: string; label: string; description: string }> = {
-  first_task: { emoji: "🌟", label: "はじめてのおてつだい", description: "はじめておてつだいをしたよ！" },
-  streak_3: { emoji: "🔥", label: "3にちれんぞく", description: "3日つづけておてつだいしたよ！" },
+  first_task: { emoji: "⚔️", label: "はじめてのクエスト", description: "はじめてクエストをクリアしたよ！" },
+  streak_3: { emoji: "🔥", label: "3にちれんぞく", description: "3日つづけてクエストクリア！" },
   earned_1000: { emoji: "💰", label: "1000えんたっせい", description: "あわせて1000えんかせいだよ！" },
   saving_master: { emoji: "🐷", label: "ちょきんマスター", description: "ちょきんもくひょうたっせい！" },
+  quest_master: { emoji: "🏆", label: "クエストマスター", description: "50かいクエストをクリア！すごい！" },
 };
 
 export async function checkAndAwardBadges(childId: string): Promise<string[]> {
   const newBadges: string[] = [];
 
-  // 既存バッジ取得
   const { data: existing } = await supabase
     .from("otetsudai_badges")
     .select("badge_type")
     .eq("child_id", childId);
   const earned = new Set((existing || []).map((b: { badge_type: string }) => b.badge_type));
 
-  // 承認済みタスクログ取得
   const { data: logs } = await supabase
     .from("otetsudai_task_logs")
     .select("*, task:otetsudai_tasks(reward_amount)")
@@ -26,7 +25,7 @@ export async function checkAndAwardBadges(childId: string): Promise<string[]> {
     .order("approved_at", { ascending: true });
   const approvedLogs = logs || [];
 
-  // 🌟 はじめてのおてつだい
+  // ⚔️ はじめてのクエスト
   if (!earned.has("first_task") && approvedLogs.length >= 1) {
     newBadges.push("first_task");
   }
@@ -66,7 +65,11 @@ export async function checkAndAwardBadges(childId: string): Promise<string[]> {
     if (goals && goals.length > 0) newBadges.push("saving_master");
   }
 
-  // 新バッジをDB に記録
+  // 🏆 クエストマスター（累計50クエスト）
+  if (!earned.has("quest_master") && approvedLogs.length >= 50) {
+    newBadges.push("quest_master");
+  }
+
   for (const badge of newBadges) {
     await supabase.from("otetsudai_badges").insert({ child_id: childId, badge_type: badge }).select();
   }

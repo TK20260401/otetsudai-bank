@@ -17,7 +17,7 @@ export default function CoinAnimation({ show, onComplete }: { show: boolean; onC
   return (
     <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
       <div className="text-4xl font-bold text-amber-600 animate-bounce">
-        やったね！🎉
+        クエストクリア！🎉
       </div>
       {coins.map((i) => {
         const angle = (i / 12) * 360;

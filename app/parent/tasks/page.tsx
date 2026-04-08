@@ -132,7 +132,7 @@ export default function TaskManagement() {
   }
 
   async function handleDelete(taskId: string) {
-    if (!confirm("このタスクを削除しますか？")) return;
+    if (!confirm("このクエストを削除しますか？")) return;
     await supabase.from("otetsudai_tasks").delete().eq("id", taskId);
     loadData();
   }
@@ -146,24 +146,24 @@ export default function TaskManagement() {
               ← もどる
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-amber-800">📋 タスク管理</h1>
+          <h1 className="text-2xl font-bold text-emerald-800">⚔️ クエスト管理</h1>
         </div>
         <Button
           className="bg-amber-500 hover:bg-amber-600 text-white"
           onClick={openCreate}
         >
-          ＋ あたらしいタスク
+          ＋ あたらしいクエスト
         </Button>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingTask ? "タスクを編集" : "あたらしいタスク"}
+                {editingTask ? "クエストを編集" : "あたらしいクエスト"}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="title">タスク名</Label>
+                <Label htmlFor="title">クエスト名</Label>
                 <Input
                   id="title"
                   value={form.title}
@@ -223,7 +223,7 @@ export default function TaskManagement() {
                 </div>
               </div>
               <div>
-                <Label>だれのタスク？</Label>
+                <Label>だれのクエスト？</Label>
                 <Select
                   value={form.assigned_child_id}
                   onValueChange={(v) =>
@@ -259,7 +259,7 @@ export default function TaskManagement() {
         {tasks.length === 0 ? (
           <Card className="border-amber-200">
             <CardContent className="p-8 text-center text-muted-foreground">
-              まだタスクがありません。「＋ あたらしいタスク」から作成しましょう！
+              まだクエストがありません。「＋ あたらしいクエスト」から作成しましょう！
             </CardContent>
           </Card>
         ) : (

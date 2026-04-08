@@ -13,7 +13,7 @@ export default function HelpPage() {
         <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
           ← もどる
         </Button>
-        <h1 className="text-2xl font-bold text-amber-800">📖 つかいかた</h1>
+        <h1 className="text-2xl font-bold text-emerald-800">📖 つかいかた</h1>
       </div>
 
       {/* クイックスタート */}
@@ -41,9 +41,9 @@ export default function HelpPage() {
                 2
               </div>
               <div>
-                <p className="font-semibold">おてつだいをやろう</p>
+                <p className="font-semibold">クエストをやろう</p>
                 <p className="text-sm text-muted-foreground">
-                  おてつだいリストからできることをえらんで「できた！」をおそう
+                  クエストリストからできることをえらんで「クリア！」をおそう
                 </p>
               </div>
             </div>
@@ -82,18 +82,18 @@ export default function HelpPage() {
           <div className="flex items-start gap-2">
             <span className="text-lg">📋</span>
             <div>
-              <p className="font-semibold">おてつだいリスト</p>
+              <p className="font-semibold">クエストリスト</p>
               <p className="text-muted-foreground">
-                できるおてつだいがならんでいるよ。アイコンをみれば、なにをするかすぐわかるね
+                できるクエストがならんでいるよ。アイコンをみれば、なにをするかすぐわかるね
               </p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <span className="text-lg">✅</span>
             <div>
-              <p className="font-semibold">「できた！」ボタン</p>
+              <p className="font-semibold">「クリア！」ボタン</p>
               <p className="text-muted-foreground">
-                おてつだいがおわったらタップ！おうちの人がみとめたらコインがもらえるよ
+                クエストをクリアしたらタップ！おうちの人がみとめたらコインがもらえるよ
               </p>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function HelpPage() {
             <div>
               <p className="font-semibold">コインくん（AIアシスタント）</p>
               <p className="text-muted-foreground">
-                右下のボタンをタップすると、コインくんとおはなしできるよ。おてつだいのコツをおしえてくれるよ！
+                右下のボタンをタップすると、コインくんとおはなしできるよ。クエストのコツをおしえてくれるよ！
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ export default function HelpPage() {
           <div className="flex items-start gap-2">
             <span className="text-lg">📋</span>
             <div>
-              <p className="font-semibold">タスク管理</p>
+              <p className="font-semibold">クエスト管理</p>
               <p className="text-muted-foreground">
                 お手伝いの追加・編集・削除ができます。報酬額、繰り返し設定（毎日/毎週/1回）、担当の子どもを設定できます
               </p>

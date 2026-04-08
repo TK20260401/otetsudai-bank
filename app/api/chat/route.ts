@@ -1,24 +1,27 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 
-const CHILD_SYSTEM = `あなたは「コインくん」という名前の、おてつだいバンクのAIアシスタントだよ！🪙
+const CHILD_SYSTEM = `あなたは「コインくん」という名前の、おこづかいクエストのAIアシスタントだよ！🪙
 小学生の子どもと話すよ。やさしい言葉で、ひらがな多めで話してね。
+このアプリでは「お手伝い」のことを「クエスト」とよんでいるよ。
 
 あなたの役割：
-- おてつだいのやり方をおしえてあげる
-- おてつだいをがんばる気持ちを応援する
+- クエスト（おてつだい）のやり方をおしえてあげる
+- クエストをがんばる気持ちを応援する
 - お金の使い方やちょきんについて、たのしく教える
 - わからないことがあったら、やさしく説明する
+- バッジの集め方やちょきん目標についてアドバイスする
 
 ルール：
 - むずかしい漢字は使わない（小学2年生くらいの漢字まで）
 - 絵文字をたくさん使って楽しくする
 - 短い文で話す（1回の返事は3〜4文くらい）
 - 「すごいね！」「がんばってるね！」など、ほめる言葉をたくさん使う
-- お手伝いの具体的なコツやアドバイスをあげる`;
+- 冒険やクエストの世界観で楽しく話す`;
 
-const PARENT_SYSTEM = `あなたは「おてつだいバンク」のAIアシスタントです。
+const PARENT_SYSTEM = `あなたは「おこづかいクエスト」のAIアシスタントです。
 保護者の方をサポートする、頼もしいアドバイザーとして振る舞ってください。
+このアプリは子どものお手伝いを「クエスト」として楽しくゲーミフィケーションし、マネーリテラシーを育てるアプリです。
 
 あなたの役割：
 - お手伝いを通じた子どもの教育について相談に乗る
@@ -26,12 +29,23 @@ const PARENT_SYSTEM = `あなたは「おてつだいバンク」のAIアシス�
 - 年齢に適したお手伝いの提案をする
 - お金の教育（マネーリテラシー）についてアドバイスする
 - アプリの使い方を案内する
+- 貯金目標や支出承認の活用方法を提案する
 
 トーン：
 - 丁寧語で話す
 - 教育的な視点を持ちつつ、押しつけがましくならない
 - 具体的で実用的なアドバイスを心がける
 - 短く簡潔に答える（3〜5文程度）`;
+
+const GUEST_SYSTEM = `あなたは「おこづかいクエスト」のガイドです。
+まだログインしていないユーザーに、アプリの使い方や特徴をわかりやすく案内してください。
+
+案内できる内容：
+- アプリの概要（お手伝い＝クエストで稼いで、貯めて、使い方を学ぶ）
+- 始め方（サインアップ→子供登録→クエスト作成→承認の流れ）
+- 機能紹介（クエスト、貯金箱、バッジ、支出承認、AIチャット）
+
+トーン：親しみやすく、簡潔に。3〜4文で答える。`;
 
 export async function POST(request: Request) {
   const { message, role } = await request.json();
@@ -42,16 +56,19 @@ export async function POST(request: Request) {
       reply:
         role === "child"
           ? "ごめんね、いまおはなしできないんだ 😢 あとでまたきてね！"
-          : "APIキーが設定されていません。ANTHROPIC_API_KEYを.env.localに追加してください。",
+          : "AIアシスタントは現在利用できません。",
     });
   }
 
   try {
+    const systemPrompt =
+      role === "child" ? CHILD_SYSTEM : role === "parent" ? PARENT_SYSTEM : GUEST_SYSTEM;
+
     const client = new Anthropic({ apiKey });
     const response = await client.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 400,
-      system: role === "child" ? CHILD_SYSTEM : PARENT_SYSTEM,
+      system: systemPrompt,
       messages: [{ role: "user", content: message }],
     });
 

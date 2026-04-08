@@ -85,12 +85,12 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-xl border-amber-200">
         <CardHeader className="text-center">
-          <div className="text-5xl mb-2">🏦</div>
-          <CardTitle className="text-2xl font-bold text-amber-800">
-            おてつだいバンク
+          <div className="text-5xl mb-2">⚔️</div>
+          <CardTitle className="text-2xl font-bold text-emerald-800">
+            おこづかいクエスト
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            お手伝いでコインをためよう！
+            クエストをクリアしてコインをかせごう！
           </p>
           <div className="flex gap-2 mt-2 justify-center">
             <Link href="/signup">
@@ -177,6 +177,9 @@ export default function LoginPage() {
                   <Label htmlFor="pin" className="text-base font-semibold">
                     PINをいれてね 🔑
                   </Label>
+                  <p className="text-xs text-muted-foreground">
+                    おうちのひとにきいた4けたのばんごうをいれてね
+                  </p>
                   <Input
                     id="pin"
                     type="password"
