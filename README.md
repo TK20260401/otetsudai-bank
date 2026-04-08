@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.3）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.4）
 
 ## 概要
 
@@ -44,6 +44,11 @@
 | ふりがな | 子供画面の全漢字にルビ自動付与 |
 | ヘルプ | 3ステップガイド、子供/親向け説明、FAQ |
 | PWA | manifest.json対応（standalone・テーマカラー#059669） |
+| RLSセキュリティ | 全9テーブルにRow Level Security有効化、get_my_family_id()関数で家族単位アクセス制御 |
+| PIN暗号化 | pgcrypto拡張によるbcryptハッシュ保存、平文PINを保持しない設計（verify_pin/set_pin_hash RPC関数） |
+| アカウント削除 | 親ダッシュボードからsoft delete（確認テキスト「削除する」入力必須）、Supabase Auth連携削除 |
+| 法務ページ | プライバシーポリシー（/privacy）、利用規約（/terms）、フッターからリンク |
+| サービス層分離 | lib/services/（auth.ts/tasks.ts/wallets.ts/families.ts）にDB操作を集約 |
 
 ## テーマカラー
 
@@ -89,6 +94,7 @@
 | v0.1.1 | 2026-04-07 | タスク絵カードアイコン30種、子供画面全漢字ルビ、AIチャット（コインくん/アドバイザー）、ヘルプページ、タスク25件追加 |
 | v0.2 | 2026-04-07 | ランディング、サインアップ（Supabase Auth）、支出承認、分割比率UI、貯金目標、バッジ4種、コインアニメ、動的🐷、きょうやること、共通ヘッダー、PWA、DB 3テーブル追加 |
 | v0.3 | 2026-04-08 | 「おこづかいクエスト」にリブランド。クエスト世界観統一（タスク→クエスト、完了→クリア）、テーマカラー変更（amber→emerald）、AIチャット全ページ化（layout.tsx一元化、ゲスト対応）、🏆クエストマスターバッジ追加、PIN説明テキスト追加 |
+| v0.4 | 2026-04-08 | セキュリティ・認証・コード基盤強化。全9テーブルRLS有効化（get_my_family_id()関数で家族単位アクセス制御）、PIN暗号化（pgcrypto拡張+bcryptハッシュ、verify_pin/set_pin_hash RPC関数、既存PINデータ移行）、Supabase Authハイブリッドセッション（auth_idカラム追加）、アカウント削除機能（soft delete API+確認ダイアログ「削除する」入力必須）、法務ページ追加（プライバシーポリシー・利用規約+フッターリンク）、lib/services/層分離（auth.ts/tasks.ts/wallets.ts/families.ts） |
 
 ## Getting Started
 
@@ -103,5 +109,50 @@ npm run dev
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  # アカウント削除API（Auth管理）に必要
 ANTHROPIC_API_KEY=your_anthropic_api_key
+```
+
+### Supabase DB セットアップ（v0.4 セキュリティ）
+
+v0.4以降、以下のDB設定が必要です（Supabase SQL Editorで実行）:
+
+```sql
+-- 1. pgcrypto拡張を有効化（PIN暗号化用）
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- 2. pin_hashカラム追加（既存のpinカラムからの移行）
+ALTER TABLE otetsudai_users ADD COLUMN IF NOT EXISTS pin_hash TEXT;
+ALTER TABLE otetsudai_users ADD COLUMN IF NOT EXISTS auth_id UUID;
+
+-- 3. 既存PINをbcryptハッシュに移行
+UPDATE otetsudai_users
+SET pin_hash = crypt(pin, gen_salt('bf'))
+WHERE pin IS NOT NULL AND pin_hash IS NULL;
+
+-- 4. PIN照合用RPC関数
+CREATE OR REPLACE FUNCTION verify_pin(p_user_id UUID, p_pin TEXT)
+RETURNS BOOLEAN AS $$
+  SELECT pin_hash = crypt(p_pin, pin_hash)
+  FROM otetsudai_users WHERE id = p_user_id;
+$$ LANGUAGE sql SECURITY DEFINER;
+
+-- 5. PINハッシュ設定用RPC関数
+CREATE OR REPLACE FUNCTION set_pin_hash(p_user_id UUID, p_pin TEXT)
+RETURNS VOID AS $$
+  UPDATE otetsudai_users
+  SET pin_hash = crypt(p_pin, gen_salt('bf'))
+  WHERE id = p_user_id;
+$$ LANGUAGE sql SECURITY DEFINER;
+
+-- 6. 家族ID取得関数（RLS用）
+CREATE OR REPLACE FUNCTION get_my_family_id()
+RETURNS UUID AS $$
+  SELECT family_id FROM otetsudai_users
+  WHERE auth_id = auth.uid() LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+-- 7. 全テーブルにRLSを有効化し、家族単位のポリシーを設定
+-- （各テーブルごとにALTER TABLE ... ENABLE ROW LEVEL SECURITY;
+--   およびCREATE POLICY ... USING (family_id = get_my_family_id()); を実行）
 ```
