@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.4）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.5）
 
 ## 概要
 
@@ -24,40 +24,58 @@
 | 日本円ウォレット | 仮想通貨ではなく日本円ベースで実感しやすい |
 | AIアドバイザー | 親向け（マネー教育のコツ）/ 子供向け（お金の豆知識） |
 | 全額親承認制 | 稼ぎも支出もすべて親の承認が必要（教育的設計） |
+| ユニバーサルデザイン | 色＋アイコンの二重符号化、大型タッチターゲット、aria対応 |
 
 ## 機能一覧
 
 | 機能 | 内容 |
 | --- | --- |
-| ランディングページ | クエスト世界観のアプリ紹介、「ぼうけんをはじめる」ボタン |
+| ランディングページ | クエスト世界観のアプリ紹介。ログイン済み自動リダイレクト（親→/parent、子→/child/[id]）。UDカラー3色（赤:つかう・青:ためる・緑:ふやす）のフィーチャーカード |
 | サインアップ | メール+PW→Supabase Auth→家族名→子供アカウント1〜5名（PIN説明付き） |
 | ログイン | 家族選択→メンバー→PIN認証（PIN説明テキスト付き） |
 | クエスト管理（親） | クエストCRUD（名前・説明・報酬・繰り返し・担当）、絵カード30種自動割当 |
-| 親ダッシュボード | 承認待ち（クエスト+支出）、子供残高・貯蓄率・分割比率設定、4指標 |
+| 親ダッシュボード | 承認待ち（クエスト+支出）、子供残高3色表示（赤:つかう・青:ためる・緑:ふやす）、UD対応分配スライダー、4指標 |
 | 支出承認 | 子供「つかう」申請→親承認/却下（却下理由付き→子供に表示） |
-| 分割比率設定 | 親が子供ごとに「ちょきん割合」をスライダーで変更 |
+| 報酬3分割スライダー | 親が子供ごとに「つかう・ためる・ふやす」の比率をスライダーで設定。赤/青/緑のカラーバーで視覚化。save_ratio + invest_ratio で制御（spend は自動算出） |
 | 子供ダッシュボード | 動的🐷貯金箱、きょうのクエスト、クエストリスト、取引履歴 |
+| クエスト構造化UI | 「準備→実行→完了」の3ステップチェックリスト形式。順序制約（前ステップ未完了でロック）。習熟度（見習い🌱 x1 / 助手⭐ x1.5 / リーダー👑 x2）による報酬倍率切り替え |
 | 貯金目標 | 子供が目標名+金額を設定、進捗バー、達成時🎉演出 |
 | 達成バッジ | ⚔️はじめてのクエスト / 🔥3日れんぞく / 💰1000円たっせい / 🐷ちょきんマスター / 🏆クエストマスター |
 | クエストクリア演出 | 🪙コインアニメーション |
 | AIチャット（全ページ） | 子供向け「コインくん🪙」/ 親向け「クエストアドバイザー💬」/ 未ログイン「クエストガイド⚔️」 |
 | ふりがな | 子供画面の全漢字にルビ自動付与 |
 | ヘルプ | 3ステップガイド、子供/親向け説明、FAQ |
-| PWA | manifest.json対応（standalone・テーマカラー#059669） |
+| PWA | manifest.json対応（standalone・テーマカラー#059669）、Service Worker |
 | RLSセキュリティ | 全9テーブルにRow Level Security有効化、get_my_family_id()関数で家族単位アクセス制御 |
 | PIN暗号化 | pgcrypto拡張によるbcryptハッシュ保存、平文PINを保持しない設計（verify_pin/set_pin_hash RPC関数） |
 | アカウント削除 | 親ダッシュボードからsoft delete（確認テキスト「削除する」入力必須）、Supabase Auth連携削除 |
 | 法務ページ | プライバシーポリシー（/privacy）、利用規約（/terms）、フッターからリンク |
 | サービス層分離 | lib/services/（auth.ts/tasks.ts/wallets.ts/families.ts）にDB操作を集約 |
 
+## ユニバーサルデザイン（UD）設計方針
+
+v0.5で導入したUD対応の設計方針：
+
+| 手法 | 適用箇所 | 効果 |
+| --- | --- | --- |
+| 色＋アイコンの二重符号化 | 全画面（💰赤:つかう / 🐷青:ためる / 🌱緑:ふやす） | 色覚特性に関わらず意味を伝達 |
+| 大型タッチターゲット | TOP画面ボタン（py-5/text-xl）、クエストステップボタン | 子供の小さな指でも操作しやすい |
+| aria-label / aria-hidden | 装飾アイコン・操作ボタンすべて | スクリーンリーダー対応 |
+| 順序制約の視覚表現 | クエスト構造化UI（🔒+opacity+disabled） | 次に何をすべきか一目でわかる |
+| プログレスバー | クエストステップ、貯金目標 | 進捗を直感的に把握 |
+| カラーバーによる比率可視化 | 報酬分配スライダー | 数字が読めなくても配分を理解可能 |
+
 ## テーマカラー
 
-| 用途 | カラー |
-| --- | --- |
-| メイン（冒険） | エメラルドグリーン #059669 |
-| コイン・報酬 | アンバー #f59e0b |
-| バッジ・特別 | バイオレット #7c3aed |
-| 背景グラデーション | emerald-50 → amber-50 |
+| 用途 | カラー | カラーコード |
+| --- | --- | --- |
+| メイン（冒険） | エメラルドグリーン | #059669 |
+| つかう（Spend） | レッド | red-400〜red-700 |
+| ためる（Save） | ブルー | blue-400〜blue-700 |
+| ふやす（Invest） | グリーン | green-400〜green-700 |
+| コイン・報酬 | アンバー | #f59e0b |
+| バッジ・特別 | バイオレット | #7c3aed |
+| 背景グラデーション | — | emerald-50 → amber-50 |
 
 ## DBテーブル（Supabase / 9テーブル）
 
@@ -67,11 +85,45 @@
 | `otetsudai_users` | ユーザー（parent/child、PIN、Supabase Auth連携） |
 | `otetsudai_tasks` | クエスト定義（報酬額・繰り返し・担当） |
 | `otetsudai_task_logs` | クエスト完了ログ（pending→approved/rejected） |
-| `otetsudai_wallets` | 子供別ウォレット（spending/saving残高・分配比率） |
-| `otetsudai_transactions` | 取引履歴（earn/spend/save） |
+| `otetsudai_wallets` | 子供別ウォレット（spending/saving/invest残高・save_ratio/invest_ratio分配比率） |
+| `otetsudai_transactions` | 取引履歴（earn/spend/save/invest） |
 | `otetsudai_spend_requests` | 支出申請（金額・用途・承認/却下・却下理由） |
 | `otetsudai_badges` | 達成バッジ（badge_type・earned_at） |
 | `otetsudai_saving_goals` | 貯金目標（目標名・目標金額・達成フラグ） |
+
+## コンポーネント構成（v0.5 新規・変更）
+
+| コンポーネント | ファイル | 概要 |
+| --- | --- | --- |
+| RewardSplitSlider | `components/reward-split-slider.tsx` | 3分割報酬スライダー。赤/青/緑カラーバー、アイコン凡例、2本の独立スライダー（ためる・ふやす）。save + invest <= 100 の自動制約 |
+| QuestSteps | `components/quest-steps.tsx` | 3ステップ構造化クエストUI。順序制約チェックリスト、習熟度バッジ（見習い/助手/リーダー）、報酬倍率表示。DOG_WALK_STEPSテンプレート付属 |
+| Slider (shadcn/ui) | `components/ui/slider.tsx` | shadcn/ui スライダープリミティブ |
+
+### QuestSteps 使用例
+
+```tsx
+import QuestSteps, { DOG_WALK_STEPS } from "@/components/quest-steps";
+
+<QuestSteps
+  steps={DOG_WALK_STEPS}
+  baseReward={100}
+  skillLevel="apprentice"  // "assistant" | "leader"
+  taskTitle="🐕 いぬの おさんぽ"
+  onComplete={(reward) => handleTaskComplete(reward)}
+/>
+```
+
+### RewardSplitSlider 使用例
+
+```tsx
+import RewardSplitSlider from "@/components/reward-split-slider";
+
+<RewardSplitSlider
+  saveRatio={30}
+  investRatio={10}
+  onChange={(save, invest) => updateRatio(save, invest)}
+/>
+```
 
 ## 技術スタック
 
@@ -91,10 +143,11 @@
 | Version | Date | Changes |
 | --- | --- | --- |
 | v0.1 | 2026-04-07 | 初期構築。ログイン、親ダッシュボード、タスク管理、子供ダッシュボード、ウォレット自動分配、Supabase DB 6テーブル |
-| v0.1.1 | 2026-04-07 | タスク絵カードアイコン30種、子供画面全漢字ルビ、AIチャット（コインくん/アドバイザー）、ヘルプページ、タスク25件追加 |
+| v0.1.1 | 2026-04-07 | タスクアイコン30種、子供画面全漢字ルビ、AIチャット（コインくん/アドバイザー）、ヘルプページ |
 | v0.2 | 2026-04-07 | ランディング、サインアップ（Supabase Auth）、支出承認、分割比率UI、貯金目標、バッジ4種、コインアニメ、動的🐷、きょうやること、共通ヘッダー、PWA、DB 3テーブル追加 |
-| v0.3 | 2026-04-08 | 「おこづかいクエスト」にリブランド。クエスト世界観統一（タスク→クエスト、完了→クリア）、テーマカラー変更（amber→emerald）、AIチャット全ページ化（layout.tsx一元化、ゲスト対応）、🏆クエストマスターバッジ追加、PIN説明テキスト追加 |
-| v0.4 | 2026-04-08 | セキュリティ・認証・コード基盤強化。全9テーブルRLS有効化（get_my_family_id()関数で家族単位アクセス制御）、PIN暗号化（pgcrypto拡張+bcryptハッシュ、verify_pin/set_pin_hash RPC関数、既存PINデータ移行）、Supabase Authハイブリッドセッション（auth_idカラム追加）、アカウント削除機能（soft delete API+確認ダイアログ「削除する」入力必須）、法務ページ追加（プライバシーポリシー・利用規約+フッターリンク）、lib/services/層分離（auth.ts/tasks.ts/wallets.ts/families.ts） |
+| v0.3 | 2026-04-08 | 「おこづかいクエスト」にリブランド。クエスト世界観統一（タスク→クエスト、完了→クリア）、テーマカラー変更（amber→emerald）、AIチャット全ページ化、🏆クエストマスターバッジ追加 |
+| v0.4 | 2026-04-08 | セキュリティ・認証・コード基盤強化。全9テーブルRLS有効化、PIN暗号化（pgcrypto+bcrypt）、Supabase Authハイブリッドセッション、アカウント削除（soft delete）、法務ページ（プライバシーポリシー・利用規約）、lib/services/層分離 |
+| v0.5 | 2026-04-08 | UD（ユニバーサルデザイン）対応・UI/UX強化。TOP画面リニューアル（ログイン済みリダイレクト・UDカラー3色フィーチャーカード）、報酬3分割スライダー（赤:つかう・青:ためる・緑:ふやす、カラーバー+アイコン二重符号化・aria対応）、クエスト構造化UI（準備→実行→完了の3ステップチェックリスト・順序制約ロック）、習熟度システム（見習い🌱x1/助手⭐x1.5/リーダー👑x2の報酬倍率）、親ダッシュボード3色ウォレット表示、大型タッチターゲット・アクセシビリティ改善 |
 
 ## Getting Started
 

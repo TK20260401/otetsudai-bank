@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import CommonHeader from "@/components/common-header";
+import RewardSplitSlider from "@/components/reward-split-slider";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -25,7 +26,8 @@ export default function ParentDashboard() {
   const [stats, setStats] = useState({ totalApproved: 0, totalEarned: 0, weeklyCount: 0, weeklyTotal: 0 });
   const [loading, setLoading] = useState(true);
   const [editingRatio, setEditingRatio] = useState<string | null>(null);
-  const [tempRatio, setTempRatio] = useState(30);
+  const [tempSaveRatio, setTempSaveRatio] = useState(30);
+  const [tempInvestRatio, setTempInvestRatio] = useState(0);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -347,17 +349,26 @@ export default function ParentDashboard() {
                     ¥{total.toLocaleString()}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-sm mb-2">
-                  <div className="bg-blue-50 rounded p-2 text-center">
-                    <p className="text-xs text-muted-foreground">つかえるお金</p>
-                    <p className="font-bold text-blue-600">
+                <div className="grid grid-cols-3 gap-2 text-sm mb-2">
+                  <div className="bg-red-50 rounded-lg p-2 text-center border border-red-100">
+                    <div className="text-lg mb-0.5" aria-hidden="true">💰</div>
+                    <p className="text-[10px] text-red-500 font-semibold">つかう</p>
+                    <p className="font-bold text-red-600">
                       ¥{wallet?.spending_balance.toLocaleString() || 0}
                     </p>
                   </div>
-                  <div className="bg-green-50 rounded p-2 text-center">
-                    <p className="text-xs text-muted-foreground">ちょきん</p>
-                    <p className="font-bold text-green-600">
+                  <div className="bg-blue-50 rounded-lg p-2 text-center border border-blue-100">
+                    <div className="text-lg mb-0.5" aria-hidden="true">🐷</div>
+                    <p className="text-[10px] text-blue-500 font-semibold">ためる</p>
+                    <p className="font-bold text-blue-600">
                       ¥{wallet?.saving_balance.toLocaleString() || 0}
+                    </p>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-2 text-center border border-green-100">
+                    <div className="text-lg mb-0.5" aria-hidden="true">🌱</div>
+                    <p className="text-[10px] text-green-500 font-semibold">ふやす</p>
+                    <p className="font-bold text-green-600">
+                      ¥{wallet?.invest_balance?.toLocaleString() || 0}
                     </p>
                   </div>
                 </div>
@@ -367,23 +378,26 @@ export default function ParentDashboard() {
                   <span className="text-xs font-semibold">{savingPercent}%</span>
                 </div>
 
-                {/* 分割比率設定 */}
+                {/* 分割比率設定（UD対応スライダー） */}
                 {editingRatio === child.id ? (
-                  <div className="mt-3 p-3 rounded-lg bg-violet-50 border border-violet-200">
-                    <p className="text-xs font-semibold text-violet-700 mb-2">
-                      ちょきんの割合: {tempRatio}%（つかえるお金: {100 - tempRatio}%）
-                    </p>
-                    <input
-                      type="range" min={0} max={100} step={5}
-                      value={tempRatio}
-                      onChange={(e) => setTempRatio(parseInt(e.target.value))}
-                      className="w-full accent-violet-600 mb-2"
+                  <div className="mt-3 p-4 rounded-xl bg-white border-2 border-amber-200">
+                    <RewardSplitSlider
+                      saveRatio={tempSaveRatio}
+                      investRatio={tempInvestRatio}
+                      onChange={(save, invest) => {
+                        setTempSaveRatio(save);
+                        setTempInvestRatio(invest);
+                      }}
                     />
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-4">
                       <Button size="sm" variant="ghost" onClick={() => setEditingRatio(null)}>キャンセル</Button>
-                      <Button size="sm" className="bg-violet-600 hover:bg-violet-700 text-white" onClick={async () => {
+                      <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white" onClick={async () => {
                         if (wallet) {
-                          await supabase.from("otetsudai_wallets").update({ split_ratio: tempRatio }).eq("id", wallet.id);
+                          await supabase.from("otetsudai_wallets").update({
+                            save_ratio: tempSaveRatio,
+                            invest_ratio: tempInvestRatio,
+                            split_ratio: tempSaveRatio, // 後方互換
+                          }).eq("id", wallet.id);
                           setEditingRatio(null);
                           loadData();
                         }
@@ -393,10 +407,14 @@ export default function ParentDashboard() {
                 ) : (
                   <Button
                     variant="ghost" size="sm"
-                    className="mt-2 w-full text-xs text-violet-600 hover:bg-violet-50"
-                    onClick={() => { setEditingRatio(child.id); setTempRatio(wallet?.split_ratio || 30); }}
+                    className="mt-2 w-full text-xs text-amber-600 hover:bg-amber-50"
+                    onClick={() => {
+                      setEditingRatio(child.id);
+                      setTempSaveRatio(wallet?.save_ratio ?? wallet?.split_ratio ?? 30);
+                      setTempInvestRatio(wallet?.invest_ratio ?? 0);
+                    }}
                   >
-                    ⚙️ 分割比率を変更（現在: ちょきん{wallet?.split_ratio || 30}%）
+                    ⚙️ 分割比率を変更
                   </Button>
                 )}
               </CardContent>
