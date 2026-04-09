@@ -95,6 +95,9 @@ export type SpendRequest = {
   purpose: string;
   status: "pending" | "approved" | "rejected";
   reject_reason: string | null;
+  payment_status: "pending_payment" | "paid" | null;
+  payment_method: "paypay" | "b43" | "linepay" | "cash" | "other" | null;
+  paid_at: string | null;
   created_at: string;
   approved_at: string | null;
   approved_by: string | null;

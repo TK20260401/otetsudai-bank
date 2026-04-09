@@ -55,7 +55,7 @@
 | じぶんクエスト | プリセット10種プルダウン選択＋カスタム自由入力。報酬はトップダウン（親設定基準額、カスタムのみ子供入力）。スタンプ6種＋メッセージ付き提案→親が承認/却下。RLSポリシーでpending提案のみ許可 |
 | レベルアップ | 累計獲得額に基づく7段階ランク（🗡️ぼうけんしゃ→👑でんせつのゆうしゃ）。プログレスバー付き |
 | 承認スタンプ | 親が承認時にLINE風スタンプ（8種）＋ひとことメッセージを送信。子供ダッシュボードに通知表示 |
-| 外部決済連携 | 支出承認後にPayPay/B43/LINE Payへのディープリンク起動ダイアログ。フォールバックURL付き |
+| 外部決済連携 | 支出承認後にPayPay/B43/LINE Payへのディープリンク起動ダイアログ。送金ステータス管理（pending_payment→paid）、送金方法記録（PayPay/B43/LINE Pay/現金/その他）。親側「おしはらいまち」セクション、子供側ステータス表示 |
 | 株価連動Invest | Alpha Vantage API連携のSupabase Edge Function。投資ポートフォリオテーブル＋フロントエンド表示 |
 | PWA強化 | maskableアイコン、shortcuts、Cache First/Network First分離SW、Apple PWAメタ対応 |
 | メンテナンスモード | `NEXT_PUBLIC_MAINTENANCE_MODE=true`で全画面メンテナンス表示。Vercel環境変数で即時切替 |

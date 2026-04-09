@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
 // 承認・却下
 export async function PUT(request: Request) {
-  const { id, action, approved_by, reject_reason } = await request.json();
+  const { id, action, approved_by, reject_reason, payment_method } = await request.json();
 
   if (action === "approve") {
     // 申請情報取得
@@ -71,10 +71,15 @@ export async function PUT(request: Request) {
       description: req.purpose,
     });
 
-    // 申請ステータス更新
+    // 申請ステータス更新（承認→送金待ち）
     await supabase
       .from("otetsudai_spend_requests")
-      .update({ status: "approved", approved_at: new Date().toISOString(), approved_by })
+      .update({
+        status: "approved",
+        approved_at: new Date().toISOString(),
+        approved_by,
+        payment_status: "pending_payment",
+      })
       .eq("id", id);
 
     return NextResponse.json({ success: true });
@@ -84,6 +89,19 @@ export async function PUT(request: Request) {
     await supabase
       .from("otetsudai_spend_requests")
       .update({ status: "rejected", reject_reason: reject_reason || null })
+      .eq("id", id);
+    return NextResponse.json({ success: true });
+  }
+
+  // 送金完了記録
+  if (action === "mark_paid") {
+    await supabase
+      .from("otetsudai_spend_requests")
+      .update({
+        payment_status: "paid",
+        payment_method: payment_method || "other",
+        paid_at: new Date().toISOString(),
+      })
       .eq("id", id);
     return NextResponse.json({ success: true });
   }

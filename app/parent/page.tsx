@@ -31,6 +31,7 @@ export default function ParentDashboard() {
   const [wallets, setWallets] = useState<Record<string, Wallet>>({});
   const [pendingLogs, setPendingLogs] = useState<(TaskLog & { task: Task; child: User })[]>([]);
   const [pendingSpends, setPendingSpends] = useState<(SpendRequest & { child: User })[]>([]);
+  const [unpaidSpends, setUnpaidSpends] = useState<(SpendRequest & { child: User })[]>([]);
   const [stats, setStats] = useState({ totalApproved: 0, totalEarned: 0 });
   const [loading, setLoading] = useState(true);
   const [editingRatio, setEditingRatio] = useState<string | null>(null);
@@ -86,7 +87,7 @@ export default function ParentDashboard() {
       return;
     }
 
-    const [walletRes, logsRes, approvedRes, spendRes] = await Promise.all([
+    const [walletRes, logsRes, approvedRes, spendRes, unpaidRes] = await Promise.all([
       supabase
         .from("otetsudai_wallets")
         .select("*")
@@ -108,6 +109,14 @@ export default function ParentDashboard() {
         .in("child_id", childIds)
         .eq("status", "pending")
         .order("created_at", { ascending: false }),
+      // 承認済み・未送金の支出リクエスト
+      supabase
+        .from("otetsudai_spend_requests")
+        .select("*, child:child_id(id, name, role)")
+        .in("child_id", childIds)
+        .eq("status", "approved")
+        .eq("payment_status", "pending_payment")
+        .order("approved_at", { ascending: false }),
     ]);
 
     const walletMap: Record<string, Wallet> = {};
@@ -118,6 +127,7 @@ export default function ParentDashboard() {
 
     setPendingLogs((logsRes.data as (TaskLog & { task: Task; child: User })[]) || []);
     setPendingSpends((spendRes.data as (SpendRequest & { child: User })[]) || []);
+    setUnpaidSpends((unpaidRes.data as (SpendRequest & { child: User })[]) || []);
 
     // じぶんクエスト提案を取得
     const { data: proposals } = await supabase
@@ -259,6 +269,15 @@ export default function ParentDashboard() {
       .from("otetsudai_tasks")
       .update({ proposal_status: "rejected" })
       .eq("id", taskId);
+    loadData();
+  }
+
+  async function handleMarkPaid(spendId: string, method: string) {
+    await fetch("/api/spend-request", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: spendId, action: "mark_paid", payment_method: method }),
+    });
     loadData();
   }
 
@@ -591,6 +610,58 @@ export default function ParentDashboard() {
             <p className="text-sm text-muted-foreground">
               しょうにんまちは ありません
             </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ──── おしはらいまち（承認済み・未送金） ──── */}
+      {unpaidSpends.length > 0 && (
+        <Card className="mb-4 border-orange-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              💸 おしはらい まち
+              <Badge className="bg-orange-500">{unpaidSpends.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {unpaidSpends.map((spend) => (
+                <div
+                  key={spend.id}
+                  className="p-3 rounded-xl bg-orange-50 border border-orange-100"
+                >
+                  <div className="mb-2">
+                    <p className="font-bold text-sm">
+                      ¥{spend.amount.toLocaleString()} — {spend.purpose}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      🧒 {displayName(spend.child?.name)}
+                    </p>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mb-2">
+                    どうやって おしはらい しましたか？
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "PayPay", method: "paypay", icon: "📱" },
+                      { label: "B/43", method: "b43", icon: "💳" },
+                      { label: "LINE Pay", method: "linepay", icon: "💚" },
+                      { label: "げんきん", method: "cash", icon: "💴" },
+                      { label: "そのほか", method: "other", icon: "✅" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.method}
+                        type="button"
+                        className="text-[11px] px-3 py-1.5 rounded-full border border-orange-200 text-orange-700 bg-white hover:bg-orange-100 active:scale-95 transition-all"
+                        onClick={() => handleMarkPaid(spend.id, opt.method)}
+                      >
+                        {opt.icon} {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}

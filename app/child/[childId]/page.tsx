@@ -50,6 +50,8 @@ export default function ChildDashboard({
   const [selfQuestOpen, setSelfQuestOpen] = useState(false);
   const [pendingProposals, setPendingProposals] = useState(0);
   const [rejectedLogs, setRejectedLogs] = useState<(TaskLog & { task?: Task })[]>([]);
+  const [pendingPayments, setPendingPayments] = useState<SpendRequest[]>([]);
+  const [paidRecent, setPaidRecent] = useState<SpendRequest[]>([]);
 
   const session = getSession();
 
@@ -87,6 +89,26 @@ export default function ChildDashboard({
       .order("created_at", { ascending: false })
       .limit(5);
     setRejectedSpends((rejects as SpendRequest[]) || []);
+
+    // 送金待ち（承認済み・未送金）
+    const { data: pendingPay } = await supabase
+      .from("otetsudai_spend_requests")
+      .select("*")
+      .eq("child_id", childId)
+      .eq("status", "approved")
+      .eq("payment_status", "pending_payment")
+      .order("approved_at", { ascending: false });
+    setPendingPayments((pendingPay as SpendRequest[]) || []);
+
+    // 最近の送金済み（直近5件）
+    const { data: paidData } = await supabase
+      .from("otetsudai_spend_requests")
+      .select("*")
+      .eq("child_id", childId)
+      .eq("payment_status", "paid")
+      .order("paid_at", { ascending: false })
+      .limit(5);
+    setPaidRecent((paidData as SpendRequest[]) || []);
 
     // 貯金目標を取得
     const { data: goals } = await supabase
@@ -419,6 +441,42 @@ export default function ChildDashboard({
           </Card>
         </TabsContent>
       </Tabs>
+      {/* おしはらい ステータス */}
+      {pendingPayments.length > 0 && (
+        <Card className="mt-4 border-orange-200 bg-orange-50">
+          <CardContent className="p-4">
+            <p className="text-sm font-semibold text-orange-700 mb-2">💰 おやが おかねを じゅんび しているよ</p>
+            {pendingPayments.map((sp) => (
+              <div key={sp.id} className="text-sm mb-1 p-2 rounded-lg bg-white/60">
+                <span className="font-bold text-orange-800">¥{sp.amount.toLocaleString()}</span>
+                <span className="text-muted-foreground ml-1.5">{sp.purpose}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+      {paidRecent.length > 0 && (
+        <Card className="mt-4 border-emerald-200 bg-emerald-50">
+          <CardContent className="p-4">
+            <p className="text-sm font-semibold text-emerald-700 mb-2">🎉 おかねを もらったよ！</p>
+            {paidRecent.map((sp) => (
+              <div key={sp.id} className="text-sm mb-1 p-2 rounded-lg bg-white/60 flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-emerald-800">¥{sp.amount.toLocaleString()}</span>
+                  <span className="text-muted-foreground ml-1.5">{sp.purpose}</span>
+                </div>
+                <span className="text-xs text-emerald-500">
+                  {sp.payment_method === "paypay" ? "📱 PayPay" :
+                   sp.payment_method === "b43" ? "💳 B/43" :
+                   sp.payment_method === "linepay" ? "💚 LINE Pay" :
+                   sp.payment_method === "cash" ? "💴 げんきん" : "✅"}
+                </span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* やりなおしクエスト（差し戻し） */}
       {rejectedLogs.length > 0 && (
         <Card className="mt-4 border-amber-200 bg-amber-50">
