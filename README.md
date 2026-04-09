@@ -1,10 +1,149 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.6）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.6.1）
 
 ## 概要
 
-**お手伝い＝クエスト。子供が冒険感覚でお手伝いをこなし、稼ぎ、貯めて、増やすを体験できる家族向けマネー教育アプリ。**
+**お手伝い＝クエスト。子供が冒険感覚でお手伝いをこなし、「稼ぐ・貯める・増やす・使う」を体験できる家族向けマネー教育アプリ。**
 
-日本の家庭の「お手伝い」文化をベースに、タスク達成→報酬→バッジのゲーミフィケーションで子供が労働の対価・貯金・支出管理を自然に学べる。
+日本の家庭の「お手伝い」文化をベースに、タスク達成→報酬→バッジのゲーミフィケーションで子供が労働の対価・貯金・支出管理を自然に学べる。米国の「BusyKid」にインスパイアされた、完全日本語対応の教育フィンテックアプリ。
+
+## ビジョン・教育理念
+
+### 目指す世界
+
+「**自走する世界市民（シチズンシップ）**」の育成。単なるお小遣い帳ではなく、子供が主体的に経済活動を体験し、お金の価値・労働の対価・貯蓄と投資の意味を実感として理解できるプラットフォーム。
+
+### 3つの教育柱
+
+| 柱 | 概念 | アプリでの実現 |
+| --- | --- | --- |
+| エージェンシー（自己主導性） | 子供が自ら意思決定し行動する力 | じぶんクエスト提案、貯金目標設定、支出申請 |
+| 金融リテラシー | お金の稼ぎ方・使い方・増やし方 | 3分割ウォレット（つかう・ためる・ふやす）、投資シミュレーション |
+| デジタルシチズンシップ | デジタル社会での責任ある行動 | 親承認制、PIN認証、プライバシー教育 |
+
+### トップダウンとボトムアップのバランス
+
+| 要素 | トップダウン（親の権限） | ボトムアップ（子供の主体性） |
+| --- | --- | --- |
+| クエスト設計 | 親がクエスト・報酬額を設定 | 子供がじぶんクエストを提案 |
+| 報酬管理 | 親が分割比率を設定 | 子供が貯金目標を設定 |
+| 支出管理 | 親が承認/やりなおし | 子供が用途を自分で説明して申請 |
+| フィードバック | 親がスタンプ・メッセージで褒める | 子供がスタンプで気持ちを伝える |
+
+### 対象ユーザー
+
+| 対象 | 年齢 | 想定される使い方 |
+| --- | --- | --- |
+| 未就学児（年中〜年長） | 4〜6歳 | 親の補助付きでスタンプ操作、ひらがなUI |
+| 小学校低学年 | 6〜9歳 | クエスト完了報告、貯金目標設定 |
+| 小学校高学年 | 9〜12歳 | じぶんクエスト提案、支出申請、投資シミュレーション |
+| 特別支援学校中学部 | 〜15歳 | UD対応UI、構造化クエスト、大型タッチターゲット |
+| 特別支援学級・通級指導 | 〜15歳 | 個別のペースに合わせた段階的な利用 |
+
+## 競合アプリ比較
+
+### 海外の主要サービス
+
+| アプリ | 国 | 特徴 | カード | 投資 | 日本語 | 料金 |
+| --- | --- | --- | --- | --- | --- | --- |
+| BusyKid | 米国 | お手伝い管理+Visaカード+株式投資 | Visa | 実株 | x | $19/年 |
+| Greenlight | 米国 | 子供用デビットカード+投資機能 | Mastercard | 実株 | x | $5.99/月〜 |
+| GoHenry | 英国 | 子供用カード+教育コンテンツ | Visa | x | x | $3.99/月〜 |
+| Step | 米国 | Z世代向け無料Visaカード | Visa | x | x | 無料 |
+| Acorns Early | 米国 | おつり投資+子供口座 | x | ETF | x | $5/月〜 |
+| RoosterMoney | 英国 | お手伝い管理特化 | x | x | x | 無料〜 |
+
+### 日本国内
+
+| アプリ | 特徴 | 課題 |
+| --- | --- | --- |
+| ファミリーバンク | 親子でお小遣い管理 | 投資機能なし、認知度低め |
+| ゆうちょ通帳アプリ | シンプルな貯金管理 | お手伝い連動なし |
+| iAllowance | お小遣い管理（買い切り） | 英語ベース |
+
+### おこづかいクエストの差別化
+
+| 機能 | BusyKid | Greenlight | GoHenry | おこづかいクエスト |
+| --- | --- | --- | --- | --- |
+| お手伝い管理 | o | o | o | o |
+| 報酬3分割（使う/貯める/増やす） | o | o | x | o |
+| 投資体験 | 実株 | 実株 | x | シミュレーション |
+| 日本語完全対応 | x | x | x | o（ふりがな付き） |
+| ユニバーサルデザイン | x | x | x | o（色+アイコン二重符号化） |
+| 特別支援教育対応 | x | x | x | o（構造化UI・大型ターゲット） |
+| AIアドバイザー | x | x | x | o（Claude API） |
+| RPGゲーミフィケーション | x | x | x | o（クエスト・レベル・バッジ） |
+| 料金 | $19/年 | $5.99/月 | $3.99/月 | 無料（OSS） |
+
+**日本語対応で「お手伝い x 投資」を組み合わせたアプリはブルーオーシャン。**
+
+## リアルマネー連携ロードマップ
+
+### 3段階アプローチ
+
+```
+Phase 1（現在）   → アプリ内仮想残高 + 手動送金リンク
+Phase 2（半年〜） → プリペイドカード連携（B/43 Jr等）※法人化必要
+Phase 3（1年〜）  → 銀行API直結 ※資金移動業ライセンス必要
+```
+
+### Phase 1: 仮想残高 + 手動送金（現在の実装）
+
+```
+子供がクエスト完了 → 親が承認 → アプリ内残高に加算（仮想）
+                                  |
+                    子供が「つかう」申請 → 親が承認
+                                  |
+                    親が手動でPayPay/現金/B43で渡す
+                                  |
+                    親が「おしはらいずみ」ボタンで記録
+```
+
+- 法的リスクゼロで最も現実的
+- BusyKid初期版もこの方式
+- 送金ステータス管理（pending_payment→paid）実装済み
+
+### Phase 2: プリペイドカード連携（法人化後）
+
+| サービス | API | 個人開発 |
+| --- | --- | --- |
+| B/43ジュニア | API非公開 | x |
+| PayPay | 送金APIは法人のみ | x |
+| Kyash | API非公開 | x |
+| LINE Pay | 送金APIは法人のみ | x |
+| GMOあおぞらネット銀行 | sunabar（sandbox有） | 法人口座必要 |
+
+**現状、日本で個人開発者が使える「子供向け送金API」は存在しない。法人化が前提条件。**
+
+### Phase 3: 銀行API直結
+
+```
+必要なもの:
+├── 法人格（株式会社 or 合同会社）
+├── 資金移動業登録（財務局への届出）
+├── 銀行API契約（GMOあおぞら等）
+├── 本人確認（eKYC）の実装
+└── セキュリティ監査
+
+コスト目安: 法人設立〜ライセンス取得で100-300万円 + 数ヶ月
+```
+
+### 投資機能の段階
+
+| 段階 | 難易度 | 現実性 | 実装状況 |
+| --- | --- | --- | --- |
+| 株価表示のみ（Alpha Vantage） | 低 | 今すぐ可能 | Edge Function作成済み |
+| シミュレーション投資（仮想売買） | 中 | 今すぐ可能 | ポートフォリオテーブル作成済み |
+| 実際の株購入（証券API） | 極めて高 | 金商法の壁 | 将来構想 |
+
+実際の株購入を代行するには**第一種金融商品取引業の登録**が必要（個人では不可能に近い）。
+
+現実的アプローチ:
+```
+子供が「この株ほしい！」→ 親が承認
+→ 親のSBI/楽天証券アプリへのリンクを表示
+→ 親が自分の口座で購入
+→ アプリ上では「投資残高」として記録（管理用）
+```
 
 ## URL
 
@@ -24,7 +163,9 @@
 | 日本円ウォレット | 仮想通貨ではなく日本円ベースで実感しやすい |
 | AIアドバイザー | 親向け（マネー教育のコツ）/ 子供向け（お金の豆知識） |
 | 全額親承認制 | 稼ぎも支出もすべて親の承認が必要（教育的設計） |
-| ユニバーサルデザイン | 色＋アイコンの二重符号化、大型タッチターゲット、aria対応 |
+| ユニバーサルデザイン | 色+アイコンの二重符号化、大型タッチターゲット、aria対応 |
+| 教育的フィードバック | 「拒否」ではなく「やりなおし」、プリセット理由で温かい差し戻し |
+| 送金ステータス管理 | 仮想残高と実送金のギャップを「おしはらいまち→ずみ」で可視化 |
 
 ## 機能一覧
 
@@ -34,44 +175,71 @@
 | サインアップ | メール+PW→Supabase Auth→家族名→子供アカウント1〜5名（PIN説明付き） |
 | ログイン | 家族選択→メンバー→PIN認証（PIN説明テキスト付き） |
 | クエスト管理（親） | クエストCRUD（名前・説明・報酬・繰り返し・担当）、絵カード30種自動割当 |
-| 親ダッシュボード | 承認キュー最優先（クエスト完了・支出・提案・メッセージ）、空状態ウェルカムカード、子供残高3色表示（赤:つかう・青:ためる・緑:ふやす）、UD対応分配スライダー、累計情報は控えめ表示 |
+| 親ダッシュボード | 承認キュー最優先（クエスト完了・支出・提案・メッセージ）、空状態ウェルカムカード、子供残高3色表示、UD対応分配スライダー、おしはらいまちセクション |
 | 支出承認 | 子供「つかう」申請→親承認/やりなおし（プリセット理由付き→子供にフィードバック表示） |
-| 報酬3分割スライダー | 親が子供ごとに「つかう・ためる・ふやす」の比率をスライダーで設定。赤/青/緑のカラーバーで視覚化。save_ratio + invest_ratio で制御（spend は自動算出） |
-| 子供ダッシュボード | 動的🐷貯金箱、きょうのクエスト、クエストリスト、取引履歴 |
-| クエスト構造化UI | 「準備→実行→完了」の3ステップチェックリスト形式。順序制約（前ステップ未完了でロック）。習熟度（見習い🌱 x1 / 助手⭐ x1.5 / リーダー👑 x2）による報酬倍率切り替え |
-| 貯金目標 | 子供が目標名+金額を設定、進捗バー、達成時🎉演出 |
-| 達成バッジ | ⚔️はじめてのクエスト / 🔥3日れんぞく / 💰1000円たっせい / 🐷ちょきんマスター / 🏆クエストマスター |
-| クエストクリア演出 | 🪙コインアニメーション |
-| AIチャット（全ページ） | 子供向け「コインくん🪙」/ 親向け「クエストアドバイザー💬」/ 未ログイン「クエストガイド⚔️」 |
+| 送金ステータス管理 | 支出承認→送金待ち（pending_payment）→送金完了（paid）。PayPay/B43/LINE Pay/現金/その他の送金方法記録。子供側に送金待ち・送金済み表示 |
+| 報酬3分割スライダー | 親が子供ごとに「つかう・ためる・ふやす」の比率をスライダーで設定。赤/青/緑のカラーバーで視覚化。save_ratio + invest_ratio で制御 |
+| 子供ダッシュボード | 動的貯金箱、きょうのクエスト、クエストリスト、取引履歴、送金ステータス、やりなおしフィードバック |
+| クエスト構造化UI | 「準備→実行→完了」の3ステップチェックリスト形式。順序制約。習熟度（見習い x1 / 助手 x1.5 / リーダー x2）による報酬倍率 |
+| 貯金目標 | 子供が目標名+金額を設定、進捗バー、達成時演出 |
+| 達成バッジ | はじめてのクエスト / 3日れんぞく / 1000円たっせい / ちょきんマスター / クエストマスター |
+| コインアニメーション | クエストクリア時の演出 |
+| AIチャット（全ページ） | 子供向け「コインくん」/ 親向け「クエストアドバイザー」/ 未ログイン「クエストガイド」 |
 | ふりがな | 子供画面の全漢字にルビ自動付与 |
 | ヘルプ | 3ステップガイド、子供/親向け説明、FAQ |
-| PWA | manifest.json対応（standalone・テーマカラー#059669）、Service Worker |
-| RLSセキュリティ | 全テーブルにRow Level Security有効化。PIN認証（localStorage）ベースのためanon許可ポリシー併設。アプリ側でsession.familyIdフィルタ |
-| PIN暗号化 | pgcrypto拡張によるbcryptハッシュ保存、平文PINを保持しない設計（verify_pin/set_pin_hash RPC関数） |
-| アカウント削除 | 親ダッシュボードからsoft delete（確認テキスト「削除する」入力必須）、Supabase Auth連携削除 |
-| 法務ページ | プライバシーポリシー（/privacy）、利用規約（/terms）、フッターからリンク |
-| サービス層分離 | lib/services/（auth.ts/tasks.ts/wallets.ts/families.ts）にDB操作を集約 |
-| おこさま後追加 | 親ダッシュボードからいつでも子供を追加可能（初回登録時のみの制約を解消） |
-| じぶんクエスト | プリセット10種プルダウン選択＋カスタム自由入力。報酬はトップダウン（親設定基準額、カスタムのみ子供入力）。スタンプ6種＋メッセージ付き提案→親が承認/却下。RLSポリシーでpending提案のみ許可 |
-| レベルアップ | 累計獲得額に基づく7段階ランク（🗡️ぼうけんしゃ→👑でんせつのゆうしゃ）。プログレスバー付き |
-| 承認スタンプ | 親が承認時にLINE風スタンプ（8種）＋ひとことメッセージを送信。子供ダッシュボードに通知表示 |
-| 外部決済連携 | 支出承認後にPayPay/B43/LINE Payへのディープリンク起動ダイアログ。送金ステータス管理（pending_payment→paid）、送金方法記録（PayPay/B43/LINE Pay/現金/その他）。親側「おしはらいまち」セクション、子供側ステータス表示 |
-| 株価連動Invest | Alpha Vantage API連携のSupabase Edge Function。投資ポートフォリオテーブル＋フロントエンド表示 |
-| PWA強化 | maskableアイコン、shortcuts、Cache First/Network First分離SW、Apple PWAメタ対応 |
-| メンテナンスモード | `NEXT_PUBLIC_MAINTENANCE_MODE=true`で全画面メンテナンス表示。Vercel環境変数で即時切替 |
+| PWA | manifest.json対応（standalone・テーマカラー#059669）、Service Worker、maskableアイコン、shortcuts |
+| RLSセキュリティ | 全テーブルにRow Level Security有効化。PIN認証ベースのためanon許可ポリシー併設。アプリ側でsession.familyIdフィルタ |
+| PIN暗号化 | pgcrypto拡張によるbcryptハッシュ保存（verify_pin/set_pin_hash RPC関数） |
+| アカウント削除 | 親ダッシュボードからsoft delete（確認テキスト入力必須）、Supabase Auth連携削除 |
+| 法務ページ | プライバシーポリシー（/privacy）、利用規約（/terms） |
+| おこさま後追加 | 親ダッシュボードからいつでも子供を追加可能（最大5名） |
+| じぶんクエスト | プリセット10種プルダウン+カスタム自由入力。報酬はトップダウン（親設定基準額）。スタンプ6種+メッセージ付き提案→親が承認 |
+| レベルアップ | 累計獲得額に基づく7段階ランク。プログレスバー付き |
+| 承認スタンプ | 親が承認時にLINE風スタンプ（8種）+ひとことメッセージを送信。子供に通知表示 |
+| やりなおしUI | 「拒否/却下」→「やりなおし」に統一。プリセット理由でワンタップ差し戻し。子供側に温かいフィードバック |
+| 外部決済連携 | 支出承認後にPayPay/B43/LINE Payへのディープリンク起動ダイアログ |
+| 株価連動Invest | Alpha Vantage API連携のSupabase Edge Function。投資ポートフォリオテーブル+フロントエンド表示 |
+| メンテナンスモード | NEXT_PUBLIC_MAINTENANCE_MODE=trueで全画面メンテナンス表示 |
+
+## ステータス遷移
+
+### クエスト完了フロー
+
+```
+子供が完了報告 → pending（しょうにんまち）
+  → 親が承認 → approved → ウォレット3分割加算
+  → 親がやりなおし → rejected（理由付きフィードバック）
+```
+
+### 支出申請フロー
+
+```
+子供が「つかう」申請 → pending（しんせいちゅう）
+  → 親が承認 → approved + payment_status='pending_payment'（おしはらいまち）
+    → 親が送金完了記録 → payment_status='paid'（おしはらいずみ）
+  → 親がやりなおし → rejected（理由付きフィードバック）
+```
+
+### クエスト提案フロー
+
+```
+子供がじぶんクエスト提案 → proposal_status='pending'
+  → 親が承認（報酬調整可） → proposal_status='approved', is_active=true
+  → 親が「こんどにしよう」 → proposal_status='rejected'
+```
 
 ## ユニバーサルデザイン（UD）設計方針
 
-v0.5で導入したUD対応の設計方針：
-
 | 手法 | 適用箇所 | 効果 |
 | --- | --- | --- |
-| 色＋アイコンの二重符号化 | 全画面（💰赤:つかう / 🐷青:ためる / 🌱緑:ふやす） | 色覚特性に関わらず意味を伝達 |
-| 大型タッチターゲット | TOP画面ボタン（py-5/text-xl）、クエストステップボタン | 子供の小さな指でも操作しやすい |
+| 色+アイコンの二重符号化 | 全画面（赤:つかう / 青:ためる / 緑:ふやす） | 色覚特性に関わらず意味を伝達 |
+| 大型タッチターゲット | TOP画面ボタン、クエストステップボタン | 子供の小さな指でも操作しやすい |
 | aria-label / aria-hidden | 装飾アイコン・操作ボタンすべて | スクリーンリーダー対応 |
-| 順序制約の視覚表現 | クエスト構造化UI（🔒+opacity+disabled） | 次に何をすべきか一目でわかる |
+| 順序制約の視覚表現 | クエスト構造化UI（ロック+透過+disabled） | 次に何をすべきか一目でわかる |
 | プログレスバー | クエストステップ、貯金目標 | 進捗を直感的に把握 |
 | カラーバーによる比率可視化 | 報酬分配スライダー | 数字が読めなくても配分を理解可能 |
+| ひらがな多用 | 操作ラベル・フィードバック文 | 漢字が読めない子供への配慮 |
+| やさしい言葉選び | 「拒否」→「やりなおし」 | 否定的な表現を避けた教育的配慮 |
 
 ## テーマカラー
 
@@ -85,63 +253,40 @@ v0.5で導入したUD対応の設計方針：
 | バッジ・特別 | バイオレット | #7c3aed |
 | 背景グラデーション | — | emerald-50 → amber-50 |
 
-## DBテーブル（Supabase / 9テーブル）
+## DBテーブル（Supabase / 11テーブル）
 
 | テーブル | 用途 |
 | --- | --- |
-| `otetsudai_families` | 家族マスター |
-| `otetsudai_users` | ユーザー（parent/child、PIN、Supabase Auth連携） |
-| `otetsudai_tasks` | クエスト定義（報酬額・繰り返し・担当） |
-| `otetsudai_task_logs` | クエスト完了ログ（pending→approved/rejected） |
-| `otetsudai_wallets` | 子供別ウォレット（spending/saving/invest残高・save_ratio/invest_ratio分配比率） |
-| `otetsudai_transactions` | 取引履歴（earn/spend/save/invest） |
-| `otetsudai_spend_requests` | 支出申請（金額・用途・承認/却下・却下理由） |
-| `otetsudai_badges` | 達成バッジ（badge_type・earned_at） |
-| `otetsudai_saving_goals` | 貯金目標（目標名・目標金額・達成フラグ） |
-| `otetsudai_invest_portfolios` | 投資ポートフォリオ（銘柄・株数・購入価格・現在価格・評価額） |
-| `otetsudai_stock_sync_log` | 株価取得ログ（レート制限管理用） |
+| otetsudai_families | 家族マスター |
+| otetsudai_users | ユーザー（parent/child、PIN、Supabase Auth連携） |
+| otetsudai_tasks | クエスト定義（報酬額・繰り返し・担当・提案ステータス） |
+| otetsudai_task_logs | クエスト完了ログ（pending→approved/rejected、承認スタンプ、やりなおし理由） |
+| otetsudai_wallets | 子供別ウォレット（spending/saving/invest残高・save_ratio/invest_ratio分配比率） |
+| otetsudai_transactions | 取引履歴（earn/spend/save/invest） |
+| otetsudai_spend_requests | 支出申請（金額・用途・承認/やりなおし・送金ステータス・送金方法） |
+| otetsudai_badges | 達成バッジ（badge_type・earned_at） |
+| otetsudai_saving_goals | 貯金目標（目標名・目標金額・達成フラグ） |
+| otetsudai_messages | 子供→親メッセージ（スタンプ・テキスト・既読管理） |
+| otetsudai_invest_portfolios | 投資ポートフォリオ（銘柄・株数・購入価格・現在価格・評価額） |
+| otetsudai_stock_sync_log | 株価取得ログ（レート制限管理用） |
 
-## コンポーネント構成（v0.5 新規・変更）
+## コンポーネント構成
 
 | コンポーネント | ファイル | 概要 |
 | --- | --- | --- |
-| RewardSplitSlider | `components/reward-split-slider.tsx` | 3分割報酬スライダー。赤/青/緑カラーバー、アイコン凡例、2本の独立スライダー（ためる・ふやす）。save + invest <= 100 の自動制約 |
-| QuestSteps | `components/quest-steps.tsx` | 3ステップ構造化クエストUI。順序制約チェックリスト、習熟度バッジ（見習い/助手/リーダー）、報酬倍率表示。DOG_WALK_STEPSテンプレート付属 |
-| Slider (shadcn/ui) | `components/ui/slider.tsx` | shadcn/ui スライダープリミティブ |
-| AddChildDialog | `components/add-child-dialog.tsx` | 親ダッシュボードからの子供追加ダイアログ。名前+PIN入力、createChildWithWallet+set_pin_hash RPC |
-| SelfQuestForm | `components/self-quest-form.tsx` | 子供がクエストを提案するダイアログ。プリセット10種プルダウン選択＋カスタム自由入力。報酬はトップダウン（親設定基準額）。スタンプ6種＋メッセージ。RLSポリシーでpending提案のみ許可 |
-| LevelDisplay | `components/level-display.tsx` | 累計獲得額ベースのレベル表示。7段階ランク＋プログレスバー＋次レベルまでの残額 |
-| ApprovalDialog | `components/approval-dialog.tsx` | 承認時スタンプ選択ダイアログ。8種LINE風スタンプ＋ひとことメッセージ＋プレビュー |
-| StampNotifications | `components/stamp-notifications.tsx` | 子供ダッシュボードのスタンプ通知表示。最新5件のスタンプ＋メッセージ |
-| PaymentLinkDialog | `components/payment-link.tsx` | 支出承認後の外部決済アプリ連携ダイアログ。PayPay/B43/LINE Payディープリンク |
-| InvestPortfolio | `components/invest-portfolio.tsx` | 投資ポートフォリオ表示。銘柄別損益＋手動同期ボタン |
-| MaintenanceGuard | `components/maintenance-guard.tsx` | メンテナンスモードガード。環境変数で全画面切替 |
-
-### QuestSteps 使用例
-
-```tsx
-import QuestSteps, { DOG_WALK_STEPS } from "@/components/quest-steps";
-
-<QuestSteps
-  steps={DOG_WALK_STEPS}
-  baseReward={100}
-  skillLevel="apprentice"  // "assistant" | "leader"
-  taskTitle="🐕 いぬの おさんぽ"
-  onComplete={(reward) => handleTaskComplete(reward)}
-/>
-```
-
-### RewardSplitSlider 使用例
-
-```tsx
-import RewardSplitSlider from "@/components/reward-split-slider";
-
-<RewardSplitSlider
-  saveRatio={30}
-  investRatio={10}
-  onChange={(save, invest) => updateRatio(save, invest)}
-/>
-```
+| RewardSplitSlider | components/reward-split-slider.tsx | 3分割報酬スライダー。赤/青/緑カラーバー、アイコン凡例 |
+| QuestSteps | components/quest-steps.tsx | 3ステップ構造化クエストUI。順序制約チェックリスト、習熟度バッジ |
+| AddChildDialog | components/add-child-dialog.tsx | 親ダッシュボードからの子供追加ダイアログ |
+| SelfQuestForm | components/self-quest-form.tsx | 子供がクエストを提案するダイアログ。プリセット10種+カスタム |
+| LevelDisplay | components/level-display.tsx | 累計獲得額ベースのレベル表示。7段階ランク+プログレスバー |
+| ApprovalDialog | components/approval-dialog.tsx | 承認時スタンプ選択ダイアログ。8種LINE風スタンプ |
+| StampNotifications | components/stamp-notifications.tsx | 子供ダッシュボードのスタンプ通知表示 |
+| PaymentLinkDialog | components/payment-link.tsx | 支出承認後の外部決済アプリ連携ダイアログ |
+| InvestPortfolio | components/invest-portfolio.tsx | 投資ポートフォリオ表示。銘柄別損益+同期ボタン |
+| MaintenanceGuard | components/maintenance-guard.tsx | メンテナンスモードガード |
+| CoinAnimation | components/coin-animation.tsx | クエストクリア時のコインアニメーション |
+| BadgeDisplay | components/badge-display.tsx | 達成バッジ表示 |
+| SavingGoal | components/saving-goal.tsx | 貯金目標設定・進捗表示 |
 
 ## 技術スタック
 
@@ -151,10 +296,24 @@ import RewardSplitSlider from "@/components/reward-split-slider";
 | React | 19.2.4 | UI構築 |
 | Tailwind CSS | 4.x | スタイリング |
 | shadcn/ui | 4.1.2 | UIコンポーネント |
-| Supabase | 2.x | DB（PostgreSQL）・Auth |
+| Supabase | 2.x | DB（PostgreSQL）・Auth・Edge Functions |
 | Anthropic Claude API | claude-sonnet-4-20250514 | AIチャット（3ロール対応） |
+| Alpha Vantage API | — | 株価データ取得（無料枠25リクエスト/日） |
 | TypeScript | 5.x | 型安全 |
-| Vercel | — | ホスティング |
+| Vercel | — | ホスティング・CI/CD |
+
+## 認証構造
+
+```
+1つの Supabase Auth ID (email/password)
+  └── 1つの otetsudai_families
+       ├── 1 parent (otetsudai_users, role='parent')
+       └── N children (otetsudai_users, role='child', PIN認証)
+
+ログイン後、プロファイル選択画面でメンバーを選択（Netflix方式）
+親: Supabase Auth + localStorage session
+子供: PIN認証 + localStorage session（Supabase Auth未使用）
+```
 
 ## バージョン履歴
 
@@ -162,12 +321,12 @@ import RewardSplitSlider from "@/components/reward-split-slider";
 | --- | --- | --- |
 | v0.1 | 2026-04-07 | 初期構築。ログイン、親ダッシュボード、タスク管理、子供ダッシュボード、ウォレット自動分配、Supabase DB 6テーブル |
 | v0.1.1 | 2026-04-07 | タスクアイコン30種、子供画面全漢字ルビ、AIチャット（コインくん/アドバイザー）、ヘルプページ |
-| v0.2 | 2026-04-07 | ランディング、サインアップ（Supabase Auth）、支出承認、分割比率UI、貯金目標、バッジ4種、コインアニメ、動的🐷、きょうやること、共通ヘッダー、PWA、DB 3テーブル追加 |
-| v0.3 | 2026-04-08 | 「おこづかいクエスト」にリブランド。クエスト世界観統一（タスク→クエスト、完了→クリア）、テーマカラー変更（amber→emerald）、AIチャット全ページ化、🏆クエストマスターバッジ追加 |
-| v0.4 | 2026-04-08 | セキュリティ・認証・コード基盤強化。全9テーブルRLS有効化、PIN暗号化（pgcrypto+bcrypt）、Supabase Authハイブリッドセッション、アカウント削除（soft delete）、法務ページ（プライバシーポリシー・利用規約）、lib/services/層分離 |
-| v0.5 | 2026-04-08 | UD（ユニバーサルデザイン）対応・UI/UX強化。TOP画面リニューアル（ログイン済みリダイレクト・UDカラー3色フィーチャーカード）、報酬3分割スライダー（赤:つかう・青:ためる・緑:ふやす、カラーバー+アイコン二重符号化・aria対応）、クエスト構造化UI（準備→実行→完了の3ステップチェックリスト・順序制約ロック）、習熟度システム（見習い🌱x1/助手⭐x1.5/リーダー👑x2の報酬倍率）、親ダッシュボード3色ウォレット表示、大型タッチターゲット・アクセシビリティ改善 |
-| v0.6 | 2026-04-09 | エージェンシー強化・外部連携・コミュニケーション設計。おこさま後追加（親ダッシュボードからいつでも子供追加可能）、じぶんクエスト（子供がクエスト提案→親が報酬調整して承認/却下、エージェンシー醸成）、レベルアップシステム（累計獲得額ベース7段階ランク＋プログレスバー）、承認スタンプ（8種LINE風スタンプ＋ひとことメッセージ→子供への通知表示）、外部決済連携（PayPay/B43/LINE Payディープリンク）、株価連動Invest（Alpha Vantage API＋Supabase Edge Function＋投資ポートフォリオテーブル）、PWA強化（maskableアイコン・shortcuts・SW v2キャッシュ戦略・Apple PWA対応）、メンテナンスモード（環境変数トグル）、DBマイグレーション3本（self_quest/approval_stamps/invest_portfolios） |
-| v0.6.1 | 2026-04-09 | じぶんクエストUI改善＆RLS全面修正＆親ダッシュボード刷新。【じぶんクエスト】プルダウン選択式・報酬トップダウン化・スタンプ6種追加・メッセージ簡略化。【RLS】全テーブルにanon許可ポリシー追加・familyIdフィルタ追加。【親ダッシュボード】統計4枚カード廃止→承認待ち件数のみ強調、空状態ウェルカムカード、ウォレット3分割バグ修正、子供名メール表示修正。【やりなおしUI】「拒否/却下」→「やりなおし」に全面変更、プリセット理由でワンタップ差し戻し、子供側に温かいフィードバック表示（クエスト・支出両対応）。messageカラムNULLABLE化。task_logsにreject_reasonカラム追加 |
+| v0.2 | 2026-04-07 | ランディング、サインアップ（Supabase Auth）、支出承認、分割比率UI、貯金目標、バッジ4種、コインアニメ、動的貯金箱、PWA、DB 3テーブル追加 |
+| v0.3 | 2026-04-08 | 「おこづかいクエスト」にリブランド。クエスト世界観統一、テーマカラー変更（amber→emerald）、AIチャット全ページ化 |
+| v0.4 | 2026-04-08 | セキュリティ基盤。全9テーブルRLS有効化、PIN暗号化（pgcrypto+bcrypt）、アカウント削除、法務ページ、lib/services/層分離 |
+| v0.5 | 2026-04-08 | UD対応・UI/UX強化。報酬3分割スライダー、クエスト構造化UI、習熟度システム、親ダッシュボード3色ウォレット |
+| v0.6 | 2026-04-09 | エージェンシー強化。おこさま後追加、じぶんクエスト、レベルアップ、承認スタンプ、外部決済連携、株価連動Invest、PWA強化、メンテナンスモード |
+| v0.6.1 | 2026-04-09 | 全面改善。じぶんクエストUI改善、RLS全面修正、親ダッシュボード刷新（統計廃止・空状態・ウォレット3分割バグ修正）、やりなおしUI（教育的配慮）、送金ステータス管理（Phase 1実装） |
 
 ## Getting Started
 
@@ -177,77 +336,26 @@ npm install
 npm run dev
 ```
 
-`.env.local` に以下の環境変数が必要:
+.env.local に以下の環境変数が必要:
 
-```
+```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  # アカウント削除API（Auth管理）に必要
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ANTHROPIC_API_KEY=your_anthropic_api_key
 
 # v0.6 追加（任意）
-NEXT_PUBLIC_MAINTENANCE_MODE=false  # true でメンテナンスモード有効化
-ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key  # 株価連動機能（Supabase Edge Function用）
+NEXT_PUBLIC_MAINTENANCE_MODE=false
+ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
 ```
 
-### Supabase DB セットアップ（v0.4 セキュリティ）
+## 参考資料
 
-v0.4以降、以下のDB設定が必要です（Supabase SQL Editorで実行）:
+- [BusyKid紹介ニュース](https://x.com/siron93/status/2040447744360186214) — 米国のお手伝い管理アプリ。Visaカード+実株投資
+- [Greenlight](https://greenlight.com/) — 子供用デビットカード。SNSで「子供が株を買う」ビジュアルがバズる
+- [GoHenry](https://www.gohenry.com/) — 英国発。教育コンテンツ重視
+- [GMOあおぞらネット銀行 sunabar](https://sunabar.gmo-aozora.com/) — 日本の銀行API sandbox（法人口座必要）
 
-```sql
--- 1. pgcrypto拡張を有効化（PIN暗号化用）
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+## ライセンス
 
--- 2. pin_hashカラム追加（既存のpinカラムからの移行）
-ALTER TABLE otetsudai_users ADD COLUMN IF NOT EXISTS pin_hash TEXT;
-ALTER TABLE otetsudai_users ADD COLUMN IF NOT EXISTS auth_id UUID;
-
--- 3. 既存PINをbcryptハッシュに移行
-UPDATE otetsudai_users
-SET pin_hash = crypt(pin, gen_salt('bf'))
-WHERE pin IS NOT NULL AND pin_hash IS NULL;
-
--- 4. PIN照合用RPC関数
-CREATE OR REPLACE FUNCTION verify_pin(p_user_id UUID, p_pin TEXT)
-RETURNS BOOLEAN AS $$
-  SELECT pin_hash = crypt(p_pin, pin_hash)
-  FROM otetsudai_users WHERE id = p_user_id;
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- 5. PINハッシュ設定用RPC関数
-CREATE OR REPLACE FUNCTION set_pin_hash(p_user_id UUID, p_pin TEXT)
-RETURNS VOID AS $$
-  UPDATE otetsudai_users
-  SET pin_hash = crypt(p_pin, gen_salt('bf'))
-  WHERE id = p_user_id;
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- 6. 家族ID取得関数（RLS用）
-CREATE OR REPLACE FUNCTION get_my_family_id()
-RETURNS UUID AS $$
-  SELECT family_id FROM otetsudai_users
-  WHERE auth_id = auth.uid() LIMIT 1;
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
-
--- 7. 全テーブルにRLSを有効化し、家族単位のポリシーを設定
--- （各テーブルごとにALTER TABLE ... ENABLE ROW LEVEL SECURITY;
---   およびCREATE POLICY ... USING (family_id = get_my_family_id()); を実行）
-```
-
-### v0.6 DBマイグレーション
-
-v0.6で追加された3つのマイグレーションを順番に実行してください:
-
-```bash
-# 1. じぶんクエスト（tasksテーブルにカラム追加）
-cat supabase/migrations/20260409_self_quest.sql
-# → Supabase SQL Editor で実行
-
-# 2. 承認スタンプ（task_logsテーブルにカラム追加）
-cat supabase/migrations/20260409_approval_stamps.sql
-# → Supabase SQL Editor で実行
-
-# 3. 投資ポートフォリオ（新テーブル作成）
-cat supabase/migrations/20260409_invest_portfolios.sql
-# → Supabase SQL Editor で実行
-```
+MIT License
