@@ -7,6 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -25,6 +33,22 @@ type Props = {
   onCreated: () => void;
   maxReward?: number;
 };
+
+/** プリセットクエスト（親が設定した基準額付き） */
+const PRESET_QUESTS = [
+  { title: "おさらあらい", reward: 30, icon: "🍽️" },
+  { title: "くつならべ", reward: 10, icon: "👟" },
+  { title: "せんたくものたたみ", reward: 30, icon: "👕" },
+  { title: "おふろそうじ", reward: 50, icon: "🛁" },
+  { title: "そうじき かける", reward: 40, icon: "🧹" },
+  { title: "ゴミだし", reward: 20, icon: "🗑️" },
+  { title: "ペットの おせわ", reward: 30, icon: "🐕" },
+  { title: "しゅくだいを おわらせる", reward: 50, icon: "📚" },
+  { title: "おつかい", reward: 50, icon: "🛒" },
+  { title: "ふとんを たたむ", reward: 20, icon: "🛏️" },
+] as const;
+
+const CUSTOM_VALUE = "__custom__";
 
 const QUICK_STAMPS = [
   { emoji: "🙏", label: "おねがい" },
@@ -45,12 +69,14 @@ export function SelfQuestForm({
 }: Props) {
   const [mode, setMode] = useState<Mode>("quest");
 
-  // クエスト提案用 — 完全独立
-  const [questTitle, setQuestTitle] = useState("");
-  const [questReward, setQuestReward] = useState("");
+  // クエスト提案用
+  const [questSelect, setQuestSelect] = useState("");
+  const [questCustomTitle, setQuestCustomTitle] = useState("");
+  const [questReward, setQuestReward] = useState(0);
   const [questNote, setQuestNote] = useState("");
+  const [questStamp, setQuestStamp] = useState<string | null>(null);
 
-  // メッセージ用 — 完全独立
+  // メッセージ用
   const [msgBody, setMsgBody] = useState("");
   const [msgStamp, setMsgStamp] = useState<string | null>(null);
 
@@ -58,25 +84,46 @@ export function SelfQuestForm({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const isCustom = questSelect === CUSTOM_VALUE;
+
+  function handleQuestSelect(value: string | null) {
+    const v = value ?? "";
+    setQuestSelect(v);
+    setError("");
+    if (v === CUSTOM_VALUE) {
+      setQuestReward(0);
+      setQuestCustomTitle("");
+    } else {
+      const preset = PRESET_QUESTS.find((q) => q.title === v);
+      setQuestReward(preset?.reward ?? 0);
+    }
+  }
+
   function switchMode(m: Mode) {
     setMode(m);
     setError("");
   }
 
   async function handleSubmitQuest() {
-    if (!questTitle.trim()) {
-      setError("クエストの なまえを いれてね");
+    const title = isCustom ? questCustomTitle.trim() : questSelect;
+    if (!title) {
+      setError(isCustom ? "クエストの なまえを いれてね" : "クエストを えらんでね");
       return;
     }
-    const rewardNum = parseInt(questReward) || 0;
-    if (rewardNum <= 0) {
+    if (questReward <= 0) {
       setError("ごほうびの きんがくを いれてね");
       return;
     }
-    if (rewardNum > maxReward) {
+    if (questReward > maxReward) {
       setError(`ごほうびは ${maxReward}えん までだよ`);
       return;
     }
+
+    // スタンプ + ノートを結合してメッセージ化
+    const messageParts: string[] = [];
+    if (questStamp) messageParts.push(questStamp);
+    if (questNote.trim()) messageParts.push(questNote.trim());
+    const proposalMessage = messageParts.join(" ") || null;
 
     setError("");
     setLoading(true);
@@ -85,16 +132,16 @@ export function SelfQuestForm({
       .from("otetsudai_tasks")
       .insert({
         family_id: familyId,
-        title: questTitle.trim(),
-        description: questNote.trim() || null,
-        reward_amount: rewardNum,
+        title,
+        description: proposalMessage,
+        reward_amount: questReward,
         recurrence: "once",
         assigned_child_id: childId,
         is_active: false,
         created_by: childId,
         proposal_status: "pending",
-        proposed_reward: rewardNum,
-        proposal_message: questNote.trim() || null,
+        proposed_reward: questReward,
+        proposal_message: proposalMessage,
       });
 
     setLoading(false);
@@ -108,8 +155,9 @@ export function SelfQuestForm({
   }
 
   async function handleSubmitMessage() {
-    if (!msgBody.trim()) {
-      setError("メッセージを いれてね");
+    // スタンプのみでも送信OK
+    if (!msgBody.trim() && !msgStamp) {
+      setError("メッセージか スタンプを えらんでね");
       return;
     }
 
@@ -122,7 +170,7 @@ export function SelfQuestForm({
         family_id: familyId,
         from_user_id: childId,
         to_user_id: null,
-        message: msgBody.trim(),
+        message: msgBody.trim() || null,
         stamp: msgStamp,
       });
 
@@ -137,9 +185,11 @@ export function SelfQuestForm({
   }
 
   function resetAndClose() {
-    setQuestTitle("");
-    setQuestReward("");
+    setQuestSelect("");
+    setQuestCustomTitle("");
+    setQuestReward(0);
     setQuestNote("");
+    setQuestStamp(null);
     setMsgBody("");
     setMsgStamp(null);
     setError("");
@@ -161,7 +211,7 @@ export function SelfQuestForm({
           </DialogTitle>
           <DialogDescription>
             {mode === "quest"
-              ? "やりたい おてつだいを おやに ていあんしよう！"
+              ? "やりたい おてつだいを えらんで おやに ていあんしよう！"
               : "おやに きもちや おねがいを つたえよう！"}
           </DialogDescription>
         </DialogHeader>
@@ -190,7 +240,7 @@ export function SelfQuestForm({
 
         {success ? (
           <div className="text-center py-6">
-            <div className="text-5xl mb-3">📨</div>
+            <div className="text-6xl mb-3 animate-bounce">📨</div>
             <p className="font-bold text-lg text-emerald-700">
               おやに おくったよ！
             </p>
@@ -203,59 +253,140 @@ export function SelfQuestForm({
         ) : mode === "quest" ? (
           /* ────── クエスト提案 ────── */
           <div className="space-y-4">
+            {/* プルダウンでクエスト選択 */}
             <div>
-              <Label htmlFor="q-title">クエストの なまえ</Label>
-              <Input
-                id="q-title"
-                value={questTitle}
-                onChange={(e) => setQuestTitle(e.target.value)}
-                placeholder="れい: ほんを 3さつ よむ"
-                className="mt-1 h-12 text-lg"
-                autoFocus
-              />
+              <Label>クエストを えらぼう</Label>
+              <Select
+                value={questSelect}
+                onValueChange={handleQuestSelect}
+              >
+                <SelectTrigger className="mt-1 w-full h-12 text-base">
+                  <SelectValue placeholder="タップして えらんでね" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRESET_QUESTS.map((q) => (
+                    <SelectItem key={q.title} value={q.title}>
+                      {q.icon} {q.title}（{q.reward}えん）
+                    </SelectItem>
+                  ))}
+                  <SelectSeparator />
+                  <SelectItem value={CUSTOM_VALUE}>
+                    ✏️ そのほか（じぶんで かく）
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
+            {/* 「その他」選択時のみ自由入力 */}
+            {isCustom && (
+              <div>
+                <Label htmlFor="q-custom">クエストの なまえ</Label>
+                <Input
+                  id="q-custom"
+                  value={questCustomTitle}
+                  onChange={(e) => setQuestCustomTitle(e.target.value)}
+                  placeholder="れい: ほんを 3さつ よむ"
+                  className="mt-1 h-12 text-lg"
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {/* 報酬表示 — プリセットは固定、カスタムは入力可 */}
             <div>
-              <Label htmlFor="q-reward">ほしい ごほうび（えん）</Label>
-              <Input
-                id="q-reward"
-                type="number"
-                inputMode="numeric"
-                min={10}
-                max={maxReward}
-                step={10}
-                value={questReward}
-                onChange={(e) => setQuestReward(e.target.value)}
-                placeholder="100"
-                className="mt-1 h-12 text-xl text-center"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                さいだい {maxReward}えん まで。おやが きんがくを かえることもあるよ
-              </p>
+              <Label htmlFor="q-reward">
+                ごほうび（えん）
+              </Label>
+              {isCustom ? (
+                <>
+                  <Input
+                    id="q-reward"
+                    type="number"
+                    inputMode="numeric"
+                    min={10}
+                    max={maxReward}
+                    step={10}
+                    value={questReward || ""}
+                    onChange={(e) => setQuestReward(parseInt(e.target.value) || 0)}
+                    placeholder="100"
+                    className="mt-1 h-12 text-xl text-center"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    さいだい {maxReward}えん まで。おやが きんがくを かえることもあるよ
+                  </p>
+                </>
+              ) : questSelect ? (
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="h-12 flex-1 flex items-center justify-center rounded-lg border bg-muted text-xl font-bold text-emerald-600">
+                    {questReward}えん
+                  </div>
+                  <p className="text-[10px] text-muted-foreground w-24 leading-tight">
+                    おやが きめた きんがくだよ
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-1 h-12 flex items-center justify-center rounded-lg border border-dashed text-muted-foreground text-sm">
+                  クエストを えらぶと ひょうじされるよ
+                </div>
+              )}
+              {!isCustom && questSelect && (
+                <p className="text-[10px] text-amber-600 mt-1">
+                  💬 もっと ほしいときは メッセージで おやに そうだんしてね
+                </p>
+              )}
             </div>
+
+            {/* メッセージ＋スタンプ（クエスト提案時） */}
             <div>
-              <Label htmlFor="q-note">おやへの メッセージ（なくても OK）</Label>
+              <Label>おやへの メッセージ（なくても OK）</Label>
+              <div className="grid grid-cols-6 gap-1.5 mt-1">
+                {QUICK_STAMPS.map((s) => (
+                  <button
+                    key={s.emoji}
+                    type="button"
+                    onClick={() => setQuestStamp(questStamp === s.emoji ? null : s.emoji)}
+                    className={`flex flex-col items-center p-1 rounded-xl transition-all ${
+                      questStamp === s.emoji
+                        ? "bg-emerald-100 ring-2 ring-emerald-400 scale-110"
+                        : "bg-gray-50 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="text-xl">{s.emoji}</span>
+                    <span className="text-[7px] text-muted-foreground leading-tight">
+                      {s.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
               <Input
-                id="q-note"
                 value={questNote}
                 onChange={(e) => setQuestNote(e.target.value)}
                 placeholder="れい: まいにち がんばるよ！"
-                className="mt-1 h-12"
+                className="mt-2 h-10"
+                maxLength={100}
               />
             </div>
+
             {error && <p className="text-destructive text-sm text-center">{error}</p>}
+
+            {/* 大きく目立つ送信ボタン */}
             <Button
-              className="w-full h-14 text-lg bg-emerald-500 hover:bg-emerald-600 text-white"
+              className="w-full h-16 text-xl font-bold bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl shadow-lg active:scale-95 transition-transform"
               onClick={handleSubmitQuest}
               disabled={loading}
             >
-              {loading ? "おくりちゅう..." : "おやに ていあんする 📨"}
+              {loading ? (
+                <span className="animate-pulse">おくりちゅう...</span>
+              ) : (
+                "おやに クエストを おくる 📨"
+              )}
             </Button>
           </div>
         ) : (
           /* ────── メッセージ ────── */
           <div className="space-y-4">
             <div>
-              <Label>スタンプ（えらばなくても OK）</Label>
+              <Label>スタンプ（えらぶだけでも おくれるよ！）</Label>
               <div className="grid grid-cols-6 gap-2 mt-1">
                 {QUICK_STAMPS.map((s) => (
                   <button
@@ -277,38 +408,32 @@ export function SelfQuestForm({
               </div>
             </div>
             <div>
-              <Label htmlFor="m-body">メッセージ</Label>
+              <Label htmlFor="m-body">メッセージ（なくても OK）</Label>
               <Textarea
                 id="m-body"
                 value={msgBody}
                 onChange={(e) => setMsgBody(e.target.value)}
                 placeholder={"れい: きょう たのしかったよ！\nれい: あたらしい クエスト ほしいな"}
-                className="mt-1 min-h-[100px] text-base"
+                className="mt-1 min-h-[80px] text-base"
                 maxLength={200}
-                autoFocus
               />
               <p className="text-[10px] text-muted-foreground mt-1 text-right">
                 {msgBody.length}/200
               </p>
             </div>
-            {(msgStamp || msgBody.trim()) && (
-              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                <p className="text-[10px] text-blue-400 mb-1">プレビュー</p>
-                <div className="flex items-start gap-2">
-                  {msgStamp && <span className="text-3xl flex-shrink-0">{msgStamp}</span>}
-                  {msgBody.trim() && (
-                    <p className="text-sm text-blue-800 whitespace-pre-wrap">{msgBody}</p>
-                  )}
-                </div>
-              </div>
-            )}
             {error && <p className="text-destructive text-sm text-center">{error}</p>}
+
+            {/* 大きく目立つ送信ボタン */}
             <Button
-              className="w-full h-14 text-lg bg-blue-500 hover:bg-blue-600 text-white"
+              className="w-full h-16 text-xl font-bold bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg active:scale-95 transition-transform"
               onClick={handleSubmitMessage}
               disabled={loading}
             >
-              {loading ? "おくりちゅう..." : "おやに おくる 📨"}
+              {loading ? (
+                <span className="animate-pulse">おくりちゅう...</span>
+              ) : (
+                "おやに おくる 📨"
+              )}
             </Button>
           </div>
         )}
