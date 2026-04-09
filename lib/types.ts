@@ -10,6 +10,8 @@ export type User = {
   role: "parent" | "child";
   name: string;
   pin: string | null;
+  icon: string;
+  display_order: number;
   created_at: string;
 };
 
@@ -22,6 +24,10 @@ export type Task = {
   recurrence: "once" | "daily" | "weekly";
   assigned_child_id: string | null;
   is_active: boolean;
+  created_by: string;
+  proposal_status: "pending" | "approved" | "rejected";
+  proposed_reward: number | null;
+  proposal_message: string | null;
   created_at: string;
 };
 
@@ -29,10 +35,13 @@ export type TaskLog = {
   id: string;
   task_id: string;
   child_id: string;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "settled";
   completed_at: string;
   approved_at: string | null;
   approved_by: string | null;
+  settled_at: string | null;
+  approval_stamp: string | null;
+  approval_message: string | null;
   // joined
   task?: Task;
   child?: User;
@@ -43,18 +52,38 @@ export type Wallet = {
   child_id: string;
   spending_balance: number;
   saving_balance: number;
-  split_ratio: number;
+  invest_balance: number;
+  save_ratio: number;
+  invest_ratio: number;
+  split_ratio: number; // deprecated: 旧フィールド（後方互換）
   updated_at: string;
 };
 
 export type Transaction = {
   id: string;
   wallet_id: string;
-  type: "earn" | "spend" | "save";
+  type: "earn" | "spend" | "save" | "invest";
   amount: number;
   description: string | null;
   task_log_id: string | null;
   created_at: string;
+};
+
+export type ChildProfile = {
+  id: string;
+  family_id: string;
+  name: string;
+  icon: string;
+  display_order: number;
+  pin_hash: string | null;
+  created_at: string;
+  wallet_id: string | null;
+  spending_balance: number;
+  saving_balance: number;
+  invest_balance: number;
+  save_ratio: number;
+  invest_ratio: number;
+  spend_ratio: number;
 };
 
 export type SpendRequest = {

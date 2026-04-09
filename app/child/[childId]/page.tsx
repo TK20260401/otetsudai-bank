@@ -21,6 +21,9 @@ import { Label } from "@/components/ui/label";
 import SavingGoalSection from "@/components/saving-goal";
 import BadgeDisplay from "@/components/badge-display";
 import CoinAnimation from "@/components/coin-animation";
+import { SelfQuestForm } from "@/components/self-quest-form";
+import { LevelDisplay } from "@/components/level-display";
+import { StampNotifications } from "@/components/stamp-notifications";
 import { checkAndAwardBadges } from "@/lib/badges";
 
 export default function ChildDashboard({
@@ -44,6 +47,8 @@ export default function ChildDashboard({
   const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
   const [badges, setBadges] = useState<BadgeType[]>([]);
   const [showCoinAnim, setShowCoinAnim] = useState(false);
+  const [selfQuestOpen, setSelfQuestOpen] = useState(false);
+  const [pendingProposals, setPendingProposals] = useState(0);
 
   const session = getSession();
 
@@ -96,6 +101,14 @@ export default function ChildDashboard({
       .select("*")
       .eq("child_id", childId);
     setBadges((badgeData as BadgeType[]) || []);
+
+    // じぶんクエスト提案中の数を取得
+    const { count } = await supabase
+      .from("otetsudai_tasks")
+      .select("*", { count: "exact", head: true })
+      .eq("created_by", childId)
+      .eq("proposal_status", "pending");
+    setPendingProposals(count || 0);
 
     // Filter transactions by this child's wallet
     if (walletRes.data) {
@@ -175,6 +188,12 @@ export default function ChildDashboard({
   return (
     <div className="min-h-screen p-4 max-w-md mx-auto">
       <CommonHeader title={`🧒 ${session?.name} のバンク`} />
+
+      {/* レベル表示 */}
+      <LevelDisplay childId={childId} />
+
+      {/* おやからのスタンプ通知 */}
+      <StampNotifications childId={childId} />
 
       {/* バッジ表示 */}
       {badges.length > 0 && (
@@ -264,6 +283,28 @@ export default function ChildDashboard({
           </Card>
         );
       })()}
+
+      {/* じぶんクエスト提案ボタン */}
+      <div className="mb-4">
+        <Button
+          className="w-full h-14 text-lg bg-emerald-500 hover:bg-emerald-600 text-white"
+          onClick={() => setSelfQuestOpen(true)}
+        >
+          ✨ じぶんクエストを つくる
+        </Button>
+        {pendingProposals > 0 && (
+          <p className="text-center text-xs text-amber-600 mt-1">
+            📨 {pendingProposals}けんの ていあんが しょうにんまちだよ
+          </p>
+        )}
+      </div>
+      <SelfQuestForm
+        open={selfQuestOpen}
+        onClose={() => setSelfQuestOpen(false)}
+        childId={childId}
+        familyId={session?.familyId || ""}
+        onCreated={loadData}
+      />
 
       <Tabs defaultValue="tasks" className="w-full">
         <TabsList className="grid w-full grid-cols-2">

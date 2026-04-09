@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input";
 
 import CommonHeader from "@/components/common-header";
 import RewardSplitSlider from "@/components/reward-split-slider";
+import { PaymentLinkDialog } from "@/components/payment-link";
+import { AddChildDialog } from "@/components/add-child-dialog";
+import { ApprovalDialog } from "@/components/approval-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -31,6 +34,16 @@ export default function ParentDashboard() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [addChildOpen, setAddChildOpen] = useState(false);
+  const [approvalTarget, setApprovalTarget] = useState<(TaskLog & { task: Task; child: User }) | null>(null);
+  const [questProposals, setQuestProposals] = useState<(Task & { child?: User })[]>([]);
+  const [proposalRewards, setProposalRewards] = useState<Record<string, number>>({});
+  const [paymentDialog, setPaymentDialog] = useState<{
+    open: boolean;
+    amount: number;
+    purpose: string;
+    childName: string;
+  }>({ open: false, amount: 0, purpose: "", childName: "" });
 
   const session = getSession();
 
@@ -73,6 +86,20 @@ export default function ParentDashboard() {
     setPendingLogs((logsRes.data as (TaskLog & { task: Task; child: User })[]) || []);
     setPendingSpends((spendRes.data as (SpendRequest & { child: User })[]) || []);
 
+    // じぶんクエスト提案を取得
+    const { data: proposals } = await supabase
+      .from("otetsudai_tasks")
+      .select("*, child:assigned_child_id(id, name, role)")
+      .eq("family_id", session.familyId)
+      .eq("proposal_status", "pending")
+      .order("created_at", { ascending: false });
+    const proposalData = (proposals as (Task & { child?: User })[]) || [];
+    setQuestProposals(proposalData);
+    // 報酬編集用の初期値
+    const rewards: Record<string, number> = {};
+    proposalData.forEach((p) => { rewards[p.id] = p.reward_amount; });
+    setProposalRewards(rewards);
+
     const approved = approvedRes.data || [];
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -95,7 +122,11 @@ export default function ParentDashboard() {
     loadData();
   }, []);
 
-  async function handleApprove(log: TaskLog & { task: Task }) {
+  async function handleApprove(
+    log: TaskLog & { task: Task },
+    stamp: string | null,
+    message: string
+  ) {
     if (!session) return;
     const { error } = await supabase
       .from("otetsudai_task_logs")
@@ -103,6 +134,8 @@ export default function ParentDashboard() {
         status: "approved",
         approved_at: new Date().toISOString(),
         approved_by: session.userId,
+        approval_stamp: stamp,
+        approval_message: message || null,
       })
       .eq("id", log.id);
 
@@ -143,13 +176,41 @@ export default function ParentDashboard() {
     loadData();
   }
 
-  async function handleApproveSpend(spend: SpendRequest) {
+  async function handleApproveSpend(spend: SpendRequest & { child?: User }) {
     if (!session) return;
     await fetch("/api/spend-request", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: spend.id, action: "approve", approved_by: session.userId }),
     });
+    // 承認後に決済アプリ連携ダイアログを表示
+    setPaymentDialog({
+      open: true,
+      amount: spend.amount,
+      purpose: spend.purpose,
+      childName: spend.child?.name || "",
+    });
+    loadData();
+  }
+
+  async function handleApproveProposal(taskId: string) {
+    const adjustedReward = proposalRewards[taskId];
+    await supabase
+      .from("otetsudai_tasks")
+      .update({
+        proposal_status: "approved",
+        is_active: true,
+        reward_amount: adjustedReward,
+      })
+      .eq("id", taskId);
+    loadData();
+  }
+
+  async function handleRejectProposal(taskId: string) {
+    await supabase
+      .from("otetsudai_tasks")
+      .update({ proposal_status: "rejected" })
+      .eq("id", taskId);
     loadData();
   }
 
@@ -176,7 +237,7 @@ export default function ParentDashboard() {
       <CommonHeader
         title="⚔️ クエストマスター"
         userName={session?.name}
-        pendingCount={pendingLogs.length + pendingSpends.length}
+        pendingCount={pendingLogs.length + pendingSpends.length + questProposals.length}
         rightActions={
           <Link href="/parent/tasks">
             <Button variant="outline" size="sm" className="border-amber-300">
@@ -249,7 +310,7 @@ export default function ParentDashboard() {
                     <Button
                       size="sm"
                       className="bg-green-500 hover:bg-green-600 text-white"
-                      onClick={() => handleApprove(log)}
+                      onClick={() => setApprovalTarget(log)}
                     >
                       ✓ 承認
                     </Button>
@@ -319,6 +380,81 @@ export default function ParentDashboard() {
                     onChange={(e) => setRejectReasons((prev) => ({ ...prev, [spend.id]: e.target.value }))}
                     className="text-xs h-8"
                   />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* じぶんクエスト提案 */}
+      {questProposals.length > 0 && (
+        <Card className="mb-6 border-emerald-200">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              ✨ クエストていあん
+              <Badge variant="destructive">{questProposals.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {questProposals.map((proposal) => (
+                <div
+                  key={proposal.id}
+                  className="p-3 rounded-lg bg-emerald-50 border border-emerald-100"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className="font-semibold">{proposal.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        🧒 {proposal.child?.name}
+                      </p>
+                      {proposal.proposal_message && (
+                        <p className="text-xs text-emerald-600 mt-1">
+                          💬 「{proposal.proposal_message}」
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-muted-foreground">ごほうび:</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      step={10}
+                      value={proposalRewards[proposal.id] ?? proposal.reward_amount}
+                      onChange={(e) =>
+                        setProposalRewards((prev) => ({
+                          ...prev,
+                          [proposal.id]: parseInt(e.target.value) || 0,
+                        }))
+                      }
+                      className="w-24 h-8 text-sm text-center"
+                    />
+                    <span className="text-xs text-muted-foreground">えん</span>
+                    {(proposalRewards[proposal.id] ?? proposal.reward_amount) !== proposal.reward_amount && (
+                      <span className="text-[10px] text-amber-500">
+                        （もとの ていあん: ¥{proposal.reward_amount}）
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      className="bg-green-500 hover:bg-green-600 text-white flex-1"
+                      onClick={() => handleApproveProposal(proposal.id)}
+                    >
+                      ✓ 承認
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-red-300 text-red-600 hover:bg-red-50 flex-1"
+                      onClick={() => handleRejectProposal(proposal.id)}
+                    >
+                      ✗ 却下
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -422,6 +558,47 @@ export default function ParentDashboard() {
           );
         })}
       </div>
+
+      {/* おこさま追加 */}
+      {children.length < 5 && (
+        <Button
+          variant="outline"
+          className="w-full mt-3 border-dashed border-amber-300 text-amber-600 h-12 text-base"
+          onClick={() => setAddChildOpen(true)}
+        >
+          ＋ おこさまを ついか
+        </Button>
+      )}
+      <AddChildDialog
+        open={addChildOpen}
+        onClose={() => setAddChildOpen(false)}
+        familyId={session?.familyId || ""}
+        onAdded={loadData}
+      />
+
+      {/* 承認スタンプダイアログ */}
+      <ApprovalDialog
+        open={!!approvalTarget}
+        onClose={() => setApprovalTarget(null)}
+        childName={approvalTarget?.child?.name || ""}
+        taskTitle={approvalTarget?.task?.title || ""}
+        reward={approvalTarget?.task?.reward_amount || 0}
+        onApprove={(stamp, message) => {
+          if (approvalTarget) {
+            handleApprove(approvalTarget, stamp, message);
+            setApprovalTarget(null);
+          }
+        }}
+      />
+
+      {/* 決済アプリ連携ダイアログ */}
+      <PaymentLinkDialog
+        open={paymentDialog.open}
+        onClose={() => setPaymentDialog((p) => ({ ...p, open: false }))}
+        amount={paymentDialog.amount}
+        purpose={paymentDialog.purpose}
+        childName={paymentDialog.childName}
+      />
 
       {/* アカウント削除 */}
       <div className="mt-8 pt-4 border-t border-gray-200">

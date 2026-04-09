@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.5）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.6）
 
 ## 概要
 
@@ -51,6 +51,14 @@
 | アカウント削除 | 親ダッシュボードからsoft delete（確認テキスト「削除する」入力必須）、Supabase Auth連携削除 |
 | 法務ページ | プライバシーポリシー（/privacy）、利用規約（/terms）、フッターからリンク |
 | サービス層分離 | lib/services/（auth.ts/tasks.ts/wallets.ts/families.ts）にDB操作を集約 |
+| おこさま後追加 | 親ダッシュボードからいつでも子供を追加可能（初回登録時のみの制約を解消） |
+| じぶんクエスト | 子供がクエストを提案→親が報酬調整して承認/却下。子供の主体性（エージェンシー）を醸成 |
+| レベルアップ | 累計獲得額に基づく7段階ランク（🗡️ぼうけんしゃ→👑でんせつのゆうしゃ）。プログレスバー付き |
+| 承認スタンプ | 親が承認時にLINE風スタンプ（8種）＋ひとことメッセージを送信。子供ダッシュボードに通知表示 |
+| 外部決済連携 | 支出承認後にPayPay/B43/LINE Payへのディープリンク起動ダイアログ。フォールバックURL付き |
+| 株価連動Invest | Alpha Vantage API連携のSupabase Edge Function。投資ポートフォリオテーブル＋フロントエンド表示 |
+| PWA強化 | maskableアイコン、shortcuts、Cache First/Network First分離SW、Apple PWAメタ対応 |
+| メンテナンスモード | `NEXT_PUBLIC_MAINTENANCE_MODE=true`で全画面メンテナンス表示。Vercel環境変数で即時切替 |
 
 ## ユニバーサルデザイン（UD）設計方針
 
@@ -90,6 +98,8 @@ v0.5で導入したUD対応の設計方針：
 | `otetsudai_spend_requests` | 支出申請（金額・用途・承認/却下・却下理由） |
 | `otetsudai_badges` | 達成バッジ（badge_type・earned_at） |
 | `otetsudai_saving_goals` | 貯金目標（目標名・目標金額・達成フラグ） |
+| `otetsudai_invest_portfolios` | 投資ポートフォリオ（銘柄・株数・購入価格・現在価格・評価額） |
+| `otetsudai_stock_sync_log` | 株価取得ログ（レート制限管理用） |
 
 ## コンポーネント構成（v0.5 新規・変更）
 
@@ -98,6 +108,14 @@ v0.5で導入したUD対応の設計方針：
 | RewardSplitSlider | `components/reward-split-slider.tsx` | 3分割報酬スライダー。赤/青/緑カラーバー、アイコン凡例、2本の独立スライダー（ためる・ふやす）。save + invest <= 100 の自動制約 |
 | QuestSteps | `components/quest-steps.tsx` | 3ステップ構造化クエストUI。順序制約チェックリスト、習熟度バッジ（見習い/助手/リーダー）、報酬倍率表示。DOG_WALK_STEPSテンプレート付属 |
 | Slider (shadcn/ui) | `components/ui/slider.tsx` | shadcn/ui スライダープリミティブ |
+| AddChildDialog | `components/add-child-dialog.tsx` | 親ダッシュボードからの子供追加ダイアログ。名前+PIN入力、createChildWithWallet+set_pin_hash RPC |
+| SelfQuestForm | `components/self-quest-form.tsx` | 子供がクエストを提案するダイアログ。クエスト名・ごほうび・メッセージ入力。提案上限額制御 |
+| LevelDisplay | `components/level-display.tsx` | 累計獲得額ベースのレベル表示。7段階ランク＋プログレスバー＋次レベルまでの残額 |
+| ApprovalDialog | `components/approval-dialog.tsx` | 承認時スタンプ選択ダイアログ。8種LINE風スタンプ＋ひとことメッセージ＋プレビュー |
+| StampNotifications | `components/stamp-notifications.tsx` | 子供ダッシュボードのスタンプ通知表示。最新5件のスタンプ＋メッセージ |
+| PaymentLinkDialog | `components/payment-link.tsx` | 支出承認後の外部決済アプリ連携ダイアログ。PayPay/B43/LINE Payディープリンク |
+| InvestPortfolio | `components/invest-portfolio.tsx` | 投資ポートフォリオ表示。銘柄別損益＋手動同期ボタン |
+| MaintenanceGuard | `components/maintenance-guard.tsx` | メンテナンスモードガード。環境変数で全画面切替 |
 
 ### QuestSteps 使用例
 
@@ -148,6 +166,7 @@ import RewardSplitSlider from "@/components/reward-split-slider";
 | v0.3 | 2026-04-08 | 「おこづかいクエスト」にリブランド。クエスト世界観統一（タスク→クエスト、完了→クリア）、テーマカラー変更（amber→emerald）、AIチャット全ページ化、🏆クエストマスターバッジ追加 |
 | v0.4 | 2026-04-08 | セキュリティ・認証・コード基盤強化。全9テーブルRLS有効化、PIN暗号化（pgcrypto+bcrypt）、Supabase Authハイブリッドセッション、アカウント削除（soft delete）、法務ページ（プライバシーポリシー・利用規約）、lib/services/層分離 |
 | v0.5 | 2026-04-08 | UD（ユニバーサルデザイン）対応・UI/UX強化。TOP画面リニューアル（ログイン済みリダイレクト・UDカラー3色フィーチャーカード）、報酬3分割スライダー（赤:つかう・青:ためる・緑:ふやす、カラーバー+アイコン二重符号化・aria対応）、クエスト構造化UI（準備→実行→完了の3ステップチェックリスト・順序制約ロック）、習熟度システム（見習い🌱x1/助手⭐x1.5/リーダー👑x2の報酬倍率）、親ダッシュボード3色ウォレット表示、大型タッチターゲット・アクセシビリティ改善 |
+| v0.6 | 2026-04-09 | エージェンシー強化・外部連携・コミュニケーション設計。おこさま後追加（親ダッシュボードからいつでも子供追加可能）、じぶんクエスト（子供がクエスト提案→親が報酬調整して承認/却下、エージェンシー醸成）、レベルアップシステム（累計獲得額ベース7段階ランク＋プログレスバー）、承認スタンプ（8種LINE風スタンプ＋ひとことメッセージ→子供への通知表示）、外部決済連携（PayPay/B43/LINE Payディープリンク）、株価連動Invest（Alpha Vantage API＋Supabase Edge Function＋投資ポートフォリオテーブル）、PWA強化（maskableアイコン・shortcuts・SW v2キャッシュ戦略・Apple PWA対応）、メンテナンスモード（環境変数トグル）、DBマイグレーション3本（self_quest/approval_stamps/invest_portfolios） |
 
 ## Getting Started
 
@@ -164,6 +183,10 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  # アカウント削除API（Auth管理）に必要
 ANTHROPIC_API_KEY=your_anthropic_api_key
+
+# v0.6 追加（任意）
+NEXT_PUBLIC_MAINTENANCE_MODE=false  # true でメンテナンスモード有効化
+ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key  # 株価連動機能（Supabase Edge Function用）
 ```
 
 ### Supabase DB セットアップ（v0.4 セキュリティ）
@@ -208,4 +231,22 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 -- 7. 全テーブルにRLSを有効化し、家族単位のポリシーを設定
 -- （各テーブルごとにALTER TABLE ... ENABLE ROW LEVEL SECURITY;
 --   およびCREATE POLICY ... USING (family_id = get_my_family_id()); を実行）
+```
+
+### v0.6 DBマイグレーション
+
+v0.6で追加された3つのマイグレーションを順番に実行してください:
+
+```bash
+# 1. じぶんクエスト（tasksテーブルにカラム追加）
+cat supabase/migrations/20260409_self_quest.sql
+# → Supabase SQL Editor で実行
+
+# 2. 承認スタンプ（task_logsテーブルにカラム追加）
+cat supabase/migrations/20260409_approval_stamps.sql
+# → Supabase SQL Editor で実行
+
+# 3. 投資ポートフォリオ（新テーブル作成）
+cat supabase/migrations/20260409_invest_portfolios.sql
+# → Supabase SQL Editor で実行
 ```

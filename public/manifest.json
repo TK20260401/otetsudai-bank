@@ -1,21 +1,56 @@
 {
   "name": "おこづかいクエスト",
   "short_name": "おこづかいクエスト",
-  "description": "お手伝い＝クエスト！マネー冒険アプリ",
+  "description": "お手伝い＝クエスト！稼いで、貯めて、増やすマネー冒険アプリ",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#fffbeb",
   "theme_color": "#059669",
+  "lang": "ja",
+  "categories": ["education", "finance", "kids"],
   "icons": [
     {
       "src": "/api/pwa-icon?size=192",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/api/pwa-icon?size=512",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/api/pwa-icon?size=192&maskable=1",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/api/pwa-icon?size=512&maskable=1",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/api/pwa-icon?size=512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "おこづかいクエスト ホーム画面"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ログイン",
+      "short_name": "ログイン",
+      "url": "/login",
+      "icons": [{ "src": "/api/pwa-icon?size=192", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
 }
