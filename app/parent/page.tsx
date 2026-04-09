@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { getSession, clearSession } from "@/lib/session";
-import type { User, TaskLog, Task, Wallet, SpendRequest } from "@/lib/types";
+import type { User, TaskLog, Task, Wallet, SpendRequest, InvestOrder } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,7 @@ export default function ParentDashboard() {
   const [approvalTarget, setApprovalTarget] = useState<(TaskLog & { task: Task; child: User }) | null>(null);
   const [questProposals, setQuestProposals] = useState<(Task & { child?: User })[]>([]);
   const [proposalRewards, setProposalRewards] = useState<Record<string, number>>({});
+  const [pendingInvestOrders, setPendingInvestOrders] = useState<(InvestOrder & { child?: User })[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [childMessages, setChildMessages] = useState<any[]>([]);
   const [paymentDialog, setPaymentDialog] = useState<{
@@ -151,6 +152,15 @@ export default function ParentDashboard() {
       .order("created_at", { ascending: false })
       .limit(10);
     setChildMessages(msgs || []);
+
+    // 投資注文（pending）を取得
+    const { data: investOrders } = await supabase
+      .from("otetsudai_invest_orders")
+      .select("*, child:child_id(id, name, role)")
+      .in("child_id", childIds)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+    setPendingInvestOrders((investOrders as (InvestOrder & { child?: User })[]) || []);
 
     const approved = approvedRes.data || [];
     setStats({
@@ -281,6 +291,70 @@ export default function ParentDashboard() {
     loadData();
   }
 
+  async function handleApproveInvestOrder(order: InvestOrder & { child?: User }) {
+    if (!session) return;
+    // invest_balanceから減算
+    const childWallet = wallets[order.child_id];
+    if (!childWallet || childWallet.invest_balance < order.amount) return;
+
+    // 株価取得（stock_pricesテーブルから）
+    const { data: stockData } = await supabase
+      .from("otetsudai_stock_prices")
+      .select("price")
+      .eq("symbol", order.symbol)
+      .single();
+    const price = stockData?.price || 1;
+    const shares = order.amount / price;
+
+    // 注文を約定
+    await supabase
+      .from("otetsudai_invest_orders")
+      .update({
+        status: "executed",
+        executed_price: price,
+        executed_shares: shares,
+        approved_at: new Date().toISOString(),
+        approved_by: session.userId,
+      })
+      .eq("id", order.id);
+
+    // ウォレットのinvest_balanceを減算
+    await supabase
+      .from("otetsudai_wallets")
+      .update({ invest_balance: childWallet.invest_balance - order.amount })
+      .eq("id", childWallet.id);
+
+    // ポートフォリオに追加
+    await supabase.from("otetsudai_invest_portfolios").insert({
+      wallet_id: childWallet.id,
+      child_id: order.child_id,
+      symbol: order.symbol,
+      name: order.name,
+      shares,
+      buy_price: price,
+      current_price: price,
+      current_value: order.amount,
+    });
+
+    // トランザクション記録
+    await supabase.from("otetsudai_transactions").insert({
+      wallet_id: childWallet.id,
+      type: "invest",
+      amount: order.amount,
+      description: `${order.name} を ¥${order.amount} で こうにゅう`,
+    });
+
+    loadData();
+  }
+
+  async function handleRejectInvestOrder(orderId: string) {
+    await supabase
+      .from("otetsudai_invest_orders")
+      .update({ status: "rejected" })
+      .eq("id", orderId);
+    loadData();
+  }
+
   async function handleRejectSpend(spendId: string, reason?: string) {
     await fetch("/api/spend-request", {
       method: "PUT",
@@ -298,7 +372,7 @@ export default function ParentDashboard() {
     );
   }
 
-  const totalPending = pendingLogs.length + pendingSpends.length + questProposals.length + childMessages.length;
+  const totalPending = pendingLogs.length + pendingSpends.length + questProposals.length + childMessages.length + pendingInvestOrders.length;
 
   return (
     <div className="min-h-screen p-4 max-w-2xl mx-auto">
@@ -594,6 +668,54 @@ export default function ParentDashboard() {
                   </div>
                 );
               })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ──── 投資注文 ──── */}
+      {pendingInvestOrders.length > 0 && (
+        <Card className="mb-4 border-green-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              🌱 とうし ちゅうもん
+              <Badge className="bg-green-500">{pendingInvestOrders.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {pendingInvestOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className="p-3 rounded-xl bg-green-50 border border-green-100"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-sm">{order.name}（{order.symbol}）</p>
+                      <p className="text-xs text-muted-foreground">
+                        🧒 {displayName(order.child?.name)} ・ ¥{order.amount.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      className="bg-green-500 hover:bg-green-600 text-white flex-1 h-9"
+                      onClick={() => handleApproveInvestOrder(order)}
+                    >
+                      ✓ しょうにん
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-amber-200 text-amber-600 hover:bg-amber-50 flex-1 h-9"
+                      onClick={() => handleRejectInvestOrder(order.id)}
+                    >
+                      🔄 こんどにしよう
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

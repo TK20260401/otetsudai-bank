@@ -120,3 +120,30 @@ export type SavingGoal = {
   is_achieved: boolean;
   created_at: string;
 };
+
+export type StockPrice = {
+  id: string;
+  symbol: string;
+  name: string;
+  icon: string;
+  price: number;
+  currency: "JPY" | "USD";
+  is_preset: boolean;
+  updated_at: string;
+};
+
+export type InvestOrder = {
+  id: string;
+  child_id: string;
+  wallet_id: string;
+  symbol: string;
+  name: string;
+  amount: number;
+  order_type: "buy" | "sell";
+  status: "pending" | "approved" | "rejected" | "executed";
+  executed_price: number | null;
+  executed_shares: number | null;
+  created_at: string;
+  approved_at: string | null;
+  approved_by: string | null;
+};

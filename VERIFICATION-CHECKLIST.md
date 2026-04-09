@@ -84,11 +84,18 @@ cd otetsudai-bank && npm run dev
 - [ ] 子供ダッシュボードに「おかねを もらったよ！」が表示される（送金済み）
 - [ ] 送金方法アイコンが子供側に表示される
 
-### F. 株価連動 Invest機能（Edge Function）
+### F. 投資シミュレーション（Phase 2）
 - [ ] `supabase/functions/stock-sync/index.ts` が存在する
 - [ ] `supabase/migrations/20260409_invest_portfolios.sql` が存在する
+- [ ] `supabase/migrations/20260409_invest_phase2.sql` が存在する
 - [ ] `components/invest-portfolio.tsx` が存在する
-- [ ] Investポートフォリオコンポーネントがインポートエラーなく読み込める
+- [ ] `components/invest-order-dialog.tsx` が存在する
+- [ ] 子供ダッシュボードにInvestPortfolioが表示される（invest_balance > 0 または invest_ratio > 0の場合）
+- [ ] 「かぶを かいたい！」ボタンが表示される（invest_balance > 0の場合）
+- [ ] プリセット銘柄8種（Apple/Tesla/Boeing/Disney/任天堂/JR東/明治/トヨタ）が選択できる
+- [ ] 投資注文が親ダッシュボードの「とうしちゅうもん」セクションに表示される
+- [ ] 親が承認するとinvest_balanceから減算されポートフォリオに記録される
+- [ ] 親が「こんどにしよう」で差し戻しできる
 
 ### G. PWA強化
 - [ ] `manifest.json` に maskable アイコンが定義されている
@@ -234,10 +241,11 @@ cd otetsudai-bank && npm run dev
 - [ ] 削除後にログイン画面に遷移する
 
 ### 16. AIチャット
-- [ ] 親画面でチャットウィジェットが動作する
-- [ ] 子供画面でチャットウィジェットが動作する
-- [ ] 未ログイン画面でクエストガイドが動作する
+- [ ] 親画面でチャットウィジェットが動作する（💼クエストアドバイザー）
+- [ ] 子供画面でチャットウィジェットが動作する（🪙コインくん）
+- [ ] 未ログイン画面でクエストガイドが動作する（⚔️クエストガイド）
 - [ ] 質問に対して適切な回答が返る
+- [ ] Vercel本番環境でANTHROPIC_API_KEYが設定されている
 
 ---
 

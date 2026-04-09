@@ -25,6 +25,8 @@ import { SelfQuestForm } from "@/components/self-quest-form";
 import { LevelDisplay } from "@/components/level-display";
 import { StampNotifications } from "@/components/stamp-notifications";
 import { checkAndAwardBadges } from "@/lib/badges";
+import { InvestPortfolio } from "@/components/invest-portfolio";
+import { InvestOrderDialog } from "@/components/invest-order-dialog";
 
 export default function ChildDashboard({
   params,
@@ -52,6 +54,7 @@ export default function ChildDashboard({
   const [rejectedLogs, setRejectedLogs] = useState<(TaskLog & { task?: Task })[]>([]);
   const [pendingPayments, setPendingPayments] = useState<SpendRequest[]>([]);
   const [paidRecent, setPaidRecent] = useState<SpendRequest[]>([]);
+  const [investOrderOpen, setInvestOrderOpen] = useState(false);
 
   const session = getSession();
 
@@ -281,6 +284,32 @@ export default function ChildDashboard({
         savingBalance={wallet?.saving_balance || 0}
         goals={savingGoals}
         onUpdate={loadData}
+      />
+
+      {/* 投資ポートフォリオ */}
+      {wallet && (wallet.invest_balance > 0 || wallet.invest_ratio > 0) && (
+        <div className="mb-4">
+          <InvestPortfolio
+            childId={childId}
+            investBalance={wallet.invest_balance || 0}
+          />
+          {wallet.invest_balance > 0 && (
+            <Button
+              className="w-full mt-2 h-12 text-base font-bold bg-green-500 hover:bg-green-600 text-white rounded-2xl"
+              onClick={() => setInvestOrderOpen(true)}
+            >
+              🌱 かぶを かいたい！
+            </Button>
+          )}
+        </div>
+      )}
+      <InvestOrderDialog
+        open={investOrderOpen}
+        onClose={() => setInvestOrderOpen(false)}
+        childId={childId}
+        walletId={wallet?.id || ""}
+        investBalance={wallet?.invest_balance || 0}
+        onCreated={loadData}
       />
 
       {/* きょうやること */}
