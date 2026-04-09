@@ -185,11 +185,37 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
 
         {/* ポートフォリオ一覧 */}
         {portfolios.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            まだ とうしは ありません。
-            <br />
-            「かぶを かいたい！」ボタンで はじめよう！
-          </p>
+          <div className="text-sm text-muted-foreground text-center py-4 space-y-3">
+            <p>
+              まだ とうしは ありません。
+              <br />
+              「かぶを かいたい！」ボタンで はじめよう！
+            </p>
+            <div className="bg-green-50 rounded-lg p-3 text-left text-xs text-green-800 space-y-2 border border-green-100">
+              <p className="font-semibold text-green-700">🌱 とうしの きほん</p>
+              <p>
+                かぶは「みせの いちぶを もつ」こと。
+                <br />
+                おみせが がんばると、かぶの ねだんが あがるよ！
+              </p>
+              <p>
+                🐢 <span className="font-semibold">ながく もつのが コツ！</span>
+                <br />
+                すぐ うらないで、じっくり そだてよう。
+                <br />
+                なんねんも もちつづけると、すこしずつ ふえていくよ。
+              </p>
+              <p>
+                🎯 <span className="font-semibold">えらびかたの ポイント</span>
+                <br />
+                たくさん ありすぎると まよっちゃうから、
+                <br />
+                このアプリでは えらびやすい かずに しているよ。
+                <br />
+                まずは 1つ えらんで みよう！
+              </p>
+            </div>
+          </div>
         ) : (
           <div className="space-y-2">
             {portfolios.map((p) => {
