@@ -83,14 +83,14 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
     setSyncMessage(null);
 
     try {
-      const res = await fetch("/api/stock-sync", { method: "POST" });
+      const res = await fetch("/api/stock-sync");
       const data = await res.json();
 
       if (res.ok) {
         await loadPortfolios();
         setSyncMessage({
           type: "success",
-          text: `✅ さいしん かかく に こうしん！（${data.updated || 0}めいがら）`,
+          text: `✅ さいしん かかく に こうしん！（${data.count || 0}めいがら）`,
         });
         setLastSync(new Date().toISOString());
         setCooldownRemain(SYNC_COOLDOWN_MS);
