@@ -107,6 +107,7 @@ cd otetsudai-bank && npm run dev
 - [ ] `20260409_invest_portfolios.sql` — otetsudai_invest_portfolios テーブルが作成されている
 - [ ] `20260409_tasks_insert_proposal_rls.sql` — tasks_insert_proposal RLSポリシーが追加されている（子供のpending提案INSERT許可）
 - [ ] `20260409_messages_nullable.sql` — otetsudai_messages.message カラムがNULLABLEになっている（スタンプのみ送信対応）
+- [ ] `20260409_anon_rls_policies.sql` — 全テーブルにanon許可ポリシーが追加されている（PIN認証ベースのため）
 
 ---
 

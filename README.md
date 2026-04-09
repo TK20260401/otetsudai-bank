@@ -46,7 +46,7 @@
 | ふりがな | 子供画面の全漢字にルビ自動付与 |
 | ヘルプ | 3ステップガイド、子供/親向け説明、FAQ |
 | PWA | manifest.json対応（standalone・テーマカラー#059669）、Service Worker |
-| RLSセキュリティ | 全9テーブルにRow Level Security有効化、get_my_family_id()関数で家族単位アクセス制御 |
+| RLSセキュリティ | 全テーブルにRow Level Security有効化。PIN認証（localStorage）ベースのためanon許可ポリシー併設。アプリ側でsession.familyIdフィルタ |
 | PIN暗号化 | pgcrypto拡張によるbcryptハッシュ保存、平文PINを保持しない設計（verify_pin/set_pin_hash RPC関数） |
 | アカウント削除 | 親ダッシュボードからsoft delete（確認テキスト「削除する」入力必須）、Supabase Auth連携削除 |
 | 法務ページ | プライバシーポリシー（/privacy）、利用規約（/terms）、フッターからリンク |
@@ -167,7 +167,7 @@ import RewardSplitSlider from "@/components/reward-split-slider";
 | v0.4 | 2026-04-08 | セキュリティ・認証・コード基盤強化。全9テーブルRLS有効化、PIN暗号化（pgcrypto+bcrypt）、Supabase Authハイブリッドセッション、アカウント削除（soft delete）、法務ページ（プライバシーポリシー・利用規約）、lib/services/層分離 |
 | v0.5 | 2026-04-08 | UD（ユニバーサルデザイン）対応・UI/UX強化。TOP画面リニューアル（ログイン済みリダイレクト・UDカラー3色フィーチャーカード）、報酬3分割スライダー（赤:つかう・青:ためる・緑:ふやす、カラーバー+アイコン二重符号化・aria対応）、クエスト構造化UI（準備→実行→完了の3ステップチェックリスト・順序制約ロック）、習熟度システム（見習い🌱x1/助手⭐x1.5/リーダー👑x2の報酬倍率）、親ダッシュボード3色ウォレット表示、大型タッチターゲット・アクセシビリティ改善 |
 | v0.6 | 2026-04-09 | エージェンシー強化・外部連携・コミュニケーション設計。おこさま後追加（親ダッシュボードからいつでも子供追加可能）、じぶんクエスト（子供がクエスト提案→親が報酬調整して承認/却下、エージェンシー醸成）、レベルアップシステム（累計獲得額ベース7段階ランク＋プログレスバー）、承認スタンプ（8種LINE風スタンプ＋ひとことメッセージ→子供への通知表示）、外部決済連携（PayPay/B43/LINE Payディープリンク）、株価連動Invest（Alpha Vantage API＋Supabase Edge Function＋投資ポートフォリオテーブル）、PWA強化（maskableアイコン・shortcuts・SW v2キャッシュ戦略・Apple PWA対応）、メンテナンスモード（環境変数トグル）、DBマイグレーション3本（self_quest/approval_stamps/invest_portfolios） |
-| v0.6.1 | 2026-04-09 | じぶんクエストUI改善＆バグ修正。プルダウン選択式（プリセット10種＋カスタム）に変更、報酬トップダウン化（親設定基準額）、スタンプ6種をクエスト提案にも追加、メッセージモード簡略化（プレビュー削除・スタンプのみ送信対応）、送信ボタン大型化＋アニメーション。クエスト提案のRLS修正（tasks_insert_proposalポリシー追加、proposal_status='pending'のみ許可）。メッセージのスタンプのみ送信対応（messageカラムNULLABLE化） |
+| v0.6.1 | 2026-04-09 | じぶんクエストUI改善＆RLS全面修正。プルダウン選択式（プリセット10種＋カスタム）に変更、報酬トップダウン化（親設定基準額）、スタンプ6種をクエスト提案にも追加、メッセージモード簡略化（プレビュー削除・スタンプのみ送信対応）、送信ボタン大型化＋アニメーション。RLS全面修正：アプリがPIN認証（localStorage）ベースでSupabase Auth未使用のためget_my_family_id()が機能しない問題を解消、全テーブルにanon許可ポリシー追加。messageカラムNULLABLE化（スタンプのみ送信対応） |
 
 ## Getting Started
 
