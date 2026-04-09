@@ -84,7 +84,7 @@ export default function SavingGoalSection({ childId, savingBalance, goals, onUpd
                 className="w-full border-dashed border-green-300 text-green-600"
                 onClick={() => setShowAdd(true)}
               >
-                ＋ <R k="目標" r="もくひょう" />をきめる
+                <span className="inline-flex items-baseline leading-relaxed">＋ <R k="目標" r="もくひょう" /> をきめる</span>
               </Button>
             ) : (
               <div className="space-y-2">
