@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-const IS_DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === "true";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -158,7 +157,7 @@ export default function LoginPage() {
                     >
                       🏠 {f.name}
                     </Button>
-                    {IS_DEV_MODE && (
+                    {f.name !== "山田家" && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -175,12 +174,6 @@ export default function LoginPage() {
                 ))}
               </div>
 
-              {/* 開発モードラベル */}
-              {IS_DEV_MODE && (
-                <p className="text-center text-[10px] text-gray-400 mt-2">
-                  🔧 かいはつモード
-                </p>
-              )}
             </>
           ) : !selectedUser ? (
             <>
@@ -274,7 +267,7 @@ export default function LoginPage() {
           <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-red-700 flex items-center gap-2">
-                🔧 かいはつモード — 家族データ削除
+                🗑️ おうちデータの さくじょ
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
