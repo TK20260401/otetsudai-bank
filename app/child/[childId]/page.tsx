@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getSession, clearSession } from "@/lib/session";
-import type { Task, Wallet, Transaction, SpendRequest, SavingGoal, Badge as BadgeType } from "@/lib/types";
+import type { Task, TaskLog, Wallet, Transaction, SpendRequest, SavingGoal, Badge as BadgeType } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTaskIcon } from "@/lib/task-icons";
 
@@ -49,6 +49,7 @@ export default function ChildDashboard({
   const [showCoinAnim, setShowCoinAnim] = useState(false);
   const [selfQuestOpen, setSelfQuestOpen] = useState(false);
   const [pendingProposals, setPendingProposals] = useState(0);
+  const [rejectedLogs, setRejectedLogs] = useState<(TaskLog & { task?: Task })[]>([]);
 
   const session = getSession();
 
@@ -101,6 +102,16 @@ export default function ChildDashboard({
       .select("*")
       .eq("child_id", childId);
     setBadges((badgeData as BadgeType[]) || []);
+
+    // やりなおしクエスト（差し戻し）を取得
+    const { data: rejLogs } = await supabase
+      .from("otetsudai_task_logs")
+      .select("*, task:otetsudai_tasks(*)")
+      .eq("child_id", childId)
+      .eq("status", "rejected")
+      .order("completed_at", { ascending: false })
+      .limit(5);
+    setRejectedLogs((rejLogs as (TaskLog & { task?: Task })[]) || []);
 
     // じぶんクエスト提案中の数を取得
     const { count } = await supabase
@@ -408,17 +419,39 @@ export default function ChildDashboard({
           </Card>
         </TabsContent>
       </Tabs>
-      {/* 却下された支出申請の通知 */}
-      {rejectedSpends.length > 0 && (
-        <Card className="mt-4 border-red-200 bg-red-50">
+      {/* やりなおしクエスト（差し戻し） */}
+      {rejectedLogs.length > 0 && (
+        <Card className="mt-4 border-amber-200 bg-amber-50">
           <CardContent className="p-4">
-            <p className="text-sm font-semibold text-red-600 mb-2">❌ <R k="却下" r="きゃっか" />されたリクエスト</p>
+            <p className="text-sm font-semibold text-amber-700 mb-2">🔄 やりなおし クエスト</p>
+            {rejectedLogs.map((log) => (
+              <div key={log.id} className="text-sm mb-2 p-2 rounded-lg bg-white/60">
+                <p className="font-semibold text-amber-800">{log.task?.title}</p>
+                {log.reject_reason ? (
+                  <p className="text-xs text-amber-600 mt-0.5">💬 {log.reject_reason}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-0.5">もういちど がんばろう！</p>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* つかう リクエストの やりなおし */}
+      {rejectedSpends.length > 0 && (
+        <Card className="mt-4 border-blue-200 bg-blue-50">
+          <CardContent className="p-4">
+            <p className="text-sm font-semibold text-blue-700 mb-2">🔄 つかう リクエストの やりなおし</p>
             {rejectedSpends.map((sr) => (
-              <div key={sr.id} className="text-sm mb-1">
-                <span className="text-red-500">¥{sr.amount.toLocaleString()}</span>
-                <span className="text-muted-foreground ml-1">{sr.purpose}</span>
-                {sr.reject_reason && (
-                  <p className="text-xs text-red-400 ml-4">→ {sr.reject_reason}</p>
+              <div key={sr.id} className="text-sm mb-2 p-2 rounded-lg bg-white/60">
+                <p className="font-semibold text-blue-800">
+                  ¥{sr.amount.toLocaleString()} — {sr.purpose}
+                </p>
+                {sr.reject_reason ? (
+                  <p className="text-xs text-blue-600 mt-0.5">💬 {sr.reject_reason}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-0.5">こんどは べつの つかいかたを かんがえてみよう！</p>
                 )}
               </div>
             ))}

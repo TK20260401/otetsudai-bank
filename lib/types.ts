@@ -42,6 +42,7 @@ export type TaskLog = {
   settled_at: string | null;
   approval_stamp: string | null;
   approval_message: string | null;
+  reject_reason: string | null;
   // joined
   task?: Task;
   child?: User;

@@ -31,7 +31,6 @@ export default function ParentDashboard() {
   const [wallets, setWallets] = useState<Record<string, Wallet>>({});
   const [pendingLogs, setPendingLogs] = useState<(TaskLog & { task: Task; child: User })[]>([]);
   const [pendingSpends, setPendingSpends] = useState<(SpendRequest & { child: User })[]>([]);
-  const [rejectReasons, setRejectReasons] = useState<Record<string, string>>({});
   const [stats, setStats] = useState({ totalApproved: 0, totalEarned: 0 });
   const [loading, setLoading] = useState(true);
   const [editingRatio, setEditingRatio] = useState<string | null>(null);
@@ -210,10 +209,10 @@ export default function ParentDashboard() {
     loadData();
   }
 
-  async function handleReject(logId: string) {
+  async function handleReject(logId: string, reason?: string) {
     await supabase
       .from("otetsudai_task_logs")
-      .update({ status: "rejected" })
+      .update({ status: "rejected", reject_reason: reason || null })
       .eq("id", logId);
     loadData();
   }
@@ -263,12 +262,11 @@ export default function ParentDashboard() {
     loadData();
   }
 
-  async function handleRejectSpend(spendId: string) {
-    const reason = rejectReasons[spendId] || "";
+  async function handleRejectSpend(spendId: string, reason?: string) {
     await fetch("/api/spend-request", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: spendId, action: "reject", reject_reason: reason }),
+      body: JSON.stringify({ id: spendId, action: "reject", reject_reason: reason || "" }),
     });
     loadData();
   }
@@ -355,34 +353,44 @@ export default function ParentDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {pendingLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-amber-50 border border-amber-100"
+                  className="p-3 rounded-xl bg-amber-50 border border-amber-100"
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-sm truncate">{log.task?.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      🧒 {displayName(log.child?.name)} ・ ¥{log.task?.reward_amount}
-                    </p>
-                  </div>
-                  <div className="flex gap-1.5 flex-shrink-0 ml-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-sm truncate">{log.task?.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        🧒 {displayName(log.child?.name)} ・ ¥{log.task?.reward_amount}
+                      </p>
+                    </div>
                     <Button
                       size="sm"
-                      className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3 flex-shrink-0 ml-2"
                       onClick={() => setApprovalTarget(log)}
                     >
                       ✓ しょうにん
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-red-200 text-red-500 hover:bg-red-50 h-9 w-9 p-0"
-                      onClick={() => handleReject(log.id)}
-                    >
-                      ✗
-                    </Button>
+                  </div>
+                  {/* やりなおしプリセット理由 */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "🔄 やりなおし", reason: "" },
+                      { label: "もうすこし ていねいに", reason: "もうすこし ていねいに やってみよう" },
+                      { label: "さいごまで やろう", reason: "さいごまで やりきろう！" },
+                      { label: "じかんを かけてね", reason: "もうすこし じかんを かけてみよう" },
+                    ].map((preset) => (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        className="text-[11px] px-2.5 py-1 rounded-full border border-amber-200 text-amber-700 bg-white hover:bg-amber-100 active:scale-95 transition-all"
+                        onClick={() => handleReject(log.id, preset.reason)}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -414,30 +422,32 @@ export default function ParentDashboard() {
                         🧒 {displayName(spend.child?.name)}
                       </p>
                     </div>
-                    <div className="flex gap-1.5 flex-shrink-0 ml-2">
-                      <Button
-                        size="sm"
-                        className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3"
-                        onClick={() => handleApproveSpend(spend)}
-                      >
-                        ✓ OK
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-red-200 text-red-500 hover:bg-red-50 h-9 w-9 p-0"
-                        onClick={() => handleRejectSpend(spend.id)}
-                      >
-                        ✗
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3 flex-shrink-0 ml-2"
+                      onClick={() => handleApproveSpend(spend)}
+                    >
+                      ✓ OK
+                    </Button>
                   </div>
-                  <Input
-                    placeholder="きゃっかの りゆう（にゅうりょく しなくても OK）"
-                    value={rejectReasons[spend.id] || ""}
-                    onChange={(e) => setRejectReasons((prev) => ({ ...prev, [spend.id]: e.target.value }))}
-                    className="text-xs h-8"
-                  />
+                  {/* やりなおしプリセット理由 */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "🔄 いまは やめておこう", reason: "" },
+                      { label: "たかすぎるよ", reason: "きんがくを みなおしてみよう" },
+                      { label: "りゆうを くわしく", reason: "もうすこし くわしく おしえてね" },
+                      { label: "ためてからね", reason: "もうすこし ためてからにしよう" },
+                    ].map((preset) => (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        className="text-[11px] px-2.5 py-1 rounded-full border border-blue-200 text-blue-700 bg-white hover:bg-blue-100 active:scale-95 transition-all"
+                        onClick={() => handleRejectSpend(spend.id, preset.reason)}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
@@ -505,10 +515,10 @@ export default function ParentDashboard() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-red-200 text-red-500 hover:bg-red-50 flex-1 h-9"
+                      className="border-amber-200 text-amber-600 hover:bg-amber-50 flex-1 h-9"
                       onClick={() => handleRejectProposal(proposal.id)}
                     >
-                      ✗ きゃっか
+                      🔄 こんどにしよう
                     </Button>
                   </div>
                 </div>
