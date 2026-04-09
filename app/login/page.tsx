@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
+const IS_DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === "true";
+
 export default function LoginPage() {
   const router = useRouter();
   const [families, setFamilies] = useState<Family[]>([]);
@@ -19,8 +21,14 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<Family | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    loadFamilies();
+  }, []);
+
+  function loadFamilies() {
     supabase
       .from("otetsudai_families")
       .select("*")
@@ -28,7 +36,7 @@ export default function LoginPage() {
         setFamilies(data || []);
         setLoading(false);
       });
-  }, []);
+  }
 
   async function handleFamilySelect(family: Family) {
     setSelectedFamily(family);
@@ -80,6 +88,28 @@ export default function LoginPage() {
     }
   }
 
+  async function handleDeleteFamily() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/family", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ family_id: deleteTarget.id }),
+      });
+      if (res.ok) {
+        setDeleteTarget(null);
+        loadFamilies();
+      } else {
+        const data = await res.json();
+        setError(data.error || "削除に失敗しました");
+      }
+    } catch {
+      setError("削除に失敗しました");
+    }
+    setDeleting(false);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -120,16 +150,37 @@ export default function LoginPage() {
               </Label>
               <div className="grid gap-2">
                 {families.map((f) => (
-                  <Button
-                    key={f.id}
-                    variant="outline"
-                    className="h-14 text-lg border-amber-300 hover:bg-amber-100"
-                    onClick={() => handleFamilySelect(f)}
-                  >
-                    🏠 {f.name}
-                  </Button>
+                  <div key={f.id} className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      className="h-14 text-lg border-amber-300 hover:bg-amber-100 flex-1"
+                      onClick={() => handleFamilySelect(f)}
+                    >
+                      🏠 {f.name}
+                    </Button>
+                    {IS_DEV_MODE && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-14 px-3 text-red-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteTarget(f);
+                        }}
+                      >
+                        🗑️
+                      </Button>
+                    )}
+                  </div>
                 ))}
               </div>
+
+              {/* 開発モードラベル */}
+              {IS_DEV_MODE && (
+                <p className="text-center text-[10px] text-gray-400 mt-2">
+                  🔧 かいはつモード
+                </p>
+              )}
             </>
           ) : !selectedUser ? (
             <>
@@ -216,6 +267,49 @@ export default function LoginPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* 家族削除確認ダイアログ（開発用） */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base text-red-700 flex items-center gap-2">
+                🔧 かいはつモード — 家族データ削除
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm font-semibold text-red-800">
+                「{deleteTarget.name}」のデータをすべて削除しますか？
+              </p>
+              <p className="text-xs text-red-500">
+                この操作は取り消せません。家族に紐づくすべてのデータ（ユーザー・クエスト・ウォレット・履歴等）が完全に削除されます。
+              </p>
+              {error && (
+                <p className="text-destructive text-xs text-center">{error}</p>
+              )}
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => { setDeleteTarget(null); setError(""); }}
+                  disabled={deleting}
+                >
+                  やめる
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  onClick={handleDeleteFamily}
+                  disabled={deleting}
+                >
+                  {deleting ? "さくじょちゅう..." : "🗑️ 削除する"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

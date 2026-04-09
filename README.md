@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.6.1）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.7）
 
 ## 概要
 
@@ -283,6 +283,7 @@ Phase 3（1年〜）  → 銀行API直結 ※資金移動業ライセンス必�
 | StampNotifications | components/stamp-notifications.tsx | 子供ダッシュボードのスタンプ通知表示 |
 | PaymentLinkDialog | components/payment-link.tsx | 支出承認後の外部決済アプリ連携ダイアログ |
 | InvestPortfolio | components/invest-portfolio.tsx | 投資ポートフォリオ表示。銘柄別損益+同期ボタン |
+| InvestOrderDialog | components/invest-order-dialog.tsx | 投資注文ダイアログ。プリセット8銘柄選択+金額入力 |
 | MaintenanceGuard | components/maintenance-guard.tsx | メンテナンスモードガード |
 | CoinAnimation | components/coin-animation.tsx | クエストクリア時のコインアニメーション |
 | BadgeDisplay | components/badge-display.tsx | 達成バッジ表示 |
@@ -327,6 +328,7 @@ Phase 3（1年〜）  → 銀行API直結 ※資金移動業ライセンス必�
 | v0.5 | 2026-04-08 | UD対応・UI/UX強化。報酬3分割スライダー、クエスト構造化UI、習熟度システム、親ダッシュボード3色ウォレット |
 | v0.6 | 2026-04-09 | エージェンシー強化。おこさま後追加、じぶんクエスト、レベルアップ、承認スタンプ、外部決済連携、株価連動Invest、PWA強化、メンテナンスモード |
 | v0.6.1 | 2026-04-09 | 全面改善。じぶんクエストUI改善、RLS全面修正、親ダッシュボード刷新（統計廃止・空状態・ウォレット3分割バグ修正）、やりなおしUI（教育的配慮）、送金ステータス管理（Phase 1実装） |
+| v0.7 | 2026-04-09 | 法務・運用強化。利用規約全面リニューアル（免責事項強調表示・ロードマップ開示・投資シミュレーション免責）、プライバシーポリシー強化（収集/非収集データ明記・Cookie方針・COPPA配慮）、フッターリンク追加、開発用家族削除機能（NEXT_PUBLIC_DEV_MODE制御・カスケード完全削除API） |
 
 ## Getting Started
 

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 import GlobalChat from "@/components/global-chat";
 import { MaintenanceGuard } from "@/components/maintenance-guard";
 
@@ -44,7 +45,16 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-gradient-to-b from-emerald-50 to-amber-50">
         <MaintenanceGuard>
-          {children}
+          <div className="flex-1">
+            {children}
+          </div>
+          <footer className="py-4 text-center text-xs text-gray-400 space-x-3">
+            <Link href="/terms" className="hover:text-gray-600 hover:underline">利用規約</Link>
+            <span>|</span>
+            <Link href="/privacy" className="hover:text-gray-600 hover:underline">プライバシーポリシー</Link>
+            <span>|</span>
+            <Link href="/help" className="hover:text-gray-600 hover:underline">ヘルプ</Link>
+          </footer>
           <GlobalChat />
         </MaintenanceGuard>
         <script
