@@ -48,9 +48,7 @@ export default function ChildDashboard({
   const [badges, setBadges] = useState<BadgeType[]>([]);
   const [showCoinAnim, setShowCoinAnim] = useState(false);
   const [selfQuestOpen, setSelfQuestOpen] = useState(false);
-  const [selfQuestMode, setSelfQuestMode] = useState<"quest" | "message">("quest");
   const [pendingProposals, setPendingProposals] = useState(0);
-  const [unreadMessages, setUnreadMessages] = useState(0);
 
   const session = getSession();
 
@@ -112,13 +110,6 @@ export default function ChildDashboard({
       .eq("proposal_status", "pending");
     setPendingProposals(count || 0);
 
-    // 子供宛の未読メッセージ数（親からの返信）
-    const { count: msgCount } = await supabase
-      .from("otetsudai_messages")
-      .select("*", { count: "exact", head: true })
-      .eq("to_user_id", childId)
-      .eq("is_read", false);
-    setUnreadMessages(msgCount || 0);
 
     // Filter transactions by this child's wallet
     if (walletRes.data) {
@@ -294,29 +285,16 @@ export default function ChildDashboard({
         );
       })()}
 
-      {/* おやへの アクション */}
-      <div className="mb-4 space-y-2">
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            className="h-14 text-base bg-emerald-500 hover:bg-emerald-600 text-white"
-            onClick={() => { setSelfQuestMode("quest"); setSelfQuestOpen(true); }}
-          >
-            ✨ クエストていあん
-          </Button>
-          <Button
-            className="h-14 text-base bg-blue-500 hover:bg-blue-600 text-white"
-            onClick={() => { setSelfQuestMode("message"); setSelfQuestOpen(true); }}
-          >
-            💬 メッセージ
-            {unreadMessages > 0 && (
-              <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
-                {unreadMessages}
-              </span>
-            )}
-          </Button>
-        </div>
+      {/* じぶんクエストを つくる */}
+      <div className="mb-4">
+        <Button
+          className="w-full h-14 text-lg bg-emerald-500 hover:bg-emerald-600 text-white"
+          onClick={() => setSelfQuestOpen(true)}
+        >
+          ✨ じぶんクエストを つくる
+        </Button>
         {pendingProposals > 0 && (
-          <p className="text-center text-xs text-amber-600">
+          <p className="text-center text-xs text-amber-600 mt-1">
             📨 {pendingProposals}けんの ていあんが しょうにんまちだよ
           </p>
         )}
@@ -327,7 +305,6 @@ export default function ChildDashboard({
         childId={childId}
         familyId={session?.familyId || ""}
         onCreated={loadData}
-        initialMode={selfQuestMode}
       />
 
       <Tabs defaultValue="tasks" className="w-full">
