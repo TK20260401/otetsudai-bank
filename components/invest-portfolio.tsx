@@ -83,10 +83,18 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
     setSyncMessage(null);
 
     try {
-      const res = await fetch("/api/stock-sync");
+      const res = await fetch("/api/stock-sync", { cache: "no-store" });
+      if (!res.ok) {
+        setSyncMessage({
+          type: "error",
+          text: "⚠️ こうしん しっぱい。もういちど ためしてね",
+        });
+        setSyncing(false);
+        return;
+      }
       const data = await res.json();
 
-      if (res.ok) {
+      if (data) {
         await loadPortfolios();
         setSyncMessage({
           type: "success",

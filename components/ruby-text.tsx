@@ -7,7 +7,7 @@ export function R({ k, r }: { k: string; r: string }) {
   return (
     <ruby>
       {k}
-      <rt className="text-[0.5em] text-inherit opacity-70">{r}</rt>
+      <rt className="text-[0.55em] leading-none text-inherit opacity-70">{r}</rt>
     </ruby>
   );
 }
@@ -31,9 +31,12 @@ const RUBY_DICT: [string, string][] = [
   ["玄関", "げんかん"],
   ["台拭", "だいふ"],
   ["布団", "ふとん"],
+  ["拭", "ふ"],
   // 料理・食事
   ["料理", "りょうり"],
   ["配膳", "はいぜん"],
+  ["箸並", "はしなら"],
+  ["箸", "はし"],
   ["夕食", "ゆうしょく"],
   ["朝食", "ちょうしょく"],
   ["昼食", "ちゅうしょく"],
