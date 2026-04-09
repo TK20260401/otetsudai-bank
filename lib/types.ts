@@ -125,8 +125,14 @@ export type StockPrice = {
   id: string;
   symbol: string;
   name: string;
+  name_ja: string | null;
+  name_kana: string | null;
+  category: "index" | "jp_stock" | "us_stock";
   icon: string;
+  description_kids: string;
   price: number;
+  price_jpy: number;
+  change_percent: number;
   currency: "JPY" | "USD";
   is_preset: boolean;
   updated_at: string;

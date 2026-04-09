@@ -23,6 +23,12 @@ type Props = {
   onCreated: () => void;
 };
 
+const CATEGORIES = [
+  { key: "index", label: "📊 インデックス", desc: "はじめての ひとに おすすめ" },
+  { key: "jp_stock", label: "🇯🇵 にほん", desc: "" },
+  { key: "us_stock", label: "🇺🇸 アメリカ", desc: "" },
+] as const;
+
 export function InvestOrderDialog({
   open,
   onClose,
@@ -37,6 +43,7 @@ export function InvestOrderDialog({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>("index");
 
   useEffect(() => {
     if (open) {
@@ -45,6 +52,7 @@ export function InvestOrderDialog({
       setAmount("");
       setError("");
       setSuccess(false);
+      setActiveCategory("index");
     }
   }, [open]);
 
@@ -53,9 +61,12 @@ export function InvestOrderDialog({
       .from("otetsudai_stock_prices")
       .select("*")
       .eq("is_preset", true)
+      .order("category")
       .order("symbol");
     setStocks((data as StockPrice[]) || []);
   }
+
+  const filteredStocks = stocks.filter((s) => s.category === activeCategory);
 
   async function handleSubmit() {
     if (!selected) {
@@ -81,7 +92,7 @@ export function InvestOrderDialog({
         child_id: childId,
         wallet_id: walletId,
         symbol: selected.symbol,
-        name: selected.name,
+        name: selected.name_ja || selected.name,
         amount: amountNum,
         order_type: "buy",
         status: "pending",
@@ -100,9 +111,18 @@ export function InvestOrderDialog({
     }, 2000);
   }
 
+  function formatPrice(stock: StockPrice): string {
+    if (stock.price_jpy > 0) return `¥${stock.price_jpy.toLocaleString()}`;
+    if (stock.price > 0) {
+      if (stock.currency === "JPY") return `¥${stock.price.toLocaleString()}`;
+      return `$${stock.price.toLocaleString()}`;
+    }
+    return "—";
+  }
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>🌱 かぶを かいたい！</DialogTitle>
           <DialogDescription>
@@ -130,28 +150,79 @@ export function InvestOrderDialog({
               </p>
             </div>
 
+            {/* カテゴリタブ */}
+            <div>
+              <Label>カテゴリを えらぼう</Label>
+              <div className="flex gap-1.5 mt-2">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.key}
+                    type="button"
+                    onClick={() => { setActiveCategory(cat.key); setSelected(null); setError(""); }}
+                    className={`flex-1 text-xs py-2 px-1 rounded-lg border transition-all ${
+                      activeCategory === cat.key
+                        ? "bg-green-100 border-green-400 font-bold text-green-800"
+                        : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+              {CATEGORIES.find((c) => c.key === activeCategory)?.desc && (
+                <p className="text-[10px] text-green-600 mt-1 text-center">
+                  {CATEGORIES.find((c) => c.key === activeCategory)?.desc}
+                </p>
+              )}
+            </div>
+
             {/* 銘柄選択 */}
             <div>
               <Label>めいがらを えらぼう</Label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {stocks.map((stock) => (
+              <div className="grid gap-2 mt-2">
+                {filteredStocks.map((stock) => (
                   <button
                     key={stock.symbol}
                     type="button"
                     onClick={() => { setSelected(stock); setError(""); }}
-                    className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all text-left ${
+                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                       selected?.symbol === stock.symbol
                         ? "bg-green-100 border-green-400 ring-2 ring-green-300"
                         : "bg-white border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    <span className="text-xl">{stock.icon}</span>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold truncate">{stock.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{stock.symbol}</p>
+                    <span className="text-2xl flex-shrink-0">{stock.icon}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold truncate">
+                          {stock.name_ja || stock.name}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground flex-shrink-0">
+                          {stock.symbol}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-tight">
+                        {stock.description_kids}
+                      </p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-xs font-bold">{formatPrice(stock)}</p>
+                      {stock.change_percent !== 0 && (
+                        <p className={`text-[10px] font-semibold ${
+                          stock.change_percent >= 0 ? "text-green-600" : "text-red-600"
+                        }`}>
+                          {stock.change_percent >= 0 ? "📈" : "📉"}{" "}
+                          {stock.change_percent >= 0 ? "+" : ""}{stock.change_percent.toFixed(2)}%
+                        </p>
+                      )}
                     </div>
                   </button>
                 ))}
+                {filteredStocks.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    この カテゴリの めいがらは ありません
+                  </p>
+                )}
               </div>
             </div>
 
