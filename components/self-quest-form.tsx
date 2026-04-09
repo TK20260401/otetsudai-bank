@@ -23,10 +23,7 @@ type Props = {
   childId: string;
   familyId: string;
   onCreated: () => void;
-  /** 親が設定した提案上限額（デフォルト500円） */
   maxReward?: number;
-  /** 初期モード */
-  initialMode?: Mode;
 };
 
 const QUICK_STAMPS = [
@@ -45,23 +42,33 @@ export function SelfQuestForm({
   familyId,
   onCreated,
   maxReward = 500,
-  initialMode = "quest",
 }: Props) {
-  const [mode, setMode] = useState<Mode>(initialMode);
-  const [title, setTitle] = useState("");
-  const [reward, setReward] = useState("");
-  const [message, setMessage] = useState("");
-  const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>("quest");
+
+  // クエスト提案用 — 完全独立
+  const [questTitle, setQuestTitle] = useState("");
+  const [questReward, setQuestReward] = useState("");
+  const [questNote, setQuestNote] = useState("");
+
+  // メッセージ用 — 完全独立
+  const [msgBody, setMsgBody] = useState("");
+  const [msgStamp, setMsgStamp] = useState<string | null>(null);
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  function switchMode(m: Mode) {
+    setMode(m);
+    setError("");
+  }
+
   async function handleSubmitQuest() {
-    if (!title.trim()) {
+    if (!questTitle.trim()) {
       setError("クエストの なまえを いれてね");
       return;
     }
-    const rewardNum = parseInt(reward) || 0;
+    const rewardNum = parseInt(questReward) || 0;
     if (rewardNum <= 0) {
       setError("ごほうびの きんがくを いれてね");
       return;
@@ -78,8 +85,8 @@ export function SelfQuestForm({
       .from("otetsudai_tasks")
       .insert({
         family_id: familyId,
-        title: title.trim(),
-        description: message.trim() || null,
+        title: questTitle.trim(),
+        description: questNote.trim() || null,
         reward_amount: rewardNum,
         recurrence: "once",
         assigned_child_id: childId,
@@ -87,26 +94,21 @@ export function SelfQuestForm({
         created_by: childId,
         proposal_status: "pending",
         proposed_reward: rewardNum,
-        proposal_message: message.trim() || null,
+        proposal_message: questNote.trim() || null,
       });
 
     setLoading(false);
-
     if (insertError) {
       setError("おくれませんでした。もういちど ためしてね");
       return;
     }
 
     setSuccess(true);
-    setTimeout(() => {
-      resetForm();
-      onClose();
-      onCreated();
-    }, 2000);
+    setTimeout(() => { resetAndClose(); onCreated(); }, 2000);
   }
 
   async function handleSubmitMessage() {
-    if (!message.trim()) {
+    if (!msgBody.trim()) {
       setError("メッセージを いれてね");
       return;
     }
@@ -119,41 +121,35 @@ export function SelfQuestForm({
       .insert({
         family_id: familyId,
         from_user_id: childId,
-        to_user_id: null, // 家族全員宛（親が見る）
-        message: message.trim(),
-        stamp: selectedStamp,
+        to_user_id: null,
+        message: msgBody.trim(),
+        stamp: msgStamp,
       });
 
     setLoading(false);
-
     if (insertError) {
       setError("おくれませんでした。もういちど ためしてね");
       return;
     }
 
     setSuccess(true);
-    setTimeout(() => {
-      resetForm();
-      onClose();
-      onCreated();
-    }, 2000);
+    setTimeout(() => { resetAndClose(); onCreated(); }, 2000);
   }
 
-  function resetForm() {
-    setTitle("");
-    setReward("");
-    setMessage("");
-    setSelectedStamp(null);
+  function resetAndClose() {
+    setQuestTitle("");
+    setQuestReward("");
+    setQuestNote("");
+    setMsgBody("");
+    setMsgStamp(null);
     setError("");
     setSuccess(false);
+    setMode("quest");
+    onClose();
   }
 
   function handleOpenChange(v: boolean) {
-    if (!v) {
-      resetForm();
-      setMode(initialMode);
-      onClose();
-    }
+    if (!v) resetAndClose();
   }
 
   return (
@@ -177,7 +173,7 @@ export function SelfQuestForm({
               variant={mode === "quest" ? "default" : "outline"}
               size="sm"
               className={mode === "quest" ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}
-              onClick={() => { setMode("quest"); setError(""); }}
+              onClick={() => switchMode("quest")}
             >
               ✨ クエスト
             </Button>
@@ -185,7 +181,7 @@ export function SelfQuestForm({
               variant={mode === "message" ? "default" : "outline"}
               size="sm"
               className={mode === "message" ? "bg-blue-500 hover:bg-blue-600 text-white" : ""}
-              onClick={() => { setMode("message"); setError(""); }}
+              onClick={() => switchMode("message")}
             >
               💬 メッセージ
             </Button>
@@ -205,35 +201,30 @@ export function SelfQuestForm({
             </p>
           </div>
         ) : mode === "quest" ? (
-          /* クエスト提案モード */
+          /* ────── クエスト提案 ────── */
           <div className="space-y-4">
             <div>
-              <Label htmlFor="quest-title">
-                クエストの なまえ
-              </Label>
+              <Label htmlFor="q-title">クエストの なまえ</Label>
               <Input
-                id="quest-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                id="q-title"
+                value={questTitle}
+                onChange={(e) => setQuestTitle(e.target.value)}
                 placeholder="れい: ほんを 3さつ よむ"
                 className="mt-1 h-12 text-lg"
                 autoFocus
               />
             </div>
-
             <div>
-              <Label htmlFor="quest-reward">
-                ほしい ごほうび（えん）
-              </Label>
+              <Label htmlFor="q-reward">ほしい ごほうび（えん）</Label>
               <Input
-                id="quest-reward"
+                id="q-reward"
                 type="number"
                 inputMode="numeric"
                 min={10}
                 max={maxReward}
                 step={10}
-                value={reward}
-                onChange={(e) => setReward(e.target.value)}
+                value={questReward}
+                onChange={(e) => setQuestReward(e.target.value)}
                 placeholder="100"
                 className="mt-1 h-12 text-xl text-center"
               />
@@ -241,24 +232,17 @@ export function SelfQuestForm({
                 さいだい {maxReward}えん まで。おやが きんがくを かえることもあるよ
               </p>
             </div>
-
             <div>
-              <Label htmlFor="quest-message">
-                おやへの メッセージ（なくても OK）
-              </Label>
+              <Label htmlFor="q-note">おやへの メッセージ（なくても OK）</Label>
               <Input
-                id="quest-message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                id="q-note"
+                value={questNote}
+                onChange={(e) => setQuestNote(e.target.value)}
                 placeholder="れい: まいにち がんばるよ！"
                 className="mt-1 h-12"
               />
             </div>
-
-            {error && (
-              <p className="text-destructive text-sm text-center">{error}</p>
-            )}
-
+            {error && <p className="text-destructive text-sm text-center">{error}</p>}
             <Button
               className="w-full h-14 text-lg bg-emerald-500 hover:bg-emerald-600 text-white"
               onClick={handleSubmitQuest}
@@ -268,9 +252,8 @@ export function SelfQuestForm({
             </Button>
           </div>
         ) : (
-          /* メッセージモード */
+          /* ────── メッセージ ────── */
           <div className="space-y-4">
-            {/* クイックスタンプ */}
             <div>
               <Label>スタンプ（えらばなくても OK）</Label>
               <div className="grid grid-cols-6 gap-2 mt-1">
@@ -278,11 +261,9 @@ export function SelfQuestForm({
                   <button
                     key={s.emoji}
                     type="button"
-                    onClick={() =>
-                      setSelectedStamp(selectedStamp === s.emoji ? null : s.emoji)
-                    }
+                    onClick={() => setMsgStamp(msgStamp === s.emoji ? null : s.emoji)}
                     className={`flex flex-col items-center p-1.5 rounded-xl transition-all ${
-                      selectedStamp === s.emoji
+                      msgStamp === s.emoji
                         ? "bg-blue-100 ring-2 ring-blue-400 scale-110"
                         : "bg-gray-50 hover:bg-gray-100"
                     }`}
@@ -295,42 +276,33 @@ export function SelfQuestForm({
                 ))}
               </div>
             </div>
-
             <div>
-              <Label htmlFor="msg-body">メッセージ</Label>
+              <Label htmlFor="m-body">メッセージ</Label>
               <Textarea
-                id="msg-body"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="れい: きょう たのしかったよ！&#10;れい: あたらしい クエスト ほしいな"
+                id="m-body"
+                value={msgBody}
+                onChange={(e) => setMsgBody(e.target.value)}
+                placeholder={"れい: きょう たのしかったよ！\nれい: あたらしい クエスト ほしいな"}
                 className="mt-1 min-h-[100px] text-base"
                 maxLength={200}
                 autoFocus
               />
               <p className="text-[10px] text-muted-foreground mt-1 text-right">
-                {message.length}/200
+                {msgBody.length}/200
               </p>
             </div>
-
-            {/* プレビュー */}
-            {(selectedStamp || message.trim()) && (
+            {(msgStamp || msgBody.trim()) && (
               <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
                 <p className="text-[10px] text-blue-400 mb-1">プレビュー</p>
                 <div className="flex items-start gap-2">
-                  {selectedStamp && (
-                    <span className="text-3xl flex-shrink-0">{selectedStamp}</span>
-                  )}
-                  {message.trim() && (
-                    <p className="text-sm text-blue-800 whitespace-pre-wrap">{message}</p>
+                  {msgStamp && <span className="text-3xl flex-shrink-0">{msgStamp}</span>}
+                  {msgBody.trim() && (
+                    <p className="text-sm text-blue-800 whitespace-pre-wrap">{msgBody}</p>
                   )}
                 </div>
               </div>
             )}
-
-            {error && (
-              <p className="text-destructive text-sm text-center">{error}</p>
-            )}
-
+            {error && <p className="text-destructive text-sm text-center">{error}</p>}
             <Button
               className="w-full h-14 text-lg bg-blue-500 hover:bg-blue-600 text-white"
               onClick={handleSubmitMessage}
