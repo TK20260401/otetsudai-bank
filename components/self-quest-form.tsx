@@ -128,27 +128,32 @@ export function SelfQuestForm({
     setError("");
     setLoading(true);
 
-    const { error: insertError } = await supabase
-      .from("otetsudai_tasks")
-      .insert({
-        family_id: familyId,
-        title,
-        description: proposalMessage,
-        reward_amount: questReward,
-        recurrence: "once",
-        assigned_child_id: childId,
-        is_active: false,
-        created_by: childId,
-        proposal_status: "pending",
-        proposed_reward: questReward,
-        proposal_message: proposalMessage,
+    try {
+      const res = await fetch("/api/quest-proposal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          family_id: familyId,
+          title,
+          description: proposalMessage,
+          reward_amount: questReward,
+          assigned_child_id: childId,
+          proposed_reward: questReward,
+          proposal_message: proposalMessage,
+        }),
       });
-
-    setLoading(false);
-    if (insertError) {
+      if (!res.ok) {
+        setLoading(false);
+        setError("おくれませんでした。もういちど ためしてね");
+        return;
+      }
+    } catch {
+      setLoading(false);
       setError("おくれませんでした。もういちど ためしてね");
       return;
     }
+
+    setLoading(false);
 
     setSuccess(true);
     setTimeout(() => { resetAndClose(); onCreated(); }, 2000);
