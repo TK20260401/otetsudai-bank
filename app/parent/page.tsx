@@ -52,32 +52,49 @@ export default function ParentDashboard() {
   const loadData = useCallback(async () => {
     if (!session) return;
 
-    const [childRes, walletRes, logsRes, approvedRes, spendRes] = await Promise.all([
-      supabase
-        .from("otetsudai_users")
-        .select("*")
-        .eq("family_id", session.familyId)
-        .eq("role", "child"),
+    // まず子供一覧を取得（IDリストで後続クエリをフィルタ）
+    const { data: childData } = await supabase
+      .from("otetsudai_users")
+      .select("*")
+      .eq("family_id", session.familyId)
+      .eq("role", "child");
+    const childList = childData || [];
+    setChildren(childList);
+    const childIds = childList.map((c: User) => c.id);
+
+    // 子供IDリストが空なら残りのクエリは不要
+    if (childIds.length === 0) {
+      setWallets({});
+      setPendingLogs([]);
+      setPendingSpends([]);
+      setStats({ totalApproved: 0, totalEarned: 0, weeklyCount: 0, weeklyTotal: 0 });
+      setLoading(false);
+      return;
+    }
+
+    const [walletRes, logsRes, approvedRes, spendRes] = await Promise.all([
       supabase
         .from("otetsudai_wallets")
-        .select("*"),
+        .select("*")
+        .in("child_id", childIds),
       supabase
         .from("otetsudai_task_logs")
         .select("*, task:otetsudai_tasks(*), child:child_id(id, name, role)")
+        .in("child_id", childIds)
         .eq("status", "pending")
         .order("completed_at", { ascending: false }),
       supabase
         .from("otetsudai_task_logs")
         .select("*, task:otetsudai_tasks(*)")
+        .in("child_id", childIds)
         .eq("status", "approved"),
       supabase
         .from("otetsudai_spend_requests")
         .select("*, child:child_id(id, name, role)")
+        .in("child_id", childIds)
         .eq("status", "pending")
         .order("created_at", { ascending: false }),
     ]);
-
-    setChildren(childRes.data || []);
 
     const walletMap: Record<string, Wallet> = {};
     (walletRes.data || []).forEach((w: Wallet) => {
