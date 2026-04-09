@@ -39,15 +39,15 @@ export default function TermsPage() {
             <div className="flex items-start gap-2">
               <span className="bg-gray-400 text-white text-xs font-bold px-2 py-0.5 rounded-full mt-0.5 flex-shrink-0">将来</span>
               <div>
-                <p className="font-semibold text-gray-700">Phase 2: プリペイドカード連携</p>
-                <p className="text-gray-500 text-xs">B/43ジュニア等との連携（予定）</p>
+                <p className="font-semibold text-gray-700">Phase 2: プリペイドカード連携・銘柄拡充</p>
+                <p className="text-gray-500 text-xs">B/43ジュニア等との連携、投資シミュレーション銘柄の拡充（予定）</p>
               </div>
             </div>
             <div className="flex items-start gap-2">
               <span className="bg-gray-400 text-white text-xs font-bold px-2 py-0.5 rounded-full mt-0.5 flex-shrink-0">将来</span>
               <div>
-                <p className="font-semibold text-gray-700">Phase 3: 銀行API連携</p>
-                <p className="text-gray-500 text-xs">資金移動業ライセンス取得後の実装予定</p>
+                <p className="font-semibold text-gray-700">Phase 3: 銀行API連携・銘柄本格拡充</p>
+                <p className="text-gray-500 text-xs">資金移動業ライセンス取得後の実装予定、投資銘柄の本格拡充</p>
               </div>
             </div>
           </div>
@@ -94,6 +94,8 @@ export default function TermsPage() {
               <li>投資助言・投資勧誘には該当しません</li>
               <li>シミュレーション結果は実際の投資成果を保証するものではありません</li>
               <li>実際の投資判断は保護者ご自身の責任で行ってください</li>
+              <li>銘柄の選択肢は、教育心理学の「選択肢のパラドックス」（選択肢が多すぎると判断が困難になる現象）を考慮し、お子様が無理なく選べる数に意図的に制限しています</li>
+              <li>銘柄ラインナップは今後のバージョンアップで段階的に拡充する予定です</li>
             </ul>
           </div>
         </section>
