@@ -16,8 +16,14 @@ import { PaymentLinkDialog } from "@/components/payment-link";
 import { AddChildDialog } from "@/components/add-child-dialog";
 import { ApprovalDialog } from "@/components/approval-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+
+/** メールアドレス形式なら表示名として不適切と判断 */
+function displayName(name: string | undefined | null): string {
+  if (!name) return "なまえ未設定";
+  if (name.includes("@")) return name.split("@")[0];
+  return name;
+}
 
 export default function ParentDashboard() {
   const router = useRouter();
@@ -26,7 +32,7 @@ export default function ParentDashboard() {
   const [pendingLogs, setPendingLogs] = useState<(TaskLog & { task: Task; child: User })[]>([]);
   const [pendingSpends, setPendingSpends] = useState<(SpendRequest & { child: User })[]>([]);
   const [rejectReasons, setRejectReasons] = useState<Record<string, string>>({});
-  const [stats, setStats] = useState({ totalApproved: 0, totalEarned: 0, weeklyCount: 0, weeklyTotal: 0 });
+  const [stats, setStats] = useState({ totalApproved: 0, totalEarned: 0 });
   const [loading, setLoading] = useState(true);
   const [editingRatio, setEditingRatio] = useState<string | null>(null);
   const [tempSaveRatio, setTempSaveRatio] = useState(30);
@@ -46,6 +52,7 @@ export default function ParentDashboard() {
     purpose: string;
     childName: string;
   }>({ open: false, amount: 0, purpose: "", childName: "" });
+  const [taskCount, setTaskCount] = useState(0);
 
   const session = getSession();
 
@@ -62,12 +69,20 @@ export default function ParentDashboard() {
     setChildren(childList);
     const childIds = childList.map((c: User) => c.id);
 
+    // クエスト数を取得
+    const { count: tCount } = await supabase
+      .from("otetsudai_tasks")
+      .select("*", { count: "exact", head: true })
+      .eq("family_id", session.familyId)
+      .eq("is_active", true);
+    setTaskCount(tCount || 0);
+
     // 子供IDリストが空なら残りのクエリは不要
     if (childIds.length === 0) {
       setWallets({});
       setPendingLogs([]);
       setPendingSpends([]);
-      setStats({ totalApproved: 0, totalEarned: 0, weeklyCount: 0, weeklyTotal: 0 });
+      setStats({ totalApproved: 0, totalEarned: 0 });
       setLoading(false);
       return;
     }
@@ -114,7 +129,6 @@ export default function ParentDashboard() {
       .order("created_at", { ascending: false });
     const proposalData = (proposals as (Task & { child?: User })[]) || [];
     setQuestProposals(proposalData);
-    // 報酬編集用の初期値
     const rewards: Record<string, number> = {};
     proposalData.forEach((p) => { rewards[p.id] = p.reward_amount; });
     setProposalRewards(rewards);
@@ -130,14 +144,9 @@ export default function ParentDashboard() {
     setChildMessages(msgs || []);
 
     const approved = approvedRes.data || [];
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const weeklyApproved = approved.filter((l: TaskLog) => new Date(l.approved_at!) > weekAgo);
     setStats({
       totalApproved: approved.length,
       totalEarned: approved.reduce((sum: number, l: TaskLog & { task: Task }) => sum + (l.task?.reward_amount || 0), 0),
-      weeklyCount: weeklyApproved.length,
-      weeklyTotal: weeklyApproved.reduce((sum: number, l: TaskLog & { task: Task }) => sum + (l.task?.reward_amount || 0), 0),
     });
 
     setLoading(false);
@@ -170,18 +179,22 @@ export default function ParentDashboard() {
 
     if (error) return;
 
-    // Update wallet
+    // ウォレット更新（3分割: save_ratio / invest_ratio / 残りがspend）
     const childWallet = wallets[log.child_id];
     if (childWallet) {
       const reward = log.task.reward_amount;
-      const savingPortion = Math.floor((reward * childWallet.split_ratio) / 100);
-      const spendingPortion = reward - savingPortion;
+      const saveRatio = childWallet.save_ratio ?? childWallet.split_ratio ?? 0;
+      const investRatio = childWallet.invest_ratio ?? 0;
+      const savingPortion = Math.floor((reward * saveRatio) / 100);
+      const investPortion = Math.floor((reward * investRatio) / 100);
+      const spendingPortion = reward - savingPortion - investPortion;
 
       await supabase
         .from("otetsudai_wallets")
         .update({
           spending_balance: childWallet.spending_balance + spendingPortion,
           saving_balance: childWallet.saving_balance + savingPortion,
+          invest_balance: childWallet.invest_balance + investPortion,
         })
         .eq("id", childWallet.id);
 
@@ -212,12 +225,11 @@ export default function ParentDashboard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: spend.id, action: "approve", approved_by: session.userId }),
     });
-    // 承認後に決済アプリ連携ダイアログを表示
     setPaymentDialog({
       open: true,
       amount: spend.amount,
       purpose: spend.purpose,
-      childName: spend.child?.name || "",
+      childName: displayName(spend.child?.name),
     });
     loadData();
   }
@@ -269,12 +281,14 @@ export default function ParentDashboard() {
     );
   }
 
+  const totalPending = pendingLogs.length + pendingSpends.length + questProposals.length + childMessages.length;
+
   return (
     <div className="min-h-screen p-4 max-w-2xl mx-auto">
       <CommonHeader
         title="⚔️ クエストマスター"
-        userName={session?.name}
-        pendingCount={pendingLogs.length + pendingSpends.length + questProposals.length + childMessages.length}
+        userName={displayName(session?.name)}
+        pendingCount={totalPending}
         rightActions={
           <Link href="/parent/tasks">
             <Button variant="outline" size="sm" className="border-amber-300">
@@ -284,77 +298,87 @@ export default function ParentDashboard() {
         }
       />
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <Card className="border-amber-200">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-amber-600">{stats.totalApproved}</p>
-            <p className="text-xs text-muted-foreground">承認済み</p>
-          </CardContent>
-        </Card>
-        <Card className="border-green-200">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">¥{stats.totalEarned.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">総獲得</p>
-          </CardContent>
-        </Card>
-        <Card className="border-blue-200">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{stats.weeklyCount}</p>
-            <p className="text-xs text-muted-foreground">今週の件数</p>
-          </CardContent>
-        </Card>
-        <Card className="border-violet-200">
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-violet-600">¥{stats.weeklyTotal.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">今週の支払い</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Pending Approvals */}
-      <Card className="mb-6 border-amber-200">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            ⏳ 承認待ち
-            {pendingLogs.length > 0 && (
-              <Badge variant="destructive">{pendingLogs.length}</Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {pendingLogs.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">
-              承認待ちはありません 🎉
+      {/* ──── ウェルカム / 空状態 ──── */}
+      {children.length === 0 ? (
+        <Card className="mb-6 border-dashed border-2 border-amber-300 bg-amber-50/50">
+          <CardContent className="py-10 text-center space-y-3">
+            <div className="text-5xl">👨‍👩‍👧‍👦</div>
+            <p className="text-lg font-bold text-amber-800">
+              ようこそ クエストマスター！
             </p>
-          ) : (
-            <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              まずは おこさまを ついかして<br />ぼうけんを はじめましょう！
+            </p>
+            <Button
+              className="bg-amber-500 hover:bg-amber-600 text-white text-base h-12 px-8"
+              onClick={() => setAddChildOpen(true)}
+            >
+              ＋ おこさまを ついか
+            </Button>
+          </CardContent>
+        </Card>
+      ) : taskCount === 0 && totalPending === 0 ? (
+        <Card className="mb-6 border-dashed border-2 border-emerald-300 bg-emerald-50/50">
+          <CardContent className="py-8 text-center space-y-3">
+            <div className="text-5xl">⚔️</div>
+            <p className="text-lg font-bold text-emerald-800">
+              クエストを つくって<br />ぼうけんを はじめよう！
+            </p>
+            <p className="text-sm text-muted-foreground">
+              おこさまが ちょうせんする クエスト（おてつだい）を つくりましょう
+            </p>
+            <Link href="/parent/tasks">
+              <Button className="bg-emerald-500 hover:bg-emerald-600 text-white text-base h-12 px-8">
+                📋 クエストを つくる
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {/* ──── 承認待ちサマリー ──── */}
+      {totalPending > 0 && (
+        <div className="mb-4 p-3 rounded-2xl bg-amber-100/70 border border-amber-200 text-center">
+          <p className="text-lg font-bold text-amber-800">
+            📬 {totalPending}けんの しょうにんまち！
+          </p>
+        </div>
+      )}
+
+      {/* ──── クエスト完了 承認キュー ──── */}
+      {pendingLogs.length > 0 && (
+        <Card className="mb-4 border-amber-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              ⏳ クエスト かんりょう
+              <Badge variant="destructive">{pendingLogs.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
               {pendingLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-amber-50 border border-amber-100"
+                  className="flex items-center justify-between p-3 rounded-xl bg-amber-50 border border-amber-100"
                 >
-                  <div>
-                    <p className="font-semibold">{log.task?.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      🧒 {log.child?.name} ・ ¥{log.task?.reward_amount}
-                    </p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-sm truncate">{log.task?.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(log.completed_at).toLocaleDateString("ja-JP")}
+                      🧒 {displayName(log.child?.name)} ・ ¥{log.task?.reward_amount}
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 flex-shrink-0 ml-2">
                     <Button
                       size="sm"
-                      className="bg-green-500 hover:bg-green-600 text-white"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3"
                       onClick={() => setApprovalTarget(log)}
                     >
-                      ✓ 承認
+                      ✓ しょうにん
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-red-300 text-red-600 hover:bg-red-50"
+                      className="border-red-200 text-red-500 hover:bg-red-50 h-9 w-9 p-0"
                       onClick={() => handleReject(log.id)}
                     >
                       ✗
@@ -363,48 +387,45 @@ export default function ParentDashboard() {
                 </div>
               ))}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* 支出承認キュー */}
+      {/* ──── 支出リクエスト ──── */}
       {pendingSpends.length > 0 && (
-        <Card className="mb-6 border-blue-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              🛒 支出リクエスト
+        <Card className="mb-4 border-blue-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              🛒 つかいたい リクエスト
               <Badge variant="destructive">{pendingSpends.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {pendingSpends.map((spend) => (
                 <div
                   key={spend.id}
-                  className="p-3 rounded-lg bg-blue-50 border border-blue-100"
+                  className="p-3 rounded-xl bg-blue-50 border border-blue-100"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-semibold">¥{spend.amount.toLocaleString()}</p>
-                      <p className="text-sm text-muted-foreground">
-                        🧒 {spend.child?.name} ・ {spend.purpose}
-                      </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-sm">¥{spend.amount.toLocaleString()} — {spend.purpose}</p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(spend.created_at).toLocaleDateString("ja-JP")}
+                        🧒 {displayName(spend.child?.name)}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5 flex-shrink-0 ml-2">
                       <Button
                         size="sm"
-                        className="bg-green-500 hover:bg-green-600 text-white"
+                        className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3"
                         onClick={() => handleApproveSpend(spend)}
                       >
-                        ✓ 承認
+                        ✓ OK
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-red-300 text-red-600 hover:bg-red-50"
+                        className="border-red-200 text-red-500 hover:bg-red-50 h-9 w-9 p-0"
                         onClick={() => handleRejectSpend(spend.id)}
                       >
                         ✗
@@ -412,7 +433,7 @@ export default function ParentDashboard() {
                     </div>
                   </div>
                   <Input
-                    placeholder="却下理由（任意）"
+                    placeholder="きゃっかの りゆう（にゅうりょく しなくても OK）"
                     value={rejectReasons[spend.id] || ""}
                     onChange={(e) => setRejectReasons((prev) => ({ ...prev, [spend.id]: e.target.value }))}
                     className="text-xs h-8"
@@ -424,34 +445,32 @@ export default function ParentDashboard() {
         </Card>
       )}
 
-      {/* じぶんクエスト提案 */}
+      {/* ──── じぶんクエスト提案 ──── */}
       {questProposals.length > 0 && (
-        <Card className="mb-6 border-emerald-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              ✨ クエストていあん
+        <Card className="mb-4 border-emerald-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              ✨ クエスト ていあん
               <Badge variant="destructive">{questProposals.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {questProposals.map((proposal) => (
                 <div
                   key={proposal.id}
-                  className="p-3 rounded-lg bg-emerald-50 border border-emerald-100"
+                  className="p-3 rounded-xl bg-emerald-50 border border-emerald-100"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-semibold">{proposal.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        🧒 {proposal.child?.name}
+                  <div className="mb-2">
+                    <p className="font-bold text-sm">{proposal.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      🧒 {displayName(proposal.child?.name)}
+                    </p>
+                    {proposal.proposal_message && (
+                      <p className="text-xs text-emerald-600 mt-1">
+                        💬 「{proposal.proposal_message}」
                       </p>
-                      {proposal.proposal_message && (
-                        <p className="text-xs text-emerald-600 mt-1">
-                          💬 「{proposal.proposal_message}」
-                        </p>
-                      )}
-                    </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs text-muted-foreground">ごほうび:</span>
@@ -466,30 +485,30 @@ export default function ParentDashboard() {
                           [proposal.id]: parseInt(e.target.value) || 0,
                         }))
                       }
-                      className="w-24 h-8 text-sm text-center"
+                      className="w-20 h-8 text-sm text-center"
                     />
                     <span className="text-xs text-muted-foreground">えん</span>
                     {(proposalRewards[proposal.id] ?? proposal.reward_amount) !== proposal.reward_amount && (
                       <span className="text-[10px] text-amber-500">
-                        （もとの ていあん: ¥{proposal.reward_amount}）
+                        （もと: ¥{proposal.reward_amount}）
                       </span>
                     )}
                   </div>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      className="bg-green-500 hover:bg-green-600 text-white flex-1"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white flex-1 h-9"
                       onClick={() => handleApproveProposal(proposal.id)}
                     >
-                      ✓ 承認
+                      ✓ しょうにん
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-red-300 text-red-600 hover:bg-red-50 flex-1"
+                      className="border-red-200 text-red-500 hover:bg-red-50 flex-1 h-9"
                       onClick={() => handleRejectProposal(proposal.id)}
                     >
-                      ✗ 却下
+                      ✗ きゃっか
                     </Button>
                   </div>
                 </div>
@@ -499,11 +518,11 @@ export default function ParentDashboard() {
         </Card>
       )}
 
-      {/* 子供からのメッセージ */}
+      {/* ──── 子供からのメッセージ ──── */}
       {childMessages.length > 0 && (
-        <Card className="mb-6 border-blue-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
+        <Card className="mb-4 border-blue-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
               💬 こどもからの メッセージ
               <Badge variant="destructive">{childMessages.length}</Badge>
             </CardTitle>
@@ -515,18 +534,20 @@ export default function ParentDashboard() {
                 return (
                   <div
                     key={msg.id}
-                    className="p-3 rounded-lg bg-blue-50 border border-blue-100"
+                    className="p-3 rounded-xl bg-blue-50 border border-blue-100"
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-2 flex-1">
+                      <div className="flex items-start gap-2 flex-1 min-w-0">
                         {msg.stamp && <span className="text-2xl flex-shrink-0">{msg.stamp}</span>}
-                        <div>
-                          <p className="text-sm font-semibold text-blue-800">
-                            🧒 {fromName || "こども"}
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-blue-800">
+                            🧒 {displayName(fromName)}
                           </p>
-                          <p className="text-sm text-blue-700 whitespace-pre-wrap mt-0.5">
-                            {msg.message}
-                          </p>
+                          {msg.message && (
+                            <p className="text-sm text-blue-700 whitespace-pre-wrap mt-0.5 break-words">
+                              {msg.message}
+                            </p>
+                          )}
                           <p className="text-[10px] text-muted-foreground mt-1">
                             {new Date(msg.created_at).toLocaleString("ja-JP")}
                           </p>
@@ -549,105 +570,126 @@ export default function ParentDashboard() {
         </Card>
       )}
 
-      <Separator className="mb-6" />
+      {/* ──── 承認待ちゼロの場合 ──── */}
+      {totalPending === 0 && children.length > 0 && taskCount > 0 && (
+        <Card className="mb-4 border-emerald-100 bg-emerald-50/30">
+          <CardContent className="py-8 text-center">
+            <div className="text-4xl mb-2">🎉</div>
+            <p className="font-bold text-emerald-700">
+              おつかれさま！
+            </p>
+            <p className="text-sm text-muted-foreground">
+              しょうにんまちは ありません
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Children Wallets */}
-      <h2 className="text-lg font-bold text-amber-800 mb-3">💰 こどもの残高</h2>
-      <div className="grid gap-3">
-        {children.map((child) => {
-          const wallet = wallets[child.id];
-          const total = wallet
-            ? wallet.spending_balance + wallet.saving_balance
-            : 0;
-          const savingPercent = wallet && total > 0
-            ? Math.round((wallet.saving_balance / total) * 100)
-            : 0;
+      <Separator className="my-6" />
 
-          return (
-            <Card key={child.id} className="border-amber-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-lg">🧒 {child.name}</span>
-                  <span className="text-xl font-bold text-amber-700">
-                    ¥{total.toLocaleString()}
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-sm mb-2">
-                  <div className="bg-red-50 rounded-lg p-2 text-center border border-red-100">
-                    <div className="text-lg mb-0.5" aria-hidden="true">💰</div>
-                    <p className="text-[10px] text-red-500 font-semibold">つかう</p>
-                    <p className="font-bold text-red-600">
-                      ¥{wallet?.spending_balance.toLocaleString() || 0}
-                    </p>
-                  </div>
-                  <div className="bg-blue-50 rounded-lg p-2 text-center border border-blue-100">
-                    <div className="text-lg mb-0.5" aria-hidden="true">🐷</div>
-                    <p className="text-[10px] text-blue-500 font-semibold">ためる</p>
-                    <p className="font-bold text-blue-600">
-                      ¥{wallet?.saving_balance.toLocaleString() || 0}
-                    </p>
-                  </div>
-                  <div className="bg-green-50 rounded-lg p-2 text-center border border-green-100">
-                    <div className="text-lg mb-0.5" aria-hidden="true">🌱</div>
-                    <p className="text-[10px] text-green-500 font-semibold">ふやす</p>
-                    <p className="font-bold text-green-600">
-                      ¥{wallet?.invest_balance?.toLocaleString() || 0}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">貯蓄率</span>
-                  <Progress value={savingPercent} className="flex-1 h-2" />
-                  <span className="text-xs font-semibold">{savingPercent}%</span>
-                </div>
+      {/* ──── 子供カード ──── */}
+      {children.length > 0 && (
+        <>
+          <h2 className="text-base font-bold text-amber-800 mb-3 flex items-center gap-1.5">
+            💰 おこさまの ざんだか
+          </h2>
+          <div className="grid gap-3">
+            {children.map((child) => {
+              const wallet = wallets[child.id];
+              const total = wallet
+                ? wallet.spending_balance + wallet.saving_balance + (wallet.invest_balance || 0)
+                : 0;
 
-                {/* 分割比率設定（UD対応スライダー） */}
-                {editingRatio === child.id ? (
-                  <div className="mt-3 p-4 rounded-xl bg-white border-2 border-amber-200">
-                    <RewardSplitSlider
-                      saveRatio={tempSaveRatio}
-                      investRatio={tempInvestRatio}
-                      onChange={(save, invest) => {
-                        setTempSaveRatio(save);
-                        setTempInvestRatio(invest);
-                      }}
-                    />
-                    <div className="flex gap-2 mt-4">
-                      <Button size="sm" variant="ghost" onClick={() => setEditingRatio(null)}>キャンセル</Button>
-                      <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white" onClick={async () => {
-                        if (wallet) {
-                          await supabase.from("otetsudai_wallets").update({
-                            save_ratio: tempSaveRatio,
-                            invest_ratio: tempInvestRatio,
-                            split_ratio: tempSaveRatio, // 後方互換
-                          }).eq("id", wallet.id);
-                          setEditingRatio(null);
-                          loadData();
-                        }
-                      }}>保存</Button>
+              return (
+                <Card key={child.id} className="border-amber-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-bold text-base">🧒 {displayName(child.name)}</span>
+                      {total > 0 ? (
+                        <span className="text-xl font-bold text-amber-700">
+                          ¥{total.toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          まだ コインが ありません
+                        </span>
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  <Button
-                    variant="ghost" size="sm"
-                    className="mt-2 w-full text-xs text-amber-600 hover:bg-amber-50"
-                    onClick={() => {
-                      setEditingRatio(child.id);
-                      setTempSaveRatio(wallet?.save_ratio ?? wallet?.split_ratio ?? 30);
-                      setTempInvestRatio(wallet?.invest_ratio ?? 0);
-                    }}
-                  >
-                    ⚙️ 分割比率を変更
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+
+                    {/* 3色残高 */}
+                    <div className="grid grid-cols-3 gap-1.5 text-sm mb-3">
+                      <div className="bg-red-50 rounded-lg p-2 text-center border border-red-100">
+                        <div className="text-base" aria-hidden="true">💰</div>
+                        <p className="text-[10px] text-red-500 font-semibold">つかう</p>
+                        <p className="font-bold text-red-600 text-sm">
+                          ¥{wallet?.spending_balance.toLocaleString() || 0}
+                        </p>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-2 text-center border border-blue-100">
+                        <div className="text-base" aria-hidden="true">🐷</div>
+                        <p className="text-[10px] text-blue-500 font-semibold">ためる</p>
+                        <p className="font-bold text-blue-600 text-sm">
+                          ¥{wallet?.saving_balance.toLocaleString() || 0}
+                        </p>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-2 text-center border border-green-100">
+                        <div className="text-base" aria-hidden="true">🌱</div>
+                        <p className="text-[10px] text-green-500 font-semibold">ふやす</p>
+                        <p className="font-bold text-green-600 text-sm">
+                          ¥{wallet?.invest_balance?.toLocaleString() || 0}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 分割比率設定 */}
+                    {editingRatio === child.id ? (
+                      <div className="p-4 rounded-xl bg-white border-2 border-amber-200">
+                        <RewardSplitSlider
+                          saveRatio={tempSaveRatio}
+                          investRatio={tempInvestRatio}
+                          onChange={(save, invest) => {
+                            setTempSaveRatio(save);
+                            setTempInvestRatio(invest);
+                          }}
+                        />
+                        <div className="flex gap-2 mt-4">
+                          <Button size="sm" variant="ghost" onClick={() => setEditingRatio(null)}>キャンセル</Button>
+                          <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white" onClick={async () => {
+                            if (wallet) {
+                              await supabase.from("otetsudai_wallets").update({
+                                save_ratio: tempSaveRatio,
+                                invest_ratio: tempInvestRatio,
+                                split_ratio: tempSaveRatio,
+                              }).eq("id", wallet.id);
+                              setEditingRatio(null);
+                              loadData();
+                            }
+                          }}>保存</Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="ghost" size="sm"
+                        className="w-full text-xs text-amber-600 hover:bg-amber-50"
+                        onClick={() => {
+                          setEditingRatio(child.id);
+                          setTempSaveRatio(wallet?.save_ratio ?? wallet?.split_ratio ?? 30);
+                          setTempInvestRatio(wallet?.invest_ratio ?? 0);
+                        }}
+                      >
+                        ⚙️ ぶんかつひりつを へんこう
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {/* おこさま追加 */}
-      {children.length < 5 && (
+      {children.length > 0 && children.length < 5 && (
         <Button
           variant="outline"
           className="w-full mt-3 border-dashed border-amber-300 text-amber-600 h-12 text-base"
@@ -663,11 +705,18 @@ export default function ParentDashboard() {
         onAdded={loadData}
       />
 
+      {/* 累計情報（さりげなく小さく表示） */}
+      {stats.totalApproved > 0 && (
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          これまでの しょうにん: {stats.totalApproved}けん ・ そうがく ¥{stats.totalEarned.toLocaleString()}
+        </p>
+      )}
+
       {/* 承認スタンプダイアログ */}
       <ApprovalDialog
         open={!!approvalTarget}
         onClose={() => setApprovalTarget(null)}
-        childName={approvalTarget?.child?.name || ""}
+        childName={displayName(approvalTarget?.child?.name)}
         taskTitle={approvalTarget?.task?.title || ""}
         reward={approvalTarget?.task?.reward_amount || 0}
         onApprove={(stamp, message) => {
@@ -696,17 +745,17 @@ export default function ParentDashboard() {
             className="text-xs text-red-400 hover:text-red-600 hover:bg-red-50"
             onClick={() => setShowDeleteConfirm(true)}
           >
-            🗑️ アカウントを削除する
+            🗑️ アカウントを さくじょ する
           </Button>
         ) : (
           <Card className="border-red-300 bg-red-50">
             <CardContent className="p-4">
-              <p className="text-sm font-semibold text-red-600 mb-2">⚠️ アカウント削除</p>
+              <p className="text-sm font-semibold text-red-600 mb-2">⚠️ アカウントさくじょ</p>
               <p className="text-xs text-red-500 mb-3">
-                削除すると、家族の全データ（クエスト・ウォレット・履歴）が失われます。この操作は取り消せません。
+                さくじょすると、かぞくの ぜんデータ（クエスト・ウォレット・りれき）が なくなります。このそうさは とりけせません。
               </p>
               <p className="text-xs text-muted-foreground mb-2">
-                確認のため「削除する」と入力してください：
+                かくにんのため「削除する」と にゅうりょく してください：
               </p>
               <Input
                 value={deleteConfirmText}
@@ -735,7 +784,7 @@ export default function ParentDashboard() {
                     router.push("/login");
                   }}
                 >
-                  {deleting ? "削除中..." : "完全に削除する"}
+                  {deleting ? "さくじょちゅう..." : "かんぜんに さくじょする"}
                 </Button>
               </div>
             </CardContent>
