@@ -38,6 +38,8 @@ export default function ParentDashboard() {
   const [approvalTarget, setApprovalTarget] = useState<(TaskLog & { task: Task; child: User }) | null>(null);
   const [questProposals, setQuestProposals] = useState<(Task & { child?: User })[]>([]);
   const [proposalRewards, setProposalRewards] = useState<Record<string, number>>({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [childMessages, setChildMessages] = useState<any[]>([]);
   const [paymentDialog, setPaymentDialog] = useState<{
     open: boolean;
     amount: number;
@@ -99,6 +101,16 @@ export default function ParentDashboard() {
     const rewards: Record<string, number> = {};
     proposalData.forEach((p) => { rewards[p.id] = p.reward_amount; });
     setProposalRewards(rewards);
+
+    // 子供からのメッセージを取得
+    const { data: msgs } = await supabase
+      .from("otetsudai_messages")
+      .select("*, from_user:from_user_id(id, name, role)")
+      .eq("family_id", session.familyId)
+      .eq("is_read", false)
+      .order("created_at", { ascending: false })
+      .limit(10);
+    setChildMessages(msgs || []);
 
     const approved = approvedRes.data || [];
     const now = new Date();
@@ -193,6 +205,14 @@ export default function ParentDashboard() {
     loadData();
   }
 
+  async function handleMarkRead(messageId: string) {
+    await supabase
+      .from("otetsudai_messages")
+      .update({ is_read: true })
+      .eq("id", messageId);
+    loadData();
+  }
+
   async function handleApproveProposal(taskId: string) {
     const adjustedReward = proposalRewards[taskId];
     await supabase
@@ -237,7 +257,7 @@ export default function ParentDashboard() {
       <CommonHeader
         title="⚔️ クエストマスター"
         userName={session?.name}
-        pendingCount={pendingLogs.length + pendingSpends.length + questProposals.length}
+        pendingCount={pendingLogs.length + pendingSpends.length + questProposals.length + childMessages.length}
         rightActions={
           <Link href="/parent/tasks">
             <Button variant="outline" size="sm" className="border-amber-300">
@@ -457,6 +477,56 @@ export default function ParentDashboard() {
                   </div>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 子供からのメッセージ */}
+      {childMessages.length > 0 && (
+        <Card className="mb-6 border-blue-200">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              💬 こどもからの メッセージ
+              <Badge variant="destructive">{childMessages.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {childMessages.map((msg: { id: string; message: string; stamp: string | null; created_at: string; from_user?: { name: string } | { name: string }[] }) => {
+                const fromName = Array.isArray(msg.from_user) ? msg.from_user[0]?.name : msg.from_user?.name;
+                return (
+                  <div
+                    key={msg.id}
+                    className="p-3 rounded-lg bg-blue-50 border border-blue-100"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-2 flex-1">
+                        {msg.stamp && <span className="text-2xl flex-shrink-0">{msg.stamp}</span>}
+                        <div>
+                          <p className="text-sm font-semibold text-blue-800">
+                            🧒 {fromName || "こども"}
+                          </p>
+                          <p className="text-sm text-blue-700 whitespace-pre-wrap mt-0.5">
+                            {msg.message}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground mt-1">
+                            {new Date(msg.created_at).toLocaleString("ja-JP")}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-blue-400 hover:text-blue-600 text-xs flex-shrink-0"
+                        onClick={() => handleMarkRead(msg.id)}
+                      >
+                        ✓ よんだ
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
