@@ -47,7 +47,6 @@ export async function DELETE(request: Request) {
       : []),
     // 投資関連（child_id）
     { table: "otetsudai_invest_orders", filter: { col: "child_id", values: userIds } },
-    { table: "otetsudai_invest_portfolios", filter: { col: "child_id", values: userIds } },
     // 支出申請（child_id）
     { table: "otetsudai_spend_requests", filter: { col: "child_id", values: userIds } },
     // ウォレット（child_id）
