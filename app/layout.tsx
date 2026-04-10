@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import GlobalChat from "@/components/global-chat";
 import { MaintenanceGuard } from "@/components/maintenance-guard";
+import { ReloadGuard } from "@/components/reload-guard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-gradient-to-b from-emerald-50 to-amber-50">
+        <ReloadGuard />
         <MaintenanceGuard>
           <div className="flex-1">
             {children}

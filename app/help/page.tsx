@@ -199,6 +199,12 @@ export default function HelpPage() {
             </p>
           </div>
           <div>
+            <p className="font-semibold">Q. ページを更新（リロード）したらTOP画面に戻った</p>
+            <p className="text-muted-foreground">
+              A. セキュリティのため、ブラウザのリロード（再読み込み）をするとTOP画面に戻る仕様です。ログイン画面から再度ログインしてください
+            </p>
+          </div>
+          <div>
             <p className="font-semibold">Q. 家族を追加したい</p>
             <p className="text-muted-foreground">
               A.
