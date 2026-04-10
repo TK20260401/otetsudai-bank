@@ -16,7 +16,8 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified");
-  const [loginMode, setLoginMode] = useState<LoginMode>("family");
+  const initialMode = searchParams.get("mode") === "admin" ? "admin" : "family";
+  const [loginMode, setLoginMode] = useState<LoginMode>(initialMode);
   const [families, setFamilies] = useState<Family[]>([]);
   const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
   const [members, setMembers] = useState<User[]>([]);

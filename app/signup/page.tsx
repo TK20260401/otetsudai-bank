@@ -177,9 +177,12 @@ export default function SignupPage() {
             </>
           )}
 
-          <div className="text-center pt-2">
-            <Link href="/login" className="text-sm text-amber-600 hover:underline">
+          <div className="text-center pt-2 space-y-2">
+            <Link href="/login" className="text-sm text-amber-600 hover:underline block">
               すでにアカウントをお持ちのかた →
+            </Link>
+            <Link href="/login?mode=admin" className="text-xs text-slate-400 hover:text-slate-600 transition-colors block">
+              🔧 管理者ログイン
             </Link>
           </div>
         </CardContent>
