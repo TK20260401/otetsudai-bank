@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.7.4）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.8.0）
 
 ## 概要
 
@@ -305,9 +305,13 @@ Phase 3（1年〜）  → 銀行API直結 ※資金移動業ライセンス必�
 | TypeScript | 5.x | 型安全 |
 | Vercel | — | ホスティング・CI/CD |
 
-## 認証構造
+## 認証構造（3ロール体制）
 
 ```
+admin: Supabase Auth (email/password) → otetsudai_users (role='admin', family_id=NULL)
+       ログイン画面の「管理者ログイン」→ メール+PW認証 → /admin
+
+parent/child: 家族ベース認証
 1つの Supabase Auth ID (email/password)
   └── 1つの otetsudai_families
        ├── 1 parent (otetsudai_users, role='parent')
@@ -335,6 +339,7 @@ Phase 3（1年〜）  → 銀行API直結 ※資金移動業ライセンス必�
 | v0.7.2 | 2026-04-09 | 品質改善。最新価格ボタンDB直読み化（GET）で高速化、銘柄10種追加（計24銘柄）、利用規約/プライバシーに「選択肢のパラドックス」教育設計根拠追記、ルビ辞書追加（拭/箸）、ルビ位置ずれ修正（text-0.55em+leading-none）、株価同期エラーハンドリング強化（res.ok事前チェック） |
 | v0.7.3 | 2026-04-09 | テストフライト対応。ルビ辞書に「手伝」追加、「目標をきめる」ボタンのルビ起因ベースラインずれ修正（inline-flex items-baseline）、投資ポートフォリオ空状態に教育メッセージ追加（長期保有の基本・選択肢のパラドックス子供向け解説）、山田家以外の家族を常時削除可能に変更（IS_DEV_MODE廃止） |
 | v0.7.4 | 2026-04-10 | 家族削除修正・TOP常時ランディング化。RLS全テーブルDELETEポリシー追加、invest_portfolios参照削除、ランディングページのログイン済み自動リダイレクト廃止（常にTOP表示）、Server Component化 |
+| v0.8.0 | 2026-04-10 | adminロール追加（3ロール体制）。管理者ログイン（Supabase Auth メール+PW認証）、管理者ダッシュボード（統計・家族一覧・削除）、DB制約更新（role='admin'追加・family_id NULL許容）、今後の拡張プレースホルダー（お知らせ配信・メンテナンスモード・株価マスタ管理） |
 
 ## Getting Started
 

@@ -1,9 +1,9 @@
 export type Session = {
   userId: string;
-  familyId: string;
-  role: "parent" | "child";
+  familyId: string | null;
+  role: "admin" | "parent" | "child";
   name: string;
-  authId?: string; // Supabase Auth UID（親のみ）
+  authId?: string; // Supabase Auth UID（親・adminのみ）
 };
 
 export function getSession(): Session | null {

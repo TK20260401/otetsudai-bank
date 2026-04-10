@@ -7,7 +7,7 @@ export type Family = {
 export type User = {
   id: string;
   family_id: string;
-  role: "parent" | "child";
+  role: "admin" | "parent" | "child";
   name: string;
   pin: string | null;
   icon: string;

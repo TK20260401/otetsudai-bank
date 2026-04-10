@@ -10,9 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
+type LoginMode = "family" | "admin";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [loginMode, setLoginMode] = useState<LoginMode>("family");
   const [families, setFamilies] = useState<Family[]>([]);
   const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
   const [members, setMembers] = useState<User[]>([]);
@@ -22,6 +24,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<Family | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminLoading, setAdminLoading] = useState(false);
 
   useEffect(() => {
     loadFamilies();
@@ -87,6 +92,49 @@ export default function LoginPage() {
     }
   }
 
+  async function handleAdminLogin() {
+    setError("");
+    setAdminLoading(true);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: adminEmail,
+        password: adminPassword,
+      });
+      if (authError || !authData.user) {
+        setError("メールアドレスまたはパスワードが正しくありません");
+        setAdminLoading(false);
+        return;
+      }
+      // otetsudai_usersからadminロールを照合
+      const { data: adminUser } = await supabase
+        .from("otetsudai_users")
+        .select("*")
+        .eq("auth_id", authData.user.id)
+        .eq("role", "admin")
+        .single();
+      if (!adminUser) {
+        await supabase.auth.signOut();
+        setError("管理者権限がありません");
+        setAdminLoading(false);
+        return;
+      }
+      localStorage.setItem(
+        "otetsudai_session",
+        JSON.stringify({
+          userId: adminUser.id,
+          familyId: null,
+          role: "admin",
+          name: adminUser.name,
+          authId: authData.user.id,
+        })
+      );
+      router.push("/admin");
+    } catch {
+      setError("ログインに失敗しました");
+    }
+    setAdminLoading(false);
+  }
+
   async function handleDeleteFamily() {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -113,6 +161,77 @@ export default function LoginPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-2xl animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  // 管理者ログイン画面
+  if (loginMode === "admin") {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Card className="w-full max-w-md shadow-xl border-slate-300">
+          <CardHeader className="text-center">
+            <div className="text-4xl mb-2">🔧</div>
+            <CardTitle className="text-xl font-bold text-slate-700">
+              管理者ログイン
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              管理者アカウントでログインしてください
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="admin-email" className="text-sm font-semibold text-slate-600">
+                メールアドレス
+              </Label>
+              <Input
+                id="admin-email"
+                type="email"
+                placeholder="admin@example.com"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                className="h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-password" className="text-sm font-semibold text-slate-600">
+                パスワード
+              </Label>
+              <Input
+                id="admin-password"
+                type="password"
+                placeholder="パスワード"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                className="h-12"
+              />
+            </div>
+            {error && (
+              <p className="text-destructive text-sm text-center">{error}</p>
+            )}
+            <Button
+              className="w-full h-12 text-lg bg-slate-700 hover:bg-slate-800 text-white"
+              onClick={handleAdminLogin}
+              disabled={adminLoading || !adminEmail || !adminPassword}
+            >
+              {adminLoading ? "ログインちゅう..." : "ログイン"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-slate-500"
+              onClick={() => {
+                setLoginMode("family");
+                setError("");
+                setAdminEmail("");
+                setAdminPassword("");
+              }}
+            >
+              ← もどる
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -259,6 +378,18 @@ export default function LoginPage() {
             </>
           )}
         </CardContent>
+        {/* 管理者ログインリンク（控えめに配置） */}
+        <div className="text-center pb-4">
+          <button
+            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            onClick={() => {
+              setLoginMode("admin");
+              setError("");
+            }}
+          >
+            🔧 管理者ログイン
+          </button>
+        </div>
       </Card>
 
       {/* 家族削除確認ダイアログ（開発用） */}
