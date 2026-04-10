@@ -6,6 +6,7 @@ import type { StockPrice } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { R } from "@/components/ruby-text";
 import {
   Dialog,
   DialogContent,
@@ -70,16 +71,16 @@ export function InvestOrderDialog({
 
   async function handleSubmit() {
     if (!selected) {
-      setError("めいがらを えらんでね");
+      setError("銘柄を 選んでね");
       return;
     }
     const amountNum = parseInt(amount);
     if (!amountNum || amountNum < 100) {
-      setError("100えん いじょう にゅうりょくしてね");
+      setError("100円 以上 入力してね");
       return;
     }
     if (amountNum > investBalance) {
-      setError(`ふやすウォレットの ざんだかが たりないよ（のこり ¥${investBalance.toLocaleString()}）`);
+      setError(`増やすウォレットの 残高が 足りないよ（残り ¥${investBalance.toLocaleString()}）`);
       return;
     }
 
@@ -100,7 +101,7 @@ export function InvestOrderDialog({
 
     setLoading(false);
     if (insertError) {
-      setError("おくれませんでした。もういちど ためしてね");
+      setError("送れませんでした。もう一度 試してね");
       return;
     }
 
@@ -124,9 +125,9 @@ export function InvestOrderDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>🌱 かぶを かいたい！</DialogTitle>
+          <DialogTitle>🌱 <R k="株" r="かぶ" />を <R k="買" r="か" />いたい！</DialogTitle>
           <DialogDescription>
-            ふやすウォレットの おかねで かぶを かえるよ
+            <R k="増" r="ふ" />やすウォレットの お<R k="金" r="かね" />で <R k="株" r="かぶ" />を <R k="買" r="か" />えるよ
           </DialogDescription>
         </DialogHeader>
 
@@ -134,17 +135,17 @@ export function InvestOrderDialog({
           <div className="text-center py-6">
             <div className="text-6xl mb-3 animate-bounce">📈</div>
             <p className="font-bold text-lg text-green-700">
-              おやに おねがいしたよ！
+              <R k="親" r="おや" />に お<R k="願" r="ねが" />いしたよ！
             </p>
             <p className="text-sm text-muted-foreground">
-              しょうにんを まってね
+              <R k="承認" r="しょうにん" />を <R k="待" r="ま" />ってね
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             {/* 残高表示 */}
             <div className="bg-green-50 rounded-xl p-3 text-center border border-green-100">
-              <p className="text-xs text-green-600">ふやすウォレット ざんだか</p>
+              <p className="text-xs text-green-600"><R k="増" r="ふ" />やすウォレット <R k="残高" r="ざんだか" /></p>
               <p className="text-xl font-bold text-green-700">
                 ¥{investBalance.toLocaleString()}
               </p>
@@ -152,7 +153,7 @@ export function InvestOrderDialog({
 
             {/* カテゴリタブ */}
             <div>
-              <Label>カテゴリを えらぼう</Label>
+              <Label>カテゴリを <R k="選" r="えら" />ぼう</Label>
               <div className="flex gap-1.5 mt-2">
                 {CATEGORIES.map((cat) => (
                   <button
@@ -178,7 +179,7 @@ export function InvestOrderDialog({
 
             {/* 銘柄選択 */}
             <div>
-              <Label>めいがらを えらぼう</Label>
+              <Label><R k="銘柄" r="めいがら" />を <R k="選" r="えら" />ぼう</Label>
               <div className="grid gap-2 mt-2">
                 {filteredStocks.map((stock) => (
                   <button
@@ -220,15 +221,18 @@ export function InvestOrderDialog({
                 ))}
                 {filteredStocks.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    この カテゴリの めいがらは ありません
+                    この カテゴリの <R k="銘柄" r="めいがら" />は ありません
                   </p>
                 )}
               </div>
+              <p className="text-[10px] text-muted-foreground text-center mt-2 leading-relaxed">
+                💡 <R k="買" r="か" />いたい <R k="株" r="かぶ" />が ないときは、おうちの <R k="人" r="ひと" />に <R k="伝" r="つた" />えるか <R k="相談" r="そうだん" />してね
+              </p>
             </div>
 
             {/* 金額入力 */}
             <div>
-              <Label htmlFor="invest-amount">いくら とうしする？（えん）</Label>
+              <Label htmlFor="invest-amount">いくら <R k="投資" r="とうし" />する？（<R k="円" r="えん" />）</Label>
               <Input
                 id="invest-amount"
                 type="number"
@@ -238,11 +242,11 @@ export function InvestOrderDialog({
                 max={investBalance}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                placeholder="れい: 500"
+                placeholder="例: 500"
                 className="mt-1 h-12 text-xl text-center"
               />
               <p className="text-[10px] text-muted-foreground mt-1">
-                100えん から とうしできるよ
+                100<R k="円" r="えん" /> から <R k="投資" r="とうし" />できるよ
               </p>
             </div>
 
@@ -254,9 +258,9 @@ export function InvestOrderDialog({
               disabled={loading}
             >
               {loading ? (
-                <span className="animate-pulse">おくりちゅう...</span>
+                <span className="animate-pulse"><R k="送" r="おく" />り<R k="中" r="ちゅう" />...</span>
               ) : (
-                "おやに おねがいする 📈"
+                "親に お願いする 📈"
               )}
             </Button>
           </div>

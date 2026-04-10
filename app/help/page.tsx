@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { R } from "@/components/ruby-text";
 
 export default function HelpPage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function HelpPage() {
         <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
           ← もどる
         </Button>
-        <h1 className="text-2xl font-bold text-emerald-800">📖 つかいかた</h1>
+        <h1 className="text-2xl font-bold text-emerald-800">📖 <R k="使" r="つか" />い<R k="方" r="かた" /></h1>
       </div>
 
       {/* クイックスタート */}
@@ -30,9 +31,9 @@ export default function HelpPage() {
                 1
               </div>
               <div>
-                <p className="font-semibold">おうちをえらんでログイン</p>
+                <p className="font-semibold">おうちを<R k="選" r="えら" />んでログイン</p>
                 <p className="text-sm text-muted-foreground">
-                  トップ画面でおうちをえらんで、じぶんの名前をタップしよう
+                  トップ<R k="画面" r="がめん" />でおうちを<R k="選" r="えら" />んで、<R k="自分" r="じぶん" />の<R k="名前" r="なまえ" />をタップしよう
                 </p>
               </div>
             </div>
@@ -43,7 +44,7 @@ export default function HelpPage() {
               <div>
                 <p className="font-semibold">クエストをやろう</p>
                 <p className="text-sm text-muted-foreground">
-                  クエストリストからできることをえらんで「クリア！」をおそう
+                  クエストリストからできることを<R k="選" r="えら" />んで「クリア！」を<R k="押" r="お" />そう
                 </p>
               </div>
             </div>
@@ -54,7 +55,7 @@ export default function HelpPage() {
               <div>
                 <p className="font-semibold">コインをためよう</p>
                 <p className="text-sm text-muted-foreground">
-                  おうちの人がみとめたら、コインがもらえるよ！ちょきんもできるよ
+                  おうちの<R k="人" r="ひと" />が<R k="認" r="みと" />めたら、コインがもらえるよ！<R k="貯金" r="ちょきん" />もできるよ
                 </p>
               </div>
             </div>
@@ -66,16 +67,16 @@ export default function HelpPage() {
       <Card className="mb-4 border-amber-200">
         <CardHeader>
           <CardTitle className="text-base text-amber-700">
-            🧒 こどもの画面
+            🧒 <R k="子" r="こ" />どもの<R k="画面" r="がめん" />
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex items-start gap-2">
             <span className="text-lg">🐷</span>
             <div>
-              <p className="font-semibold">ちょきんばこ</p>
+              <p className="font-semibold"><R k="貯金箱" r="ちょきんばこ" /></p>
               <p className="text-muted-foreground">
-                いまのおかねがわかるよ。「つかえるお金」と「ちょきん」にわかれているよ
+                <R k="今" r="いま" />のお<R k="金" r="かね" />がわかるよ。「<R k="使" r="つか" />えるお<R k="金" r="かね" />」と「<R k="貯金" r="ちょきん" />」にわかれているよ
               </p>
             </div>
           </div>
@@ -84,7 +85,7 @@ export default function HelpPage() {
             <div>
               <p className="font-semibold">クエストリスト</p>
               <p className="text-muted-foreground">
-                できるクエストがならんでいるよ。アイコンをみれば、なにをするかすぐわかるね
+                できるクエストが<R k="並" r="なら" />んでいるよ。アイコンを<R k="見" r="み" />れば、<R k="何" r="なに" />をするかすぐわかるね
               </p>
             </div>
           </div>
@@ -93,16 +94,16 @@ export default function HelpPage() {
             <div>
               <p className="font-semibold">「クリア！」ボタン</p>
               <p className="text-muted-foreground">
-                クエストをクリアしたらタップ！おうちの人がみとめたらコインがもらえるよ
+                クエストをクリアしたらタップ！おうちの<R k="人" r="ひと" />が<R k="認" r="みと" />めたらコインがもらえるよ
               </p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <span className="text-lg">📜</span>
             <div>
-              <p className="font-semibold">りれき</p>
+              <p className="font-semibold"><R k="履歴" r="りれき" /></p>
               <p className="text-muted-foreground">
-                いままでもらったコインや、つかったコインのきろくがみられるよ
+                <R k="今" r="いま" />までもらったコインや、<R k="使" r="つか" />ったコインの<R k="記録" r="きろく" />が<R k="見" r="み" />られるよ
               </p>
             </div>
           </div>
@@ -111,7 +112,7 @@ export default function HelpPage() {
             <div>
               <p className="font-semibold">コインくん（AIアシスタント）</p>
               <p className="text-muted-foreground">
-                右下のボタンをタップすると、コインくんとおはなしできるよ。クエストのコツをおしえてくれるよ！
+                <R k="右下" r="みぎした" />のボタンをタップすると、コインくんとお<R k="話" r="はなし" />できるよ。クエストのコツを<R k="教" r="おし" />えてくれるよ！
               </p>
             </div>
           </div>

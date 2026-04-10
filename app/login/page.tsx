@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { R } from "@/components/ruby-text";
 
 type LoginMode = "family" | "admin";
 
@@ -30,6 +31,7 @@ export default function LoginPage() {
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminLoading, setAdminLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     loadFamilies();
@@ -200,15 +202,25 @@ export default function LoginPage() {
               <Label htmlFor="admin-password" className="text-sm font-semibold text-slate-600">
                 パスワード
               </Label>
-              <Input
-                id="admin-password"
-                type="password"
-                placeholder="パスワード"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
-                className="h-12"
-              />
+              <div className="relative">
+                <Input
+                  id="admin-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="パスワード"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                  className="h-12 pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示"}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
             {error && (
               <p className="text-destructive text-sm text-center">{error}</p>
@@ -220,6 +232,22 @@ export default function LoginPage() {
             >
               {adminLoading ? "ログインちゅう..." : "ログイン"}
             </Button>
+            <button
+              type="button"
+              className="w-full text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              onClick={async () => {
+                if (!adminEmail) { setError("メールアドレスを入力してください"); return; }
+                setError("");
+                const { error: resetError } = await supabase.auth.resetPasswordForEmail(adminEmail, {
+                  redirectTo: `${window.location.origin}/login`,
+                });
+                if (resetError) { setError(resetError.message); return; }
+                setError("");
+                alert("パスワードリセットメールを送信しました。メールを確認してください。");
+              }}
+            >
+              パスワードを忘れた方はこちら
+            </button>
             <Button
               variant="ghost"
               size="sm"
@@ -229,6 +257,7 @@ export default function LoginPage() {
                 setError("");
                 setAdminEmail("");
                 setAdminPassword("");
+                setShowPassword(false);
               }}
             >
               ← もどる
@@ -248,17 +277,17 @@ export default function LoginPage() {
             おこづかいクエスト
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            クエストをクリアしてコインをかせごう！
+            クエストをクリアしてコインを<R k="稼" r="かせ" />ごう！
           </p>
           <div className="flex gap-2 mt-2 justify-center">
             <Link href="/signup">
               <Button variant="outline" size="sm" className="border-amber-300 text-amber-600 hover:bg-amber-50">
-                ✨ はじめてのかた
+                ✨ <R k="初" r="はじ" />めての<R k="方" r="かた" />
               </Button>
             </Link>
             <Link href="/help">
               <Button variant="outline" size="sm" className="border-gray-200 text-gray-500 hover:bg-gray-50">
-                📖 つかいかた
+                📖 <R k="使" r="つか" />い<R k="方" r="かた" />
               </Button>
             </Link>
           </div>
@@ -279,7 +308,7 @@ export default function LoginPage() {
           {!selectedFamily ? (
             <>
               <Label className="text-base font-semibold">
-                おうちをえらんでね
+                おうちを<R k="選" r="えら" />んでね
               </Label>
               <div className="grid gap-2">
                 {families.map((f) => (
@@ -326,7 +355,7 @@ export default function LoginPage() {
                   {selectedFamily.name}
                 </span>
               </div>
-              <Label className="text-base font-semibold">だれかな？</Label>
+              <Label className="text-base font-semibold"><R k="誰" r="だれ" />かな？</Label>
               <div className="grid gap-2">
                 {members.map((m) => (
                   <Button
@@ -360,10 +389,10 @@ export default function LoginPage() {
               {selectedUser.pin ? (
                 <>
                   <Label htmlFor="pin" className="text-base font-semibold">
-                    PINをいれてね 🔑
+                    PINを<R k="入" r="い" />れてね 🔑
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    おうちのひとにきいた4けたのばんごうをいれてね
+                    おうちの<R k="人" r="ひと" />に<R k="聞" r="き" />いた4けたの<R k="番号" r="ばんごう" />を<R k="入" r="い" />れてね
                   </p>
                   <Input
                     id="pin"

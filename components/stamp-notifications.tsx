@@ -55,7 +55,7 @@ export function StampNotifications({ childId }: Props) {
     <Card className="mb-4 border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50">
       <CardContent className="p-4">
         <p className="text-sm font-bold text-amber-700 mb-2">
-          💌 おやからの メッセージ
+          💌 <R k="親" r="おや" />からの メッセージ
         </p>
         <div className="space-y-2">
           {notifications.map((n) => {

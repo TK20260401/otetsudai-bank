@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { R } from "@/components/ruby-text";
 
 type Portfolio = {
   id: string;
@@ -73,7 +74,7 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
         setCooldownRemain(remain);
         setSyncMessage({
           type: "error",
-          text: `あと ${Math.ceil(remain / 60000)}ぷんで こうしん できます`,
+          text: `あと ${Math.ceil(remain / 60000)}分で 更新 できます`,
         });
         return;
       }
@@ -87,7 +88,7 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
       if (!res.ok) {
         setSyncMessage({
           type: "error",
-          text: "⚠️ こうしん しっぱい。もういちど ためしてね",
+          text: "⚠️ 更新 失敗。もう一度 試してね",
         });
         setSyncing(false);
         return;
@@ -98,20 +99,20 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
         await loadPortfolios();
         setSyncMessage({
           type: "success",
-          text: `✅ さいしん かかく に こうしん！（${data.count || 0}めいがら）`,
+          text: `✅ 最新 価格 に 更新！（${data.count || 0}銘柄）`,
         });
         setLastSync(new Date().toISOString());
         setCooldownRemain(SYNC_COOLDOWN_MS);
       } else {
         setSyncMessage({
           type: "error",
-          text: `⚠️ こうしん しっぱい: ${data.error || "もういちど ためしてね"}`,
+          text: `⚠️ 更新 失敗: ${data.error || "もう一度 試してね"}`,
         });
       }
     } catch {
       setSyncMessage({
         type: "error",
-        text: "⚠️ かかくの こうしん に しっぱい しました",
+        text: "⚠️ 価格の 更新 に 失敗 しました",
       });
     } finally {
       setSyncing(false);
@@ -138,7 +139,7 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
     <Card className="border-green-200">
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center justify-between">
-          <span>🌱 とうしポートフォリオ</span>
+          <span>🌱 <R k="投資" r="とうし" />ポートフォリオ</span>
           <Button
             variant="ghost"
             size="sm"
@@ -147,11 +148,11 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
             disabled={syncing || isCoolingDown}
           >
             {syncing ? (
-              <span className="animate-pulse">こうしん ちゅう...</span>
+              <span className="animate-pulse"><R k="更新" r="こうしん" /> <R k="中" r="ちゅう" />...</span>
             ) : isCoolingDown ? (
-              `⏳ あと${Math.ceil(cooldownRemain / 60000)}ぷん`
+              `⏳ あと${Math.ceil(cooldownRemain / 60000)}分`
             ) : (
-              "🔄 さいしんかかく"
+              <>🔄 <R k="最新" r="さいしん" /><R k="価格" r="かかく" /></>
             )}
           </Button>
         </CardTitle>
@@ -172,13 +173,13 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
 
         {/* 総評価額 */}
         <div className="bg-green-50 rounded-xl p-3 mb-3 text-center border border-green-100">
-          <p className="text-xs text-green-600 font-semibold">ふやすウォレット</p>
+          <p className="text-xs text-green-600 font-semibold"><R k="増" r="ふ" />やすウォレット</p>
           <p className="text-2xl font-bold text-green-700">
             ¥{investBalance.toLocaleString()}
           </p>
           {lastSync && (
             <p className="text-[10px] text-muted-foreground mt-1">
-              さいしゅうこうしん: {new Date(lastSync).toLocaleString("ja-JP")}
+              <R k="最終" r="さいしゅう" /><R k="更新" r="こうしん" />: {new Date(lastSync).toLocaleString("ja-JP")}
             </p>
           )}
         </div>
@@ -187,32 +188,32 @@ export function InvestPortfolio({ childId, investBalance }: Props) {
         {portfolios.length === 0 ? (
           <div className="text-sm text-muted-foreground text-center py-4 space-y-3">
             <p>
-              まだ とうしは ありません。
+              まだ <R k="投資" r="とうし" />は ありません。
               <br />
-              「かぶを かいたい！」ボタンで はじめよう！
+              「<R k="株" r="かぶ" />を <R k="買" r="か" />いたい！」ボタンで <R k="始" r="はじ" />めよう！
             </p>
             <div className="bg-green-50 rounded-lg p-3 text-left text-xs text-green-800 space-y-2 border border-green-100">
-              <p className="font-semibold text-green-700">🌱 とうしの きほん</p>
+              <p className="font-semibold text-green-700">🌱 <R k="投資" r="とうし" />の <R k="基本" r="きほん" /></p>
               <p>
-                かぶは「みせの いちぶを もつ」こと。
+                <R k="株" r="かぶ" />は「お<R k="店" r="みせ" />の <R k="一部" r="いちぶ" />を <R k="持" r="も" />つ」こと。
                 <br />
-                おみせが がんばると、かぶの ねだんが あがるよ！
+                お<R k="店" r="みせ" />が <R k="頑張" r="がんば" />ると、<R k="株" r="かぶ" />の <R k="値段" r="ねだん" />が あがるよ！
               </p>
               <p>
-                🐢 <span className="font-semibold">ながく もつのが コツ！</span>
+                🐢 <span className="font-semibold"><R k="長" r="なが" />く <R k="持" r="も" />つのが コツ！</span>
                 <br />
-                すぐ うらないで、じっくり そだてよう。
+                すぐ <R k="売" r="う" />らないで、じっくり <R k="育" r="そだ" />てよう。
                 <br />
-                なんねんも もちつづけると、すこしずつ ふえていくよ。
+                <R k="何" r="なん" /><R k="年" r="ねん" />も <R k="持" r="も" />ち<R k="続" r="つづ" />けると、すこしずつ <R k="増" r="ふ" />えていくよ。
               </p>
               <p>
-                🎯 <span className="font-semibold">えらびかたの ポイント</span>
+                🎯 <span className="font-semibold"><R k="選" r="えら" />び<R k="方" r="かた" />の ポイント</span>
                 <br />
-                たくさん ありすぎると まよっちゃうから、
+                たくさん ありすぎると <R k="迷" r="まよ" />っちゃうから、
                 <br />
-                このアプリでは えらびやすい かずに しているよ。
+                このアプリでは <R k="選" r="えら" />びやすい <R k="数" r="かず" />に しているよ。
                 <br />
-                まずは 1つ えらんで みよう！
+                まずは 1つ <R k="選" r="えら" />んで みよう！
               </p>
             </div>
           </div>

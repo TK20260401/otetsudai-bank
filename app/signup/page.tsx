@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [parentName, setParentName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleStep1() {
     if (!email || !password) { setError("メールアドレスとパスワードを入力してください"); return; }
@@ -122,14 +123,24 @@ export default function SignupPage() {
               </div>
               <div>
                 <Label htmlFor="password">パスワード</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="8文字以上"
-                  className="mt-1"
-                />
+                <div className="relative mt-1">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="8文字以上"
+                    className="pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示"}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
               </div>
               {error && <p className="text-destructive text-sm text-center">{error}</p>}
               <Button

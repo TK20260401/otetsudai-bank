@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { R } from "@/components/ruby-text";
 
 export default function LandingPage() {
   return (
@@ -11,10 +14,10 @@ export default function LandingPage() {
             おこづかいクエスト
           </h1>
           <p className="text-lg text-emerald-700 mb-1">
-            クエストをクリアして コインを かせごう！
+            クエストをクリアして コインを <R k="稼" r="かせ" />ごう！
           </p>
           <p className="text-sm text-muted-foreground mb-8">
-            お手伝い＝クエスト！稼いで、貯めて、増やすマネー冒険アプリ
+            お<R k="手伝" r="てつだ" />い＝クエスト！<R k="稼" r="かせ" />いで、<R k="貯" r="た" />めて、<R k="増" r="ふ" />やすマネー<R k="冒険" r="ぼうけん" />アプリ
           </p>
 
           {/* UD対応：大きなボタン + アイコン + カラーで意味を伝える */}
@@ -25,7 +28,7 @@ export default function LandingPage() {
                 aria-label="新規登録 - ぼうけんをはじめる"
               >
                 <span className="text-3xl" aria-hidden="true">⚔️</span>
-                <span>あたらしく はじめる</span>
+                <span><R k="新" r="あたら" />しく <R k="始" r="はじ" />める</span>
               </button>
             </Link>
             <Link href="/login">
@@ -44,28 +47,28 @@ export default function LandingPage() {
             <div className="bg-red-50 rounded-xl p-4 border-2 border-red-200 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white text-xl" aria-hidden="true">💰</div>
-                <h3 className="font-bold text-red-700">つかう</h3>
+                <h3 className="font-bold text-red-700"><R k="使" r="つか" />う</h3>
               </div>
               <p className="text-xs text-red-600/80">
-                かせいだコインで すきなものを かおう！
+                <R k="稼" r="かせ" />いだコインで <R k="好" r="す" />きなものを <R k="買" r="か" />おう！
               </p>
             </div>
             <div className="bg-blue-50 rounded-xl p-4 border-2 border-blue-200 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-xl" aria-hidden="true">🐷</div>
-                <h3 className="font-bold text-blue-700">ためる</h3>
+                <h3 className="font-bold text-blue-700"><R k="貯" r="た" />める</h3>
               </div>
               <p className="text-xs text-blue-600/80">
-                ちょきんして おおきな ゆめを かなえよう！
+                <R k="貯金" r="ちょきん" />して <R k="大" r="おお" />きな <R k="夢" r="ゆめ" />を <R k="叶" r="かな" />えよう！
               </p>
             </div>
             <div className="bg-green-50 rounded-xl p-4 border-2 border-green-200 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white text-xl" aria-hidden="true">🌱</div>
-                <h3 className="font-bold text-green-700">ふやす</h3>
+                <h3 className="font-bold text-green-700"><R k="増" r="ふ" />やす</h3>
               </div>
               <p className="text-xs text-green-600/80">
-                コインをそだてて もっと ふやそう！
+                コインを<R k="育" r="そだ" />てて もっと <R k="増" r="ふ" />やそう！
               </p>
             </div>
           </div>
@@ -74,7 +77,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="text-center py-4 text-xs text-muted-foreground space-x-2">
-        <Link href="/help" className="hover:text-emerald-600">📖 つかいかた</Link>
+        <Link href="/help" className="hover:text-emerald-600">📖 <R k="使" r="つか" />い<R k="方" r="かた" /></Link>
         <span>|</span>
         <Link href="/privacy" className="hover:text-emerald-600">プライバシーポリシー</Link>
         <span>|</span>

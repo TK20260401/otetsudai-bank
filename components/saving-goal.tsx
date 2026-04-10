@@ -84,14 +84,14 @@ export default function SavingGoalSection({ childId, savingBalance, goals, onUpd
                 className="w-full border-dashed border-green-300 text-green-600"
                 onClick={() => setShowAdd(true)}
               >
-                <span className="inline-flex items-baseline leading-relaxed">＋ <R k="目標" r="もくひょう" /> をきめる</span>
+                <span className="inline-flex items-baseline leading-relaxed">＋ <R k="目標" r="もくひょう" /> を<R k="決" r="き" />める</span>
               </Button>
             ) : (
               <div className="space-y-2">
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="れい: ゲームソフト"
+                  placeholder="例: ゲームソフト"
                   className="text-sm"
                 />
                 <div className="flex gap-2">
@@ -100,14 +100,14 @@ export default function SavingGoalSection({ childId, savingBalance, goals, onUpd
                     min={1}
                     value={targetAmount}
                     onChange={(e) => setTargetAmount(e.target.value)}
-                    placeholder="きんがく"
+                    placeholder="金額"
                     className="text-sm"
                   />
                   <span className="text-sm text-muted-foreground self-center"><R k="円" r="えん" /></span>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => setShowAdd(false)}>やめる</Button>
-                  <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white" onClick={handleAdd}>きめる！</Button>
+                  <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white" onClick={handleAdd}><R k="決" r="き" />める！</Button>
                 </div>
               </div>
             )}

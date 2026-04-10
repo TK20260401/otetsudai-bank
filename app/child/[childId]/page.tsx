@@ -185,9 +185,9 @@ export default function ChildDashboard({
 
   async function handleSpendRequest() {
     const amount = parseInt(spendAmount);
-    if (!amount || amount <= 0) { setSpendError("きんがくをいれてね"); return; }
-    if (!spendPurpose.trim()) { setSpendError("なにに つかうか いれてね"); return; }
-    if (!wallet || amount > wallet.spending_balance) { setSpendError("おかねが たりないよ"); return; }
+    if (!amount || amount <= 0) { setSpendError("金額を入れてね"); return; }
+    if (!spendPurpose.trim()) { setSpendError("何に使うか入れてね"); return; }
+    if (!wallet || amount > wallet.spending_balance) { setSpendError("お金が足りないよ"); return; }
     setSpendError("");
 
     const res = await fetch("/api/spend-request", {
@@ -250,11 +250,11 @@ export default function ChildDashboard({
           <p className="text-3xl font-bold text-amber-700">
             ¥{total.toLocaleString()}
           </p>
-          <p className="text-sm text-muted-foreground mb-4">ぜんぶのおかね</p>
+          <p className="text-sm text-muted-foreground mb-4"><R k="全部" r="ぜんぶ" />のお<R k="金" r="かね" /></p>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/70 rounded-xl p-3">
               <p className="text-xs text-blue-500 font-semibold">
-                💳 つかえるお<R k="金" r="かね" />
+                💳 <R k="使" r="つか" />えるお<R k="金" r="かね" />
               </p>
               <p className="text-xl font-bold text-blue-600">
                 ¥{wallet?.spending_balance.toLocaleString() || 0}
@@ -264,7 +264,7 @@ export default function ChildDashboard({
                 className="mt-1 w-full bg-blue-500 hover:bg-blue-600 text-white text-xs h-7"
                 onClick={() => { setSpendOpen(true); setSpendError(""); setSpendSuccess(false); }}
               >
-                🛒 つかう
+                🛒 <R k="使" r="つか" />う
               </Button>
             </div>
             <div className="bg-white/70 rounded-xl p-3">
@@ -300,7 +300,7 @@ export default function ChildDashboard({
               className="w-full mt-2 h-12 text-base font-bold bg-green-500 hover:bg-green-600 text-white rounded-2xl"
               onClick={() => setInvestOrderOpen(true)}
             >
-              🌱 かぶを かいたい！
+              🌱 <R k="株" r="かぶ" />を <R k="買" r="か" />いたい！
             </Button>
           )}
         </div>
@@ -324,7 +324,7 @@ export default function ChildDashboard({
           <Card className="mb-4 border-amber-300">
             <CardContent className="p-4">
               <p className="text-base font-bold text-amber-800 mb-2">
-                ☀️ きょうのクエスト
+                ☀️ <R k="今日" r="きょう" />のクエスト
               </p>
               <div className="space-y-2">
                 {todayTasks.map((task) => (
@@ -355,11 +355,11 @@ export default function ChildDashboard({
           className="w-full h-14 text-lg bg-emerald-500 hover:bg-emerald-600 text-white"
           onClick={() => setSelfQuestOpen(true)}
         >
-          ✨ じぶんクエストを つくる
+          ✨ <R k="自分" r="じぶん" />クエストを <R k="作" r="つく" />る
         </Button>
         {pendingProposals > 0 && (
           <p className="text-center text-xs text-amber-600 mt-1">
-            📨 {pendingProposals}けんの ていあんが しょうにんまちだよ
+            📨 {pendingProposals}<R k="件" r="けん" />の <R k="提案" r="ていあん" />が <R k="承認待" r="しょうにんま" />ちだよ
           </p>
         )}
       </div>
@@ -382,7 +382,7 @@ export default function ChildDashboard({
           {tasks.length === 0 ? (
             <Card className="border-amber-200">
               <CardContent className="p-6 text-center text-muted-foreground">
-                いまできるクエストはないよ 😴
+                <R k="今" r="いま" />できるクエストはないよ 😴
               </CardContent>
             </Card>
           ) : (
@@ -476,7 +476,7 @@ export default function ChildDashboard({
       {pendingPayments.length > 0 && (
         <Card className="mt-4 border-orange-200 bg-orange-50">
           <CardContent className="p-4">
-            <p className="text-sm font-semibold text-orange-700 mb-2">💰 おやが おかねを じゅんび しているよ</p>
+            <p className="text-sm font-semibold text-orange-700 mb-2">💰 <R k="親" r="おや" />が お<R k="金" r="かね" />を <R k="準備" r="じゅんび" /> しているよ</p>
             {pendingPayments.map((sp) => (
               <div key={sp.id} className="text-sm mb-1 p-2 rounded-lg bg-white/60">
                 <span className="font-bold text-orange-800">¥{sp.amount.toLocaleString()}</span>
@@ -489,7 +489,7 @@ export default function ChildDashboard({
       {paidRecent.length > 0 && (
         <Card className="mt-4 border-emerald-200 bg-emerald-50">
           <CardContent className="p-4">
-            <p className="text-sm font-semibold text-emerald-700 mb-2">🎉 おかねを もらったよ！</p>
+            <p className="text-sm font-semibold text-emerald-700 mb-2">🎉 お<R k="金" r="かね" />を もらったよ！</p>
             {paidRecent.map((sp) => (
               <div key={sp.id} className="text-sm mb-1 p-2 rounded-lg bg-white/60 flex items-center justify-between">
                 <div>
@@ -500,7 +500,7 @@ export default function ChildDashboard({
                   {sp.payment_method === "paypay" ? "📱 PayPay" :
                    sp.payment_method === "b43" ? "💳 B/43" :
                    sp.payment_method === "linepay" ? "💚 LINE Pay" :
-                   sp.payment_method === "cash" ? "💴 げんきん" : "✅"}
+                   sp.payment_method === "cash" ? "💴 現金" : "✅"}
                 </span>
               </div>
             ))}
@@ -512,14 +512,14 @@ export default function ChildDashboard({
       {rejectedLogs.length > 0 && (
         <Card className="mt-4 border-amber-200 bg-amber-50">
           <CardContent className="p-4">
-            <p className="text-sm font-semibold text-amber-700 mb-2">🔄 やりなおし クエスト</p>
+            <p className="text-sm font-semibold text-amber-700 mb-2">🔄 やり<R k="直" r="なお" />し クエスト</p>
             {rejectedLogs.map((log) => (
               <div key={log.id} className="text-sm mb-2 p-2 rounded-lg bg-white/60">
                 <p className="font-semibold text-amber-800">{log.task?.title}</p>
                 {log.reject_reason ? (
                   <p className="text-xs text-amber-600 mt-0.5">💬 {log.reject_reason}</p>
                 ) : (
-                  <p className="text-xs text-muted-foreground mt-0.5">もういちど がんばろう！</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">もう<R k="一度" r="いちど" /> <R k="頑張" r="がんば" />ろう！</p>
                 )}
               </div>
             ))}
@@ -531,7 +531,7 @@ export default function ChildDashboard({
       {rejectedSpends.length > 0 && (
         <Card className="mt-4 border-blue-200 bg-blue-50">
           <CardContent className="p-4">
-            <p className="text-sm font-semibold text-blue-700 mb-2">🔄 つかう リクエストの やりなおし</p>
+            <p className="text-sm font-semibold text-blue-700 mb-2">🔄 <R k="使" r="つか" />う リクエストの やり<R k="直" r="なお" />し</p>
             {rejectedSpends.map((sr) => (
               <div key={sr.id} className="text-sm mb-2 p-2 rounded-lg bg-white/60">
                 <p className="font-semibold text-blue-800">
@@ -540,7 +540,7 @@ export default function ChildDashboard({
                 {sr.reject_reason ? (
                   <p className="text-xs text-blue-600 mt-0.5">💬 {sr.reject_reason}</p>
                 ) : (
-                  <p className="text-xs text-muted-foreground mt-0.5">こんどは べつの つかいかたを かんがえてみよう！</p>
+                  <p className="text-xs text-muted-foreground mt-0.5"><R k="今度" r="こんど" />は <R k="別" r="べつ" />の <R k="使" r="つか" />い<R k="方" r="かた" />を <R k="考" r="かんが" />えてみよう！</p>
                 )}
               </div>
             ))}
@@ -552,18 +552,18 @@ export default function ChildDashboard({
       <Dialog open={spendOpen} onOpenChange={setSpendOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>🛒 おかねをつかう</DialogTitle>
+            <DialogTitle>🛒 お<R k="金" r="かね" />を<R k="使" r="つか" />う</DialogTitle>
           </DialogHeader>
           {spendSuccess ? (
             <div className="text-center py-4">
               <div className="text-4xl mb-2">📨</div>
-              <p className="font-semibold text-green-600">おやに おねがいしたよ！</p>
-              <p className="text-sm text-muted-foreground"><R k="承認" r="しょうにん" />をまってね</p>
+              <p className="font-semibold text-green-600"><R k="親" r="おや" />に お<R k="願" r="ねが" />いしたよ！</p>
+              <p className="text-sm text-muted-foreground"><R k="承認" r="しょうにん" />を<R k="待" r="ま" />ってね</p>
             </div>
           ) : (
             <div className="space-y-4">
               <div>
-                <Label><R k="金額" r="きんがく" />（えん）</Label>
+                <Label><R k="金額" r="きんがく" />（<R k="円" r="えん" />）</Label>
                 <Input
                   type="number"
                   min={1}
@@ -574,23 +574,23 @@ export default function ChildDashboard({
                 />
               </div>
               <div>
-                <Label>なにに つかう？</Label>
+                <Label><R k="何" r="なに" />に <R k="使" r="つか" />う？</Label>
                 <Input
                   value={spendPurpose}
                   onChange={(e) => setSpendPurpose(e.target.value)}
-                  placeholder="れい: おかしを かいたい"
+                  placeholder="例: お菓子を買いたい"
                   className="h-12"
                 />
               </div>
               {spendError && <p className="text-destructive text-sm text-center">{spendError}</p>}
               <p className="text-xs text-muted-foreground text-center">
-                つかえるお<R k="金" r="かね" />: ¥{wallet?.spending_balance.toLocaleString() || 0}
+                <R k="使" r="つか" />えるお<R k="金" r="かね" />: ¥{wallet?.spending_balance.toLocaleString() || 0}
               </p>
               <Button
                 className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white text-lg"
                 onClick={handleSpendRequest}
               >
-                おやに おねがいする
+                <R k="親" r="おや" />に お<R k="願" r="ねが" />いする
               </Button>
             </div>
           )}

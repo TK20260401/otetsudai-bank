@@ -55,12 +55,12 @@ export function LevelDisplay({ childId }: Props) {
             <>
               <Progress value={progress} className="h-2 mt-1" />
               <p className="text-[10px] text-muted-foreground mt-0.5">
-                つぎの レベル「{next.icon} {next.title}」まで あと ¥{remaining.toLocaleString()}
+                <R k="次" r="つぎ" />の レベル「{next.icon} {next.title}」まで あと ¥{remaining.toLocaleString()}
               </p>
             </>
           ) : (
             <p className="text-[10px] text-amber-600 mt-1 font-semibold">
-              さいこう レベル たっせい！ 🎊
+              <R k="最高" r="さいこう" /> レベル <R k="達成" r="たっせい" />！ 🎊
             </p>
           )}
         </div>
