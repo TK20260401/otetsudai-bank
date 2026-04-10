@@ -1,38 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getSession } from "@/lib/session";
 
 export default function LandingPage() {
-  const router = useRouter();
-  const [checked, setChecked] = useState(false);
-
-  useEffect(() => {
-    const session = getSession();
-    if (session) {
-      // ログイン済み → ロールに応じてリダイレクト
-      if (session.role === "parent") {
-        router.replace("/parent");
-        return;
-      }
-      if (session.role === "child") {
-        router.replace(`/child/${session.userId}`);
-        return;
-      }
-    }
-    setChecked(true);
-  }, [router]);
-
-  if (!checked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl animate-pulse">読み込み中...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero */}
