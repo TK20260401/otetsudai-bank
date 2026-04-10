@@ -27,6 +27,7 @@ import { StampNotifications } from "@/components/stamp-notifications";
 import { checkAndAwardBadges } from "@/lib/badges";
 import { InvestPortfolio } from "@/components/invest-portfolio";
 import { InvestOrderDialog } from "@/components/invest-order-dialog";
+import { AnnouncementBanner } from "@/components/announcement-banner";
 
 export default function ChildDashboard({
   params,
@@ -224,6 +225,7 @@ export default function ChildDashboard({
 
   return (
     <div className="min-h-screen p-4 max-w-md mx-auto">
+      <AnnouncementBanner role="child" />
       <CommonHeader title={`🧒 ${session?.name} のバンク`} />
 
       {/* レベル表示 */}

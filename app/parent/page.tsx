@@ -17,6 +17,7 @@ import { AddChildDialog } from "@/components/add-child-dialog";
 import { ApprovalDialog } from "@/components/approval-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { AnnouncementBanner } from "@/components/announcement-banner";
 
 /** メールアドレス形式なら表示名として不適切と判断 */
 function displayName(name: string | undefined | null): string {
@@ -376,6 +377,7 @@ export default function ParentDashboard() {
 
   return (
     <div className="min-h-screen p-4 max-w-2xl mx-auto">
+      <AnnouncementBanner role="parent" />
       <CommonHeader
         title="⚔️ クエストマスター"
         userName={displayName(session?.name)}
