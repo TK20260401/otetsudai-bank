@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Family, User } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +14,8 @@ type LoginMode = "family" | "admin";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const verified = searchParams.get("verified");
   const [loginMode, setLoginMode] = useState<LoginMode>("family");
   const [families, setFamilies] = useState<Family[]>([]);
   const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
@@ -261,6 +263,18 @@ export default function LoginPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {verified === "true" && (
+            <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-3 text-center">
+              <p className="text-sm font-semibold text-emerald-700">✅ メール認証が完了しました</p>
+              <p className="text-xs text-emerald-600 mt-1">ログインしてください</p>
+            </div>
+          )}
+          {verified === "error" && (
+            <div className="bg-red-50 border border-red-300 rounded-lg p-3 text-center">
+              <p className="text-sm font-semibold text-red-700">認証リンクが無効です</p>
+              <p className="text-xs text-red-600 mt-1">リンクの有効期限が切れている可能性があります</p>
+            </div>
+          )}
           {!selectedFamily ? (
             <>
               <Label className="text-base font-semibold">

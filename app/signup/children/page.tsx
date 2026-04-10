@@ -86,7 +86,7 @@ export default function ChildrenSignupPage() {
       });
     }
 
-    router.push("/parent");
+    router.push("/signup/complete");
   }
 
   if (!session) {

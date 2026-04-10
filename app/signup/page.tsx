@@ -21,7 +21,7 @@ export default function SignupPage() {
 
   async function handleStep1() {
     if (!email || !password) { setError("メールアドレスとパスワードを入力してください"); return; }
-    if (password.length < 6) { setError("パスワードは6文字以上にしてください"); return; }
+    if (password.length < 8) { setError("パスワードは8文字以上にしてください"); return; }
     setError("");
     setStep(2);
   }
@@ -35,6 +35,9 @@ export default function SignupPage() {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+      },
     });
     if (authError) {
       setError(authError.message);
@@ -84,7 +87,10 @@ export default function SignupPage() {
       })
     );
 
-    // 5. 子供登録へ
+    // 5. 登録情報を一時保存（完了画面で表示用）
+    sessionStorage.setItem("signup_info", JSON.stringify({ familyName }));
+
+    // 6. 子供登録へ
     router.push("/signup/children");
   }
 
@@ -121,7 +127,7 @@ export default function SignupPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="6文字以上"
+                  placeholder="8文字以上"
                   className="mt-1"
                 />
               </div>
