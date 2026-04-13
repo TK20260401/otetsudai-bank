@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { R } from "@/components/ruby-text";
 
@@ -72,6 +73,23 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
+
+          {/* Download section */}
+          <div className="mt-12 text-center">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">ダウンロードはこちら</h2>
+            <div className="flex justify-center gap-6 mb-4">
+              <a href="#" className="block">
+                <Image src="/badge-appstore.svg" alt="App Storeからダウンロード" width={160} height={54} />
+              </a>
+              <a href="#" className="block">
+                <Image src="/badge-googleplay.svg" alt="Google Playで手に入れよう" width={160} height={54} />
+              </a>
+            </div>
+            <div className="flex justify-center gap-6">
+              <Image src="/qr-appstore.svg" alt="App Store QRコード" width={120} height={120} />
+              <Image src="/qr-googleplay.svg" alt="Google Play QRコード" width={120} height={120} />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -81,7 +99,7 @@ export default function LandingPage() {
         <span>|</span>
         <Link href="/privacy" className="hover:text-emerald-600">プライバシーポリシー</Link>
         <span>|</span>
-        <Link href="/terms" className="hover:text-emerald-600">利用規約</Link>
+        <Link href="/terms" className="hover:text-emerald-600"><R k="利用" r="りよう" /><R k="規約" r="きやく" /></Link>
         <span>|</span>
         おこづかいクエスト v0.5
       </footer>

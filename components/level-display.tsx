@@ -6,17 +6,19 @@ import { getLevelProgress } from "@/lib/levels";
 import { Progress } from "@/components/ui/progress";
 import { R } from "@/components/ruby-text";
 
+type Mood = "active" | "normal" | "lonely";
+
 type Props = {
   childId: string;
 };
 
 export function LevelDisplay({ childId }: Props) {
   const [totalEarned, setTotalEarned] = useState(0);
+  const [mood, setMood] = useState<Mood>("normal");
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     async function load() {
-      // 承認済みタスクログから累計獲得額を計算
       const { data } = await supabase
         .from("otetsudai_task_logs")
         .select("*, task:otetsudai_tasks(reward_amount)")
@@ -29,6 +31,21 @@ export function LevelDisplay({ childId }: Props) {
         0
       );
       setTotalEarned(total);
+
+      // 機嫌判定：直近のクエスト活動に基づく
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      const recentLogs = (data || []).filter(
+        (log: { approved_at?: string }) =>
+          log.approved_at && new Date(log.approved_at) >= threeDaysAgo
+      );
+      if (recentLogs.length >= 1) {
+        setMood("active");
+      } else {
+        // 全くログがない場合はnormal（始めたばかり）、ログがあるのに最近ない場合はlonely
+        setMood(data && data.length > 0 ? "lonely" : "normal");
+      }
+
       setLoaded(true);
     }
     load();
@@ -38,24 +55,54 @@ export function LevelDisplay({ childId }: Props) {
 
   const { current, next, progress, remaining } = getLevelProgress(totalEarned);
 
+  const greeting =
+    mood === "active"
+      ? current.greetingActive
+      : mood === "lonely"
+        ? current.greetingLonely
+        : current.greeting;
+
+  const moodBg =
+    mood === "active"
+      ? "from-emerald-100 to-yellow-100 border-emerald-300"
+      : mood === "lonely"
+        ? "from-blue-50 to-gray-100 border-blue-200"
+        : "from-amber-100 to-yellow-100 border-amber-200";
+
+  const moodIndicator =
+    mood === "active" ? "✨" : mood === "lonely" ? "💤" : "😊";
+
   return (
-    <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-3 mb-4 border border-amber-200">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="text-2xl">{current.icon}</span>
-        <div className="flex-1">
+    <div className={`bg-gradient-to-r ${moodBg} rounded-xl p-4 mb-4 border`}>
+      <div className="flex items-start gap-3">
+        {/* キャラクター表示 */}
+        <div className="flex flex-col items-center gap-1 min-w-[64px]">
+          <div className="relative">
+            <span className="text-5xl">{current.character}</span>
+            <span className="absolute -top-1 -right-1 text-sm">{moodIndicator}</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground">{current.appearance}</span>
+        </div>
+
+        {/* ステータス */}
+        <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <p className="font-bold text-amber-800">
               Lv.{current.level} {current.title}
             </p>
-            <p className="text-xs text-amber-600">
-              <R k="合計" r="ごうけい" /> ¥{totalEarned.toLocaleString()}
-            </p>
           </div>
+
+          {/* セリフ吹き出し */}
+          <div className="relative bg-white/70 rounded-lg px-3 py-1.5 mt-1 mb-2">
+            <div className="absolute -left-1.5 top-2 w-0 h-0 border-t-4 border-t-transparent border-r-6 border-r-white/70 border-b-4 border-b-transparent" />
+            <p className="text-xs text-gray-700">「{greeting}」</p>
+          </div>
+
           {next ? (
             <>
-              <Progress value={progress} className="h-2 mt-1" />
+              <Progress value={progress} className="h-2" />
               <p className="text-[10px] text-muted-foreground mt-0.5">
-                <R k="次" r="つぎ" />の レベル「{next.icon} {next.title}」まで あと ¥{remaining.toLocaleString()}
+                <R k="次" r="つぎ" />のレベルまで あと ¥{remaining.toLocaleString()}
               </p>
             </>
           ) : (

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 60" width="180" height="60">
+  <rect width="180" height="60" rx="10" fill="#000"/>
+  <text x="50" y="20" fill="#fff" font-size="10" font-family="sans-serif">Google Play</text>
+  <text x="50" y="40" fill="#fff" font-size="14" font-weight="bold" font-family="sans-serif">で手に入れよう</text>
+  <g transform="translate(10,10)">
+    <path d="M6 3.8l12.4 12.4L6 28.6V3.8z" fill="#4285F4"/>
+    <path d="M6 3.8l16.8 9.6-4.4 4.2L6 3.8z" fill="#EA4335"/>
+    <path d="M6 28.6l12-13.8 4.4 4.2L6 28.6z" fill="#34A853"/>
+    <path d="M22.8 13.4l-4.4 4.2 4.4 4.2 5.2-3c.8-.4.8-1.6 0-2.2l-5.2-3.2z" fill="#FBBC04"/>
+  </g>
+</svg>
