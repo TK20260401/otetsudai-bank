@@ -234,12 +234,22 @@ export default function ChildDashboard({
       {/* おやからのスタンプ通知 */}
       <StampNotifications childId={childId} />
 
-      {/* バッジ表示 */}
-      {badges.length > 0 && (
-        <div className="mb-3">
+      {/* 装備（バッジ）表示 — 常時表示 */}
+      <div className="mb-3">
+        {badges.length > 0 ? (
           <BadgeDisplay badges={badges} />
-        </div>
-      )}
+        ) : (
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
+            <p className="text-sm font-bold text-gray-500 mb-2">⚔️ <R k="装備" r="そうび" /></p>
+            <div className="flex justify-center gap-3 mb-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-lg">？</div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400">クエストをクリアして <R k="装備" r="そうび" />をあつめよう！</p>
+          </div>
+        )}
+      </div>
 
       {/* Piggy Bank */}
       <Card className="mb-4 border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50">

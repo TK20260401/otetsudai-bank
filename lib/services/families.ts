@@ -8,6 +8,16 @@ export async function getFamilies(): Promise<Family[]> {
 
 export async function createFamily(name: string): Promise<Family | null> {
   const { data } = await supabase.from("otetsudai_families").insert({ name }).select().single();
+  if (data) {
+    // 家族設定の初期行を作成（特別クエスト有効化）
+    await supabase.from("otetsudai_family_settings").insert({
+      family_id: data.id,
+      special_quest_enabled: true,
+      special_quest_star1_enabled: true,
+      special_quest_star2_enabled: true,
+      special_quest_star3_enabled: true,
+    });
+  }
   return data;
 }
 

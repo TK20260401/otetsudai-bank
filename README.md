@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.9.5）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.9.6）
 
 ## 概要
 
@@ -352,6 +352,7 @@ parent/child: 家族ベース認証
 | v0.9.3 | 2026-04-14 | レベルシステム漢字化＋ルビ振り対応。levels.tsの全テキストをマーカー記法（[漢字｜よみ]）に変換、RubyStrコンポーネント追加（PWA/モバイル両対応）、level-display.tsx・LevelUpModal.tsx・ChildDashboardScreen.tsxをルビ表示に更新 |
 | v0.9.4 | 2026-04-14 | 表記統一。全画面のひらがな表記（つかう/ためる/ふやす/ちょきん/あんしょうばんごう等）を漢字＋ルビに統一、表記ブレ解消。対象: reward-split-slider、parent/page、signup/children、add-child-dialog、chat-widget、help/page |
 | v0.9.5 | 2026-04-14 | 子どもダッシュボード画面構成統一。新規追加した子（次郎）のウォレットに invest_balance / save_ratio / invest_ratio が未設定だった問題を修正。createChildWithWallet と signup/children に3分割フィールド追加、子画面の投資セクション条件撤去で常時表示、おさいふ表示を3分割（使う/貯める/増やす）に統一、NULL安全対応。既存データのバックフィルSQL追加。モバイル版の null 安全性強化 |
+| v0.9.6 | 2026-04-14 | 特別クエスト・装備セクションを全児童デフォルト表示化。空状態UI追加（未獲得スロット・メッセージ）。特別クエストのassigned_child_id NULL統一バックフィル。family_settings初期行自動作成をcreateFamilyに追加 |
 
 ## Getting Started
 
