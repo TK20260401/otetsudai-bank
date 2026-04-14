@@ -8,9 +8,9 @@ type Message = { role: "user" | "assistant"; content: string };
 
 const CHILD_SUGGESTIONS = [
   "クエストのコツをおしえて",
-  "ちょきんってなに？",
+  "貯金ってなに？",
   "バッジをあつめたい！",
-  "ごほうびのつかいかた",
+  "ごほうびの使いかた",
 ];
 
 const PARENT_SUGGESTIONS = [
@@ -22,7 +22,7 @@ const PARENT_SUGGESTIONS = [
 
 const GUEST_SUGGESTIONS = [
   "このアプリはなに？",
-  "はじめかたをおしえて",
+  "始めかたをおしえて",
   "どんな機能がある？",
   "親はなにができる？",
 ];

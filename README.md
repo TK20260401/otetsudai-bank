@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.9.3）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.9.4）
 
 ## 概要
 
@@ -350,6 +350,7 @@ parent/child: 家族ベース認証
 | v0.9.1 | 2026-04-10 | セキュリティ強化。メール認証（Supabase Auth Confirm email）、登録完了画面（/signup/complete）、メール認証コールバック（/auth/confirm）、パスワード最低8文字化、ログイン画面に認証ステータスバナー、adminアカウント作成 |
 | v0.9.2 | 2026-04-14 | ルビ（振り仮名）レイアウト崩れ修正。globals.cssにruby/rtグローバルスタイル追加（line-height:1.75で行高均一化、ruby-align/ruby-position最適化）、ruby-text.tsxのインラインクラス重複削除 |
 | v0.9.3 | 2026-04-14 | レベルシステム漢字化＋ルビ振り対応。levels.tsの全テキストをマーカー記法（[漢字｜よみ]）に変換、RubyStrコンポーネント追加（PWA/モバイル両対応）、level-display.tsx・LevelUpModal.tsx・ChildDashboardScreen.tsxをルビ表示に更新 |
+| v0.9.4 | 2026-04-14 | 表記統一。全画面のひらがな表記（つかう/ためる/ふやす/ちょきん/あんしょうばんごう等）を漢字＋ルビに統一、表記ブレ解消。対象: reward-split-slider、parent/page、signup/children、add-child-dialog、chat-widget、help/page |
 
 ## Getting Started
 

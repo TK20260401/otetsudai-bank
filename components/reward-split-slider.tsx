@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { R } from "@/components/ruby-text";
 
 /**
  * 報酬自動分配スライダー（UD対応）
@@ -79,17 +80,17 @@ export default function RewardSplitSlider({
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="flex flex-col items-center gap-1">
           <div className="w-8 h-8 rounded-full bg-red-400 flex items-center justify-center text-white text-sm" aria-hidden="true">💰</div>
-          <span className="text-xs font-bold text-red-600">つかう</span>
+          <span className="text-xs font-bold text-red-600"><R k="使" r="つか" />う</span>
           <span className="text-lg font-bold text-red-700">{spendRatio}%</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center text-white text-sm" aria-hidden="true">🐷</div>
-          <span className="text-xs font-bold text-blue-600">ためる</span>
+          <span className="text-xs font-bold text-blue-600"><R k="貯" r="た" />める</span>
           <span className="text-lg font-bold text-blue-700">{saveRatio}%</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center text-white text-sm" aria-hidden="true">🌱</div>
-          <span className="text-xs font-bold text-green-600">ふやす</span>
+          <span className="text-xs font-bold text-green-600"><R k="増" r="ふ" />やす</span>
           <span className="text-lg font-bold text-green-700">{investRatio}%</span>
         </div>
       </div>
@@ -99,7 +100,7 @@ export default function RewardSplitSlider({
         <div>
           <label className="flex items-center gap-2 text-sm font-semibold text-blue-700 mb-1">
             <span className="w-5 h-5 rounded-full bg-blue-400 inline-flex items-center justify-center text-white text-xs" aria-hidden="true">🐷</span>
-            ためる: {saveRatio}%
+            <R k="貯" r="た" />める: {saveRatio}%
           </label>
           <input
             type="range"
@@ -116,7 +117,7 @@ export default function RewardSplitSlider({
         <div>
           <label className="flex items-center gap-2 text-sm font-semibold text-green-700 mb-1">
             <span className="w-5 h-5 rounded-full bg-green-400 inline-flex items-center justify-center text-white text-xs" aria-hidden="true">🌱</span>
-            ふやす: {investRatio}%
+            <R k="増" r="ふ" />やす: {investRatio}%
           </label>
           <input
             type="range"
@@ -134,7 +135,7 @@ export default function RewardSplitSlider({
 
       {/* ヒント */}
       <p className="text-xs text-muted-foreground text-center">
-        のこり（つかうお金）は じどうで きまります
+        <R k="残" r="のこ" />り（<R k="使" r="つか" />うお<R k="金" r="かね" />）は <R k="自動" r="じどう" />で <R k="決" r="き" />まります
       </p>
     </div>
   );

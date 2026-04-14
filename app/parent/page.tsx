@@ -400,7 +400,7 @@ export default function ParentDashboard() {
               ようこそ クエストマスター！
             </p>
             <p className="text-sm text-muted-foreground">
-              まずは おこさまを ついかして<br />ぼうけんを はじめましょう！
+              まずは おこさまを 追加して<br />冒険を はじめましょう！
             </p>
             <Button
               className="bg-amber-500 hover:bg-amber-600 text-white text-base h-12 px-8"
@@ -415,7 +415,7 @@ export default function ParentDashboard() {
           <CardContent className="py-8 text-center space-y-3">
             <div className="text-5xl">⚔️</div>
             <p className="text-lg font-bold text-emerald-800">
-              クエストを つくって<br />ぼうけんを はじめよう！
+              クエストを つくって<br />冒険を はじめよう！
             </p>
             <p className="text-sm text-muted-foreground">
               おこさまが ちょうせんする クエスト（おてつだい）を つくりましょう
@@ -825,21 +825,21 @@ export default function ParentDashboard() {
                     <div className="grid grid-cols-3 gap-1.5 text-sm mb-3">
                       <div className="bg-red-50 rounded-lg p-2 text-center border border-red-100">
                         <div className="text-base" aria-hidden="true">💰</div>
-                        <p className="text-[10px] text-red-500 font-semibold">つかう</p>
+                        <p className="text-[10px] text-red-500 font-semibold">使う</p>
                         <p className="font-bold text-red-600 text-sm">
                           ¥{wallet?.spending_balance.toLocaleString() || 0}
                         </p>
                       </div>
                       <div className="bg-blue-50 rounded-lg p-2 text-center border border-blue-100">
                         <div className="text-base" aria-hidden="true">🐷</div>
-                        <p className="text-[10px] text-blue-500 font-semibold">ためる</p>
+                        <p className="text-[10px] text-blue-500 font-semibold">貯める</p>
                         <p className="font-bold text-blue-600 text-sm">
                           ¥{wallet?.saving_balance.toLocaleString() || 0}
                         </p>
                       </div>
                       <div className="bg-green-50 rounded-lg p-2 text-center border border-green-100">
                         <div className="text-base" aria-hidden="true">🌱</div>
-                        <p className="text-[10px] text-green-500 font-semibold">ふやす</p>
+                        <p className="text-[10px] text-green-500 font-semibold">増やす</p>
                         <p className="font-bold text-green-600 text-sm">
                           ¥{wallet?.invest_balance?.toLocaleString() || 0}
                         </p>

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { R } from "@/components/ruby-text";
 
 type ChildForm = { name: string; pin: string };
 
@@ -137,7 +138,7 @@ export default function ChildrenSignupPage() {
                   className="tracking-widest"
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  ログインするときにつかう4けたのあんしょうばんごうです。おこさまといっしょにきめてください
+                  ログインするときに<R k="使" r="つか" />う4けたの<R k="暗証番号" r="あんしょうばんごう" />です。おこさまといっしょに<R k="決" r="き" />めてください
                 </p>
               </div>
             </div>

@@ -141,7 +141,7 @@ export default function HelpPage() {
             <div>
               <p className="font-semibold">子どもの残高</p>
               <p className="text-muted-foreground">
-                各子どもの「つかえるお金」「ちょきん」の残高と貯蓄率が一覧で確認できます
+                各子どもの「使えるお金」「貯金」の残高と貯蓄率が一覧で確認できます
               </p>
             </div>
           </div>
@@ -183,11 +183,11 @@ export default function HelpPage() {
           </div>
           <div>
             <p className="font-semibold">
-              Q. ちょきんと「つかえるお金」のわりあいは？
+              Q. <R k="貯金" r="ちょきん" />と「<R k="使" r="つか" />えるお<R k="金" r="かね" />」の<R k="割合" r="わりあい" />は？
             </p>
             <p className="text-muted-foreground">
               A.
-              ウォレットの分配比率で設定できます。最初は「つかえるお金70%：ちょきん30%」がおすすめです
+              ウォレットの分配比率で設定できます。最初は「使えるお金70%：貯金30%」がおすすめです
             </p>
           </div>
           <div>

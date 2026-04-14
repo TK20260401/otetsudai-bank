@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { R } from "@/components/ruby-text";
 
 type Props = {
   open: boolean;
@@ -126,7 +127,7 @@ export function AddChildDialog({ open, onClose, familyId, onAdded }: Props) {
                 className="mt-1 h-12 text-lg tracking-widest text-center"
               />
               <p className="text-[10px] text-muted-foreground mt-1">
-                ログインするときに つかう あんしょうばんごうです
+                ログインするときに <R k="使" r="つか" />う <R k="暗証番号" r="あんしょうばんごう" />です
               </p>
             </div>
 
