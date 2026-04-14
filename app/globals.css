@@ -130,27 +130,36 @@
   }
 
   /* ── ルビ（振り仮名）レイアウト安定化 ──
-     span + inline-flex + column-reverse で実装。
-     DOM順: ruby-base → ruby-rt（ベースラインは漢字から取得）
-     表示順: ruby-rt（上）→ ruby-base（下）（column-reverse）
-     ボタン等のコンテナ内でもはみ出さず収まる。 */
+     span + inline-block + absolute で実装。
+     ベースラインは漢字に自然に揃う。
+     rt は漢字の真上・中央揃えで absolute 配置。
+     body line-height: 1.75 により十分な行間を確保。
+     ボタン等の枠内にルビが収まるよう :has(.ruby-w) で
+     padding-top を追加。 */
   .ruby-w {
-    display: inline-flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    vertical-align: baseline;
-    line-height: normal;
+    position: relative;
+    display: inline-block;
+    text-align: center;
   }
   .ruby-rt {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
     font-size: 0.5em;
     line-height: 1;
     letter-spacing: 0.02em;
     opacity: 0.7;
-    white-space: nowrap;
     user-select: none;
     pointer-events: none;
   }
-  .ruby-base {
-    line-height: 1.1;
+  /* ルビを含むボタン・バッジ等の枠を広げてはみ出し防止 */
+  button:has(.ruby-w),
+  a:has(.ruby-w),
+  [class*="badge"]:has(.ruby-w),
+  [class*="Badge"]:has(.ruby-w),
+  label:has(.ruby-w) {
+    padding-top: 1em;
   }
 }
