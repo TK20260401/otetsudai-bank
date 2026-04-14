@@ -78,12 +78,15 @@ export default function ChildrenSignupPage() {
         await supabase.rpc("set_pin_hash", { p_user_id: childData.id, p_pin: child.pin });
       }
 
-      // ウォレット作成（デフォルト: 貯金30%）
+      // ウォレット作成（3分割: つかう70% / ためる20% / ふやす10%）
       await supabase.from("otetsudai_wallets").insert({
         child_id: childData.id,
         spending_balance: 0,
         saving_balance: 0,
-        split_ratio: 30,
+        invest_balance: 0,
+        save_ratio: 20,
+        invest_ratio: 10,
+        split_ratio: 20,
       });
     }
 

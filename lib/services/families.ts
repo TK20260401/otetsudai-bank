@@ -42,12 +42,15 @@ export async function createChildWithWallet(familyId: string, name: string, pin?
 
   if (error || !childData) return { data: null, error };
 
-  // ウォレット作成
+  // ウォレット作成（3分割: つかう70% / ためる20% / ふやす10%）
   await supabase.from("otetsudai_wallets").insert({
     child_id: childData.id,
     spending_balance: 0,
     saving_balance: 0,
-    split_ratio: 30,
+    invest_balance: 0,
+    save_ratio: 20,
+    invest_ratio: 10,
+    split_ratio: 20,
   });
 
   return { data: childData, error: null };

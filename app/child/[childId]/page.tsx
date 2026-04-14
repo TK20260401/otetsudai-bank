@@ -220,7 +220,7 @@ export default function ChildDashboard({
   }
 
   const total = wallet
-    ? wallet.spending_balance + wallet.saving_balance
+    ? wallet.spending_balance + wallet.saving_balance + (wallet.invest_balance ?? 0)
     : 0;
 
   return (
@@ -251,28 +251,36 @@ export default function ChildDashboard({
             ¥{total.toLocaleString()}
           </p>
           <p className="text-sm text-muted-foreground mb-4"><R k="全部" r="ぜんぶ" />のお<R k="金" r="かね" /></p>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/70 rounded-xl p-3">
-              <p className="text-xs text-blue-500 font-semibold">
-                💳 <R k="使" r="つか" />えるお<R k="金" r="かね" />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white/70 rounded-xl p-2">
+              <p className="text-[10px] text-red-500 font-semibold">
+                💳 <R k="使" r="つか" />う
               </p>
-              <p className="text-xl font-bold text-blue-600">
-                ¥{wallet?.spending_balance.toLocaleString() || 0}
+              <p className="text-base font-bold text-red-600">
+                ¥{(wallet?.spending_balance ?? 0).toLocaleString()}
               </p>
               <Button
                 size="sm"
-                className="mt-1 w-full bg-blue-500 hover:bg-blue-600 text-white text-xs h-7"
+                className="mt-1 w-full bg-red-500 hover:bg-red-600 text-white text-[10px] h-6 px-1"
                 onClick={() => { setSpendOpen(true); setSpendError(""); setSpendSuccess(false); }}
               >
                 🛒 <R k="使" r="つか" />う
               </Button>
             </div>
-            <div className="bg-white/70 rounded-xl p-3">
-              <p className="text-xs text-green-500 font-semibold">
-                🏦 <R k="貯" r="ちょ" /><R k="金" r="きん" />
+            <div className="bg-white/70 rounded-xl p-2">
+              <p className="text-[10px] text-blue-500 font-semibold">
+                🐷 <R k="貯" r="た" />める
               </p>
-              <p className="text-xl font-bold text-green-600">
-                ¥{wallet?.saving_balance.toLocaleString() || 0}
+              <p className="text-base font-bold text-blue-600">
+                ¥{(wallet?.saving_balance ?? 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-white/70 rounded-xl p-2">
+              <p className="text-[10px] text-green-500 font-semibold">
+                🌱 <R k="増" r="ふ" />やす
+              </p>
+              <p className="text-base font-bold text-green-600">
+                ¥{(wallet?.invest_balance ?? 0).toLocaleString()}
               </p>
             </div>
           </div>
@@ -288,14 +296,14 @@ export default function ChildDashboard({
         onUpdate={loadData}
       />
 
-      {/* 投資ポートフォリオ */}
-      {wallet && (wallet.invest_balance > 0 || wallet.invest_ratio > 0) && (
+      {/* 投資ポートフォリオ（全員に常時表示） */}
+      {wallet && (
         <div className="mb-4">
           <InvestPortfolio
             childId={childId}
-            investBalance={wallet.invest_balance || 0}
+            investBalance={wallet.invest_balance ?? 0}
           />
-          {wallet.invest_balance > 0 && (
+          {(wallet.invest_balance ?? 0) > 0 && (
             <Button
               className="w-full mt-2 h-12 text-base font-bold bg-green-500 hover:bg-green-600 text-white rounded-2xl"
               onClick={() => setInvestOrderOpen(true)}
