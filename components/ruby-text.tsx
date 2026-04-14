@@ -258,24 +258,33 @@ const RUBY_DICT: [string, string][] = [
   ["教", "おし"],
   ["迷", "まよ"],
   ["続", "つづ"],
+  ["皿洗", "さらあら"],
   ["皿", "さら"],
+  ["洗", "あら"],
   ["世話", "せわ"],
   ["終", "お"],
 ];
 
-// テキスト内の漢字を自動でルビ付きに変換
+// 辞書を長い順にソート（長い語を先にマッチさせる）
+const SORTED_DICT = [...RUBY_DICT].sort((a, b) => b[0].length - a[0].length);
+
+// ひらがな→漢字の逆引き辞書（2文字以上の読みのみ、過剰マッチ防止）
+const REVERSE_DICT = RUBY_DICT
+  .filter(([, reading]) => reading.length >= 2)
+  .map(([kanji, reading]) => [reading, kanji, reading] as const)
+  .sort((a, b) => b[0].length - a[0].length);
+
+// テキスト内の漢字・ひらがなを自動でルビ付きに変換
 export function AutoRuby({ text }: { text: string }): ReactNode {
   if (!text) return null;
-
-  // 辞書を長い順にソート（長い語を先にマッチさせる）
-  const sorted = [...RUBY_DICT].sort((a, b) => b[0].length - a[0].length);
 
   const parts: { text: string; ruby?: string }[] = [];
   let remaining = text;
 
   while (remaining.length > 0) {
     let matched = false;
-    for (const [kanji, reading] of sorted) {
+    // 漢字マッチ
+    for (const [kanji, reading] of SORTED_DICT) {
       if (remaining.startsWith(kanji)) {
         parts.push({ text: kanji, ruby: reading });
         remaining = remaining.slice(kanji.length);
@@ -284,7 +293,17 @@ export function AutoRuby({ text }: { text: string }): ReactNode {
       }
     }
     if (!matched) {
-      // マッチしなかった1文字をそのまま追加
+      // ひらがな逆引きマッチ
+      for (const [reading, kanji, ruby] of REVERSE_DICT) {
+        if (remaining.startsWith(reading)) {
+          parts.push({ text: kanji, ruby });
+          remaining = remaining.slice(reading.length);
+          matched = true;
+          break;
+        }
+      }
+    }
+    if (!matched) {
       if (parts.length > 0 && !parts[parts.length - 1].ruby) {
         parts[parts.length - 1].text += remaining[0];
       } else {
