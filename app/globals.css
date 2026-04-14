@@ -130,17 +130,24 @@
   }
 
   /* ── ルビ（振り仮名）レイアウト安定化 ──
-     ルビ有無にかかわらず行高を均一にし、
-     ボタン・カード・リスト内のテキスト位置を揃える */
+     rt を絶対配置にし、ベースラインへの影響をゼロにする。
+     body line-height: 1.75 により rt が上にはみ出しても
+     十分な行間があるためクリッピングしない。 */
   ruby {
-    ruby-align: center;
-    ruby-position: over;
+    position: relative;
+    overflow: visible;
   }
   rt {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
     font-size: 0.5em;
     line-height: 1;
     letter-spacing: 0.02em;
     opacity: 0.7;
     user-select: none;
+    pointer-events: none;
   }
 }
