@@ -6,8 +6,8 @@ import type { ReactNode } from "react";
 export function R({ k, r }: { k: string; r: string }) {
   return (
     <span className="ruby-w">
-      <span className="ruby-rt">{r}</span>
       <span className="ruby-base">{k}</span>
+      <span className="ruby-rt">{r}</span>
     </span>
   );
 }
@@ -26,8 +26,8 @@ export function RubyStr({ text }: { text: string }): ReactNode {
     }
     parts.push(
       <span className="ruby-w" key={key++}>
-        <span className="ruby-rt">{match[2]}</span>
         <span className="ruby-base">{match[1]}</span>
+        <span className="ruby-rt">{match[2]}</span>
       </span>
     );
     lastIndex = match.index + match[0].length;
@@ -328,8 +328,8 @@ export function AutoRuby({ text }: { text: string }): ReactNode {
       {parts.map((p, i) =>
         p.ruby ? (
           <span className="ruby-w" key={i}>
-            <span className="ruby-rt">{p.ruby}</span>
             <span className="ruby-base">{p.text}</span>
+            <span className="ruby-rt">{p.ruby}</span>
           </span>
         ) : (
           <span key={i}>{p.text}</span>
