@@ -5,10 +5,10 @@ import type { ReactNode } from "react";
 // 手動ルビ: <R k="漢字" r="かんじ" />
 export function R({ k, r }: { k: string; r: string }) {
   return (
-    <ruby>
-      {k}
-      <rt>{r}</rt>
-    </ruby>
+    <span className="ruby-w">
+      <span className="ruby-rt">{r}</span>
+      <span className="ruby-base">{k}</span>
+    </span>
   );
 }
 
@@ -25,10 +25,10 @@ export function RubyStr({ text }: { text: string }): ReactNode {
       parts.push(text.slice(lastIndex, match.index));
     }
     parts.push(
-      <ruby key={key++}>
-        {match[1]}
-        <rt>{match[2]}</rt>
-      </ruby>
+      <span className="ruby-w" key={key++}>
+        <span className="ruby-rt">{match[2]}</span>
+        <span className="ruby-base">{match[1]}</span>
+      </span>
     );
     lastIndex = match.index + match[0].length;
   }
@@ -327,10 +327,10 @@ export function AutoRuby({ text }: { text: string }): ReactNode {
     <>
       {parts.map((p, i) =>
         p.ruby ? (
-          <ruby key={i}>
-            {p.text}
-            <rt>{p.ruby}</rt>
-          </ruby>
+          <span className="ruby-w" key={i}>
+            <span className="ruby-rt">{p.ruby}</span>
+            <span className="ruby-base">{p.text}</span>
+          </span>
         ) : (
           <span key={i}>{p.text}</span>
         )
