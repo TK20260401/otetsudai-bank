@@ -87,7 +87,7 @@ export function LevelDisplay({ childId }: Props) {
         {/* ステータス */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <p className="font-bold text-amber-800">
+            <p className="font-bold text-amber-800 text-sm leading-relaxed break-words">
               Lv.{current.level} <RubyStr text={current.title} />
             </p>
           </div>

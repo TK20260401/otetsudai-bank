@@ -224,7 +224,7 @@ export default function ChildDashboard({
     : 0;
 
   return (
-    <div className="min-h-screen p-4 max-w-md mx-auto">
+    <div className="min-h-screen px-4 py-4 max-w-lg mx-auto" style={{ paddingTop: "env(safe-area-inset-top, 0px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
       <AnnouncementBanner role="child" />
       <CommonHeader title={`🧒 ${session?.name} のバンク`} />
 
