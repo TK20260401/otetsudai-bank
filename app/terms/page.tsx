@@ -59,13 +59,13 @@ export default function TermsPage() {
 
         {/* ===== サービス概要 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">1. サービス概要</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">1. サービス概要</h2>
           <p>おこづかいクエスト（以下「本サービス」）は、家庭内のお手伝いを通じてお子様の金融リテラシーを育成するための教育アプリケーションです。保護者がクエスト（お手伝い）を設定し、お子様がクリアすることで仮想的な報酬を獲得・管理する体験を提供します。</p>
         </section>
 
         {/* ===== 対象年齢 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">2. 対象年齢・利用条件</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">2. 対象年齢・利用条件</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>本サービスは、<strong>保護者の監督下</strong>での使用を前提としています（お子様単独での利用は想定していません）</li>
             <li>対象年齢: 未就学児〜中学生（保護者の判断による）</li>
@@ -76,7 +76,7 @@ export default function TermsPage() {
 
         {/* ===== アカウント管理 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">3. アカウント管理</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">3. アカウント管理</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>保護者がアカウントの作成・管理・削除の全責任を負います</li>
             <li>家族単位でデータを管理し、データの削除は保護者のみが行えます</li>
@@ -86,7 +86,7 @@ export default function TermsPage() {
 
         {/* ===== 投資シミュレーション ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">4. 投資シミュレーションについて</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">4. 投資シミュレーションについて</h2>
           <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3">
             <p>本サービスの投資機能は<strong>教育目的のシミュレーション</strong>であり、以下の点にご注意ください:</p>
             <ul className="list-disc pl-6 space-y-1 mt-2">
@@ -102,7 +102,7 @@ export default function TermsPage() {
 
         {/* ===== 禁止事項 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">5. 禁止事項</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">5. 禁止事項</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>他のユーザーのアカウントへの不正アクセス</li>
             <li>サービスの運営を妨害する行為</li>
@@ -113,7 +113,7 @@ export default function TermsPage() {
 
         {/* ===== 免責事項 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">6. 免責事項</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">6. 免責事項</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>本サービスは「現状有姿」で提供されます</li>
             <li>外部アプリ（PayPay、B/43、LINE Pay等）での送金トラブルは本サービスの責任外です</li>
@@ -125,7 +125,7 @@ export default function TermsPage() {
 
         {/* ===== サービス変更・終了 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">7. サービスの変更・終了</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">7. サービスの変更・終了</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>本サービスは予告なく内容の変更・一時停止・終了を行う場合があります</li>
             <li>重要な変更がある場合は、アプリ内で事前に通知するよう努めます</li>
@@ -135,7 +135,7 @@ export default function TermsPage() {
 
         {/* ===== 規約の変更 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">8. 規約の変更</h2>
+          <h2 className="text-lg font-semibold text-emerald-800 mb-2">8. 規約の変更</h2>
           <p>本規約は予告なく変更される場合があります。重要な変更がある場合は、アプリ内で通知します。継続利用をもって改定後の規約に同意したものとみなします。</p>
         </section>
       </div>
