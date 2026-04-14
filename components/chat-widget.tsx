@@ -90,7 +90,7 @@ export default function ChatWidget({ role }: { role: "parent" | "child" | "guest
 
       {/* チャットパネル */}
       {open && (
-        <div className="fixed bottom-20 right-5 z-50 w-[340px] sm:w-[370px] rounded-2xl shadow-2xl overflow-hidden border border-gray-200 bg-white flex flex-col"
+        <div className="fixed bottom-20 right-5 left-5 sm:left-auto z-50 sm:w-[370px] rounded-2xl shadow-2xl overflow-hidden border border-gray-200 bg-white flex flex-col"
           style={{ maxHeight: "min(500px, 70vh)" }}>
           {/* ヘッダー */}
           <div
