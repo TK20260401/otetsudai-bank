@@ -55,6 +55,11 @@ export default function AdminPage() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
+  // 家族追加
+  const [showAddFamily, setShowAddFamily] = useState(false);
+  const [newFamilyName, setNewFamilyName] = useState("");
+  const [addingFamily, setAddingFamily] = useState(false);
+
   // お知らせ管理
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
@@ -243,6 +248,34 @@ export default function AdminPage() {
     setShowMaintenanceConfirm(false);
   }
 
+  async function handleAddFamily() {
+    if (!newFamilyName.trim()) return;
+    setAddingFamily(true);
+    setError("");
+    try {
+      // 家族作成
+      const { data: familyData } = await supabase
+        .from("otetsudai_families")
+        .insert({ name: newFamilyName.trim() })
+        .select()
+        .single();
+      if (familyData) {
+        // family_settings 初期行作成
+        await supabase.from("otetsudai_family_settings").insert({
+          family_id: familyData.id,
+          special_quest_enabled: true,
+          special_quest_star1_enabled: true,
+          special_quest_star2_enabled: true,
+          special_quest_star3_enabled: true,
+        });
+      }
+      setNewFamilyName("");
+      setShowAddFamily(false);
+      loadData();
+    } catch { setError("家族の追加に失敗しました"); }
+    setAddingFamily(false);
+  }
+
   async function handleDeleteFamily() {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -384,10 +417,32 @@ export default function AdminPage() {
 
         {/* 家族一覧 */}
         <Card className="border-slate-200">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-base text-slate-700">🏠 家族一覧</CardTitle>
+            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setShowAddFamily(true)}>
+              ＋ 家族追加
+            </Button>
           </CardHeader>
           <CardContent>
+            {showAddFamily && (
+              <div className="mb-4 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                <Label className="text-sm font-semibold text-emerald-700">新しい家族名</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    value={newFamilyName}
+                    onChange={(e) => setNewFamilyName(e.target.value)}
+                    placeholder="例: 田中家"
+                    className="flex-1"
+                  />
+                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleAddFamily} disabled={addingFamily || !newFamilyName.trim()}>
+                    {addingFamily ? "追加中..." : "追加"}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { setShowAddFamily(false); setNewFamilyName(""); }}>
+                    キャンセル
+                  </Button>
+                </div>
+              </div>
+            )}
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
