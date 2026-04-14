@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { getLevelProgress } from "@/lib/levels";
 import { Progress } from "@/components/ui/progress";
-import { R } from "@/components/ruby-text";
+import { R, RubyStr } from "@/components/ruby-text";
 
 type Mood = "active" | "normal" | "lonely";
 
@@ -81,21 +81,21 @@ export function LevelDisplay({ childId }: Props) {
             <span className="text-5xl">{current.character}</span>
             <span className="absolute -top-1 -right-1 text-sm">{moodIndicator}</span>
           </div>
-          <span className="text-[10px] text-muted-foreground">{current.appearance}</span>
+          <span className="text-[10px] text-muted-foreground"><RubyStr text={current.appearance} /></span>
         </div>
 
         {/* ステータス */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <p className="font-bold text-amber-800">
-              Lv.{current.level} {current.title}
+              Lv.{current.level} <RubyStr text={current.title} />
             </p>
           </div>
 
           {/* セリフ吹き出し */}
           <div className="relative bg-white/70 rounded-lg px-3 py-1.5 mt-1 mb-2">
             <div className="absolute -left-1.5 top-2 w-0 h-0 border-t-4 border-t-transparent border-r-6 border-r-white/70 border-b-4 border-b-transparent" />
-            <p className="text-xs text-gray-700">「{greeting}」</p>
+            <p className="text-xs text-gray-700">「<RubyStr text={greeting} />」</p>
           </div>
 
           {next ? (

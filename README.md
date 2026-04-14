@@ -1,4 +1,4 @@
-# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.9.2）
+# おこづかいクエスト — お手伝い＝クエスト！マネー冒険アプリ（v0.9.3）
 
 ## 概要
 
@@ -349,6 +349,7 @@ parent/child: 家族ベース認証
 | v0.9.0 | 2026-04-10 | admin機能3点実装。お知らせ配信（CRUD・優先度3段階・対象ロール指定・バナー表示・既読管理）、メンテナンスモード（DB設定ベース・admin除外・30秒キャッシュ・確認ダイアログ）、株価マスター管理（銘柄CRUD・Alpha Vantage 1銘柄ずつ同期・プログレス表示・為替換算）。DBテーブル追加: otetsudai_announcements, otetsudai_settings |
 | v0.9.1 | 2026-04-10 | セキュリティ強化。メール認証（Supabase Auth Confirm email）、登録完了画面（/signup/complete）、メール認証コールバック（/auth/confirm）、パスワード最低8文字化、ログイン画面に認証ステータスバナー、adminアカウント作成 |
 | v0.9.2 | 2026-04-14 | ルビ（振り仮名）レイアウト崩れ修正。globals.cssにruby/rtグローバルスタイル追加（line-height:1.75で行高均一化、ruby-align/ruby-position最適化）、ruby-text.tsxのインラインクラス重複削除 |
+| v0.9.3 | 2026-04-14 | レベルシステム漢字化＋ルビ振り対応。levels.tsの全テキストをマーカー記法（[漢字｜よみ]）に変換、RubyStrコンポーネント追加（PWA/モバイル両対応）、level-display.tsx・LevelUpModal.tsx・ChildDashboardScreen.tsxをルビ表示に更新 |
 
 ## Getting Started
 

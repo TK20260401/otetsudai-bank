@@ -12,6 +12,32 @@ export function R({ k, r }: { k: string; r: string }) {
   );
 }
 
+// マーカー記法でのルビ表示: "[駆|か]け[出|だ]し" → 駆(か)け出(だ)し
+export function RubyStr({ text }: { text: string }): ReactNode {
+  if (!text) return null;
+  const parts: ReactNode[] = [];
+  const regex = /\[([^\]|]+)\|([^\]]+)\]/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    parts.push(
+      <ruby key={key++}>
+        {match[1]}
+        <rt>{match[2]}</rt>
+      </ruby>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+  return <>{parts}</>;
+}
+
 // 漢字→読みの辞書（お手伝い系の頻出漢字 + UI用語）
 const RUBY_DICT: [string, string][] = [
   // ── アプリUI・共通用語 ──
