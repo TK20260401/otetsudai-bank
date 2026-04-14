@@ -7,7 +7,7 @@ export function R({ k, r }: { k: string; r: string }) {
   return (
     <ruby>
       {k}
-      <rt className="text-[0.55em] leading-none text-inherit opacity-70">{r}</rt>
+      <rt>{r}</rt>
     </ruby>
   );
 }
@@ -274,7 +274,7 @@ export function AutoRuby({ text }: { text: string }): ReactNode {
         p.ruby ? (
           <ruby key={i}>
             {p.text}
-            <rt className="text-[0.5em] text-inherit opacity-70">{p.ruby}</rt>
+            <rt>{p.ruby}</rt>
           </ruby>
         ) : (
           <span key={i}>{p.text}</span>
