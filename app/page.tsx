@@ -26,10 +26,10 @@ export default function LandingPage() {
             <Link href="/signup">
               <button
                 className="w-full px-8 py-5 rounded-2xl text-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-3"
-                aria-label="新規登録 - ぼうけんをはじめる"
+                aria-label="新規スタート - ぼうけんをはじめる"
               >
                 <span className="text-3xl" aria-hidden="true">⚔️</span>
-                <span><R k="新" r="あたら" />しく <R k="始" r="はじ" />める</span>
+                <span><R k="新規" r="しんき" />スタート</span>
               </button>
             </Link>
             <Link href="/login">
@@ -101,7 +101,7 @@ export default function LandingPage() {
         <span>|</span>
         <Link href="/terms" className="hover:text-emerald-600"><R k="利用" r="りよう" /><R k="規約" r="きやく" /></Link>
         <span>|</span>
-        おこづかいクエスト v0.5
+        おこづかいクエスト v0.9.4
       </footer>
     </div>
   );
