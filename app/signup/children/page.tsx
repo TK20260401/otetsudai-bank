@@ -40,7 +40,7 @@ export default function ChildrenSignupPage() {
 
     const validChildren = children.filter((c) => c.name.trim());
     if (validChildren.length === 0) {
-      setError("おこさまの名前を1人以上入力してください");
+      setError("お子さまの名前を1人以上入力してください");
       return;
     }
 
@@ -79,15 +79,27 @@ export default function ChildrenSignupPage() {
       }
 
       // ウォレット作成（3分割: つかう70% / ためる20% / ふやす10%）
-      await supabase.from("otetsudai_wallets").insert({
+      // ウェルカムボーナス100円を「つかう」に付与
+      const welcomeBonus = 100;
+      const { data: walletData } = await supabase.from("otetsudai_wallets").insert({
         child_id: childData.id,
-        spending_balance: 0,
+        spending_balance: welcomeBonus,
         saving_balance: 0,
         invest_balance: 0,
         save_ratio: 20,
         invest_ratio: 10,
         split_ratio: 20,
-      });
+      }).select().single();
+
+      // ウェルカムボーナスのトランザクション記録
+      if (walletData) {
+        await supabase.from("otetsudai_transactions").insert({
+          wallet_id: walletData.id,
+          type: "earn",
+          amount: welcomeBonus,
+          description: "🎉 ウェルカムボーナス！冒険の始まりだ！",
+        });
+      }
     }
 
     router.push("/signup/complete");
@@ -107,10 +119,10 @@ export default function ChildrenSignupPage() {
         <CardHeader className="text-center">
           <div className="text-5xl mb-2">🧒</div>
           <CardTitle className="text-2xl font-bold text-amber-800">
-            おこさまを登録しよう
+            お<R k="子" r="こ" />さまを<R k="登録" r="とうろく" />しよう
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            おてつだいをするおこさまの名前を入れてね（最大5人）
+            お<R k="手伝" r="てつだ" />いをするお<R k="子" r="こ" />さまの<R k="名前" r="なまえ" />を<R k="入" r="い" />れてね（<R k="最大" r="さいだい" />5<R k="人" r="にん" />）
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -118,7 +130,7 @@ export default function ChildrenSignupPage() {
             <div key={i} className="rounded-lg border border-amber-100 p-3 bg-amber-50/50">
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-sm font-semibold text-amber-700">
-                  おこさま {i + 1}
+                  お<R k="子" r="こ" />さま {i + 1}
                 </Label>
                 {children.length > 1 && (
                   <Button variant="ghost" size="sm" className="text-red-400 h-6 px-2 text-xs" onClick={() => removeChild(i)}>
@@ -141,7 +153,7 @@ export default function ChildrenSignupPage() {
                   className="tracking-widest"
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  ログインするときに<R k="使" r="つか" />う4けたの<R k="暗証番号" r="あんしょうばんごう" />です。おこさまといっしょに<R k="決" r="き" />めてください
+                  ログインするときに<R k="使" r="つか" />う4けたの<R k="暗証番号" r="あんしょうばんごう" />です。お<R k="子" r="こ" />さまといっしょに<R k="決" r="き" />めてください
                 </p>
               </div>
             </div>
@@ -149,7 +161,7 @@ export default function ChildrenSignupPage() {
 
           {children.length < 5 && (
             <Button variant="outline" className="w-full border-dashed border-amber-300 text-amber-600" onClick={addChild}>
-              ＋ おこさまを追加
+              ＋ お<R k="子" r="こ" />さまを<R k="追加" r="ついか" />
             </Button>
           )}
 

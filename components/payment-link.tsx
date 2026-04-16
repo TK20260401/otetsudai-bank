@@ -41,12 +41,12 @@ export function PaymentLinkDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>おしはらいアプリをひらく</DialogTitle>
+          <DialogTitle>お支払いアプリを開く</DialogTitle>
           <DialogDescription>
-            {childName}の「{purpose}」（{amount.toLocaleString()}えん）が
-            しょうにんされました。
+            {childName}の「{purpose}」（{amount.toLocaleString()}円）が
+            承認されました。
             <br />
-            おしはらいアプリをひらきますか？
+            お支払いアプリを開きますか？
           </DialogDescription>
         </DialogHeader>
 

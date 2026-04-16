@@ -64,8 +64,33 @@ export default function LandingPage() {
             </div>
           </div>
 
+          {/* 追加機能訴求 */}
+          <div className="mt-8 grid grid-cols-3 gap-3 text-center">
+            <div className="bg-amber-50 rounded-xl p-3 border border-amber-200">
+              <div className="text-2xl mb-1">🔥</div>
+              <p className="text-xs font-bold text-amber-700"><R k="連続" r="れんぞく" />ストリーク</p>
+              <p className="text-[10px] text-amber-600/70"><R k="毎日" r="まいにち" /><R k="続" r="つづ" />けると<R k="記録" r="きろく" />が<R k="増" r="ふ" />える！</p>
+            </div>
+            <div className="bg-purple-50 rounded-xl p-3 border border-purple-200">
+              <div className="text-2xl mb-1">⚔️</div>
+              <p className="text-xs font-bold text-purple-700">レベルアップ</p>
+              <p className="text-[10px] text-purple-600/70">クエストで<R k="強" r="つよ" />くなろう！</p>
+            </div>
+            <div className="bg-cyan-50 rounded-xl p-3 border border-cyan-200">
+              <div className="text-2xl mb-1">🏅</div>
+              <p className="text-xs font-bold text-cyan-700"><R k="装備" r="そうび" />コレクション</p>
+              <p className="text-[10px] text-cyan-600/70">バッジを<R k="集" r="あつ" />めよう！</p>
+            </div>
+          </div>
+
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="text-center py-4 text-xs text-muted-foreground space-x-4">
+        <a href="/terms" className="hover:underline">利用規約</a>
+        <a href="/privacy" className="hover:underline">プライバシーポリシー</a>
+      </footer>
     </div>
   );
 }

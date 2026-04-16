@@ -27,7 +27,7 @@ export default function CommonHeader({ title, userName, backHref, pendingCount, 
         )}
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-amber-800 sm:text-2xl">{title}</h1>
+            <h1 className="text-xl font-bold text-amber-800 sm:text-2xl whitespace-nowrap">{title}</h1>
             {pendingCount !== undefined && pendingCount > 0 && (
               <Badge variant="destructive" className="text-xs">{pendingCount}</Badge>
             )}

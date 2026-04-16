@@ -55,6 +55,7 @@ export default function ParentDashboard() {
     childName: string;
   }>({ open: false, amount: 0, purpose: "", childName: "" });
   const [taskCount, setTaskCount] = useState(0);
+  const [weeklySummary, setWeeklySummary] = useState({ quests: 0, earned: 0 });
 
   const session = getSession();
 
@@ -167,6 +168,18 @@ export default function ParentDashboard() {
     setStats({
       totalApproved: approved.length,
       totalEarned: approved.reduce((sum: number, l: TaskLog & { task: Task }) => sum + (l.task?.reward_amount || 0), 0),
+    });
+
+    // 週次サマリー
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    const weeklyApproved = approved.filter(
+      (l: TaskLog) => l.approved_at && new Date(l.approved_at) >= weekStart
+    );
+    setWeeklySummary({
+      quests: weeklyApproved.length,
+      earned: weeklyApproved.reduce((sum: number, l: TaskLog & { task: Task }) => sum + (l.task?.reward_amount || 0), 0),
     });
 
     setLoading(false);
@@ -400,13 +413,13 @@ export default function ParentDashboard() {
               ようこそ クエストマスター！
             </p>
             <p className="text-sm text-muted-foreground">
-              まずは おこさまを 追加して<br />冒険を はじめましょう！
+              まずは お子さまを 追加して<br />冒険を はじめましょう！
             </p>
             <Button
               className="bg-amber-500 hover:bg-amber-600 text-white text-base h-12 px-8"
               onClick={() => setAddChildOpen(true)}
             >
-              ＋ おこさまを ついか
+              ＋ お子さまを 追加
             </Button>
           </CardContent>
         </Card>
@@ -418,7 +431,7 @@ export default function ParentDashboard() {
               クエストを つくって<br />冒険を はじめよう！
             </p>
             <p className="text-sm text-muted-foreground">
-              おこさまが ちょうせんする クエスト（おてつだい）を つくりましょう
+              お子さまが 挑戦する クエスト（お手伝い）を つくりましょう
             </p>
             <Link href="/parent/tasks">
               <Button className="bg-emerald-500 hover:bg-emerald-600 text-white text-base h-12 px-8">
@@ -429,11 +442,30 @@ export default function ParentDashboard() {
         </Card>
       ) : null}
 
+      {/* ──── 週次サマリー ──── */}
+      {weeklySummary.quests > 0 && (
+        <Card className="mb-4 border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50">
+          <CardContent className="p-4">
+            <p className="text-sm font-bold text-amber-800 mb-2">📊 今週の家族記録</p>
+            <div className="flex justify-around">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-amber-700">{weeklySummary.quests}</p>
+                <p className="text-xs text-muted-foreground">クエスト完了</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-amber-700">¥{weeklySummary.earned.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">支払い</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* ──── 承認待ちサマリー ──── */}
       {totalPending > 0 && (
         <div className="mb-4 p-3 rounded-2xl bg-amber-100/70 border border-amber-200 text-center">
           <p className="text-lg font-bold text-amber-800">
-            📬 {totalPending}けんの しょうにんまち！
+            📬 {totalPending}件の 承認待ち！
           </p>
         </div>
       )}
@@ -466,16 +498,16 @@ export default function ParentDashboard() {
                       className="bg-emerald-500 hover:bg-emerald-600 text-white h-9 px-3 flex-shrink-0 ml-2"
                       onClick={() => setApprovalTarget(log)}
                     >
-                      ✓ しょうにん
+                      ✓ 承認
                     </Button>
                   </div>
                   {/* やりなおしプリセット理由 */}
                   <div className="flex flex-wrap gap-1.5">
                     {[
-                      { label: "🔄 やりなおし", reason: "" },
-                      { label: "もうすこし ていねいに", reason: "もうすこし ていねいに やってみよう" },
-                      { label: "さいごまで やろう", reason: "さいごまで やりきろう！" },
-                      { label: "じかんを かけてね", reason: "もうすこし じかんを かけてみよう" },
+                      { label: "🔄 やり直し", reason: "" },
+                      { label: "もう少し 丁寧に", reason: "もう少し 丁寧に やってみよう" },
+                      { label: "最後まで やろう", reason: "最後まで やりきろう！" },
+                      { label: "時間を かけてね", reason: "もう少し 時間を かけてみよう" },
                     ].map((preset) => (
                       <button
                         key={preset.label}
@@ -528,10 +560,10 @@ export default function ParentDashboard() {
                   {/* やりなおしプリセット理由 */}
                   <div className="flex flex-wrap gap-1.5">
                     {[
-                      { label: "🔄 いまは やめておこう", reason: "" },
-                      { label: "たかすぎるよ", reason: "きんがくを みなおしてみよう" },
-                      { label: "りゆうを くわしく", reason: "もうすこし くわしく おしえてね" },
-                      { label: "ためてからね", reason: "もうすこし ためてからにしよう" },
+                      { label: "🔄 今は やめておこう", reason: "" },
+                      { label: "高すぎるよ", reason: "金額を 見直してみよう" },
+                      { label: "理由を くわしく", reason: "もう少し くわしく 教えてね" },
+                      { label: "貯めてからね", reason: "もう少し 貯めてからにしよう" },
                     ].map((preset) => (
                       <button
                         key={preset.label}
@@ -605,7 +637,7 @@ export default function ParentDashboard() {
                       className="bg-emerald-500 hover:bg-emerald-600 text-white flex-1 h-9"
                       onClick={() => handleApproveProposal(proposal.id)}
                     >
-                      ✓ しょうにん
+                      ✓ 承認
                     </Button>
                     <Button
                       size="sm"
@@ -705,7 +737,7 @@ export default function ParentDashboard() {
                       className="bg-green-500 hover:bg-green-600 text-white flex-1 h-9"
                       onClick={() => handleApproveInvestOrder(order)}
                     >
-                      ✓ しょうにん
+                      ✓ 承認
                     </Button>
                     <Button
                       size="sm"
@@ -732,18 +764,18 @@ export default function ParentDashboard() {
               おつかれさま！
             </p>
             <p className="text-sm text-muted-foreground">
-              しょうにんまちは ありません
+              承認待ちは ありません
             </p>
           </CardContent>
         </Card>
       )}
 
-      {/* ──── おしはらいまち（承認済み・未送金） ──── */}
+      {/* ──── お支払いまち（承認済み・未送金） ──── */}
       {unpaidSpends.length > 0 && (
         <Card className="mb-4 border-orange-200">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              💸 おしはらい まち
+              💸 お支払い まち
               <Badge className="bg-orange-500">{unpaidSpends.length}</Badge>
             </CardTitle>
           </CardHeader>
@@ -763,7 +795,7 @@ export default function ParentDashboard() {
                     </p>
                   </div>
                   <p className="text-[11px] text-muted-foreground mb-2">
-                    どうやって おしはらい しましたか？
+                    どうやって お支払い しましたか？
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {[
@@ -796,7 +828,7 @@ export default function ParentDashboard() {
       {children.length > 0 && (
         <>
           <h2 className="text-base font-bold text-amber-800 mb-3 flex items-center gap-1.5">
-            💰 おこさまの ざんだか
+            💰 お子さまの 残高
           </h2>
           <div className="grid gap-3">
             {children.map((child) => {
@@ -882,7 +914,7 @@ export default function ParentDashboard() {
                           setTempInvestRatio(wallet?.invest_ratio ?? 0);
                         }}
                       >
-                        ⚙️ ぶんかつひりつを へんこう
+                        ⚙️ 分割比率を 変更
                       </Button>
                     )}
                   </CardContent>
@@ -900,7 +932,7 @@ export default function ParentDashboard() {
           className="w-full mt-3 border-dashed border-amber-300 text-amber-600 h-12 text-base"
           onClick={() => setAddChildOpen(true)}
         >
-          ＋ おこさまを ついか
+          ＋ お子さまを 追加
         </Button>
       )}
       <AddChildDialog
@@ -913,7 +945,7 @@ export default function ParentDashboard() {
       {/* 累計情報（さりげなく小さく表示） */}
       {stats.totalApproved > 0 && (
         <p className="text-center text-xs text-muted-foreground mt-6">
-          これまでの しょうにん: {stats.totalApproved}けん ・ そうがく ¥{stats.totalEarned.toLocaleString()}
+          これまでの 承認: {stats.totalApproved}件 ・ 総額 ¥{stats.totalEarned.toLocaleString()}
         </p>
       )}
 
@@ -950,17 +982,17 @@ export default function ParentDashboard() {
             className="text-xs text-red-400 hover:text-red-600 hover:bg-red-50"
             onClick={() => setShowDeleteConfirm(true)}
           >
-            🗑️ アカウントを さくじょ する
+            🗑️ アカウントを 削除 する
           </Button>
         ) : (
           <Card className="border-red-300 bg-red-50">
             <CardContent className="p-4">
-              <p className="text-sm font-semibold text-red-600 mb-2">⚠️ アカウントさくじょ</p>
+              <p className="text-sm font-semibold text-red-600 mb-2">⚠️ アカウント削除</p>
               <p className="text-xs text-red-500 mb-3">
-                さくじょすると、かぞくの ぜんデータ（クエスト・ウォレット・りれき）が なくなります。このそうさは とりけせません。
+                削除すると、家族の 全データ（クエスト・ウォレット・履歴）が なくなります。この操作は 取り消せません。
               </p>
               <p className="text-xs text-muted-foreground mb-2">
-                かくにんのため「削除する」と にゅうりょく してください：
+                確認のため「削除する」と 入力 してください：
               </p>
               <Input
                 value={deleteConfirmText}
@@ -989,7 +1021,7 @@ export default function ParentDashboard() {
                     router.push("/login");
                   }}
                 >
-                  {deleting ? "さくじょちゅう..." : "かんぜんに さくじょする"}
+                  {deleting ? "削除中..." : "完全に 削除する"}
                 </Button>
               </div>
             </CardContent>

@@ -49,7 +49,7 @@ export function AddChildDialog({ open, onClose, familyId, onAdded }: Props) {
     );
 
     if (createError || !data) {
-      setError("ついかに しっぱいしました");
+      setError("追加に失敗しました");
       setLoading(false);
       return;
     }
@@ -88,9 +88,9 @@ export function AddChildDialog({ open, onClose, familyId, onAdded }: Props) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>🧒 おこさまを ついか</DialogTitle>
+          <DialogTitle>🧒 お<R k="子" r="こ" />さまを <R k="追加" r="ついか" /></DialogTitle>
           <DialogDescription>
-            あたらしい おこさまを かぞくに ついかします
+            <R k="新" r="あたら" />しい お<R k="子" r="こ" />さまを <R k="家族" r="かぞく" />に <R k="追加" r="ついか" />します
           </DialogDescription>
         </DialogHeader>
 
@@ -98,7 +98,7 @@ export function AddChildDialog({ open, onClose, familyId, onAdded }: Props) {
           <div className="text-center py-6">
             <div className="text-5xl mb-3">🎉</div>
             <p className="font-bold text-lg text-emerald-700">
-              {name} を ついかしました！
+              {name} を追加しました！
             </p>
           </div>
         ) : (
@@ -140,7 +140,7 @@ export function AddChildDialog({ open, onClose, familyId, onAdded }: Props) {
               onClick={handleSubmit}
               disabled={loading}
             >
-              {loading ? "ついかちゅう..." : "ついかする"}
+              {loading ? "追加中..." : "追加する"}
             </Button>
           </div>
         )}

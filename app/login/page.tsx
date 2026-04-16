@@ -442,7 +442,7 @@ export default function LoginPage() {
           <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-red-700 flex items-center gap-2">
-                🗑️ おうちデータの さくじょ
+                🗑️ おうちデータの 削除
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -471,7 +471,7 @@ export default function LoginPage() {
                   onClick={handleDeleteFamily}
                   disabled={deleting}
                 >
-                  {deleting ? "さくじょちゅう..." : "🗑️ 削除する"}
+                  {deleting ? "削除中..." : "🗑️ 削除する"}
                 </Button>
               </div>
             </CardContent>
