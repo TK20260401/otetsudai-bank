@@ -29,6 +29,10 @@ export type Task = {
   proposed_reward: number | null;
   proposal_message: string | null;
   price_change_comment: string | null;
+  is_special: boolean;
+  special_difficulty: number | null;
+  start_date: string | null;
+  end_date: string | null;
   created_at: string;
 };
 
