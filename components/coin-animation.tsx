@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { PixelCoinIcon, PixelConfettiIcon } from "@/components/pixel-icons";
 
 export default function CoinAnimation({ show, onComplete }: { show: boolean; onComplete: () => void }) {
   useEffect(() => {
@@ -16,8 +17,8 @@ export default function CoinAnimation({ show, onComplete }: { show: boolean; onC
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-      <div className="text-4xl font-bold text-amber-600 animate-bounce">
-        クエストクリア！🎉
+      <div className="text-4xl font-bold text-amber-600 animate-bounce flex items-center gap-2">
+        クエストクリア！<PixelConfettiIcon size={32} />
       </div>
       {coins.map((i) => {
         const angle = (i / 12) * 360;
@@ -37,7 +38,7 @@ export default function CoinAnimation({ show, onComplete }: { show: boolean; onC
               ["--y" as string]: `${y}px`,
             }}
           >
-            🪙
+            <PixelCoinIcon size={24} />
           </span>
         );
       })}

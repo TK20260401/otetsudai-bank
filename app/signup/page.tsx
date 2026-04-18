@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PixelHeroSvg from "@/components/pixel-hero-svg";
+import { PixelDoorIcon } from "@/components/pixel-icons";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -99,7 +101,7 @@ export default function SignupPage() {
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-xl border-amber-200">
         <CardHeader className="text-center">
-          <div className="text-5xl mb-2">⚔️</div>
+          <div className="mb-2 flex justify-center"><PixelHeroSvg type="warrior" size={48} /></div>
           <CardTitle className="text-2xl font-bold text-emerald-800">
             おこづかいクエストをはじめよう
           </CardTitle>
@@ -135,7 +137,7 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                     aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示"}
                   >
                     {showPassword ? "🙈" : "👁️"}
@@ -175,7 +177,7 @@ export default function SignupPage() {
               {error && <p className="text-destructive text-sm text-center">{error}</p>}
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={() => { setStep(1); setError(""); }}>
-                  ← もどる
+                  <span className="flex items-center gap-1"><PixelDoorIcon size={14} /> もどる</span>
                 </Button>
                 <Button
                   className="flex-1 h-12 text-lg bg-amber-500 hover:bg-amber-600 text-white"
@@ -192,7 +194,7 @@ export default function SignupPage() {
             <Link href="/login" className="text-sm text-amber-600 hover:underline block">
               すでにアカウントをお持ちのかた →
             </Link>
-            <Link href="/login?mode=admin" className="text-xs text-slate-400 hover:text-slate-600 transition-colors block">
+            <Link href="/login?mode=admin" className="text-xs text-muted-foreground hover:text-primary transition-colors block">
               🔧 管理者ログイン
             </Link>
           </div>

@@ -32,15 +32,15 @@ type Announcement = {
 };
 
 const TARGET_LABELS: Record<string, { label: string; color: string }> = {
-  all: { label: "全員", color: "bg-gray-100 text-gray-700" },
-  parent: { label: "親のみ", color: "bg-blue-100 text-blue-700" },
-  child: { label: "子のみ", color: "bg-green-100 text-green-700" },
+  all: { label: "全員", color: "bg-muted text-muted-foreground" },
+  parent: { label: "親のみ", color: "bg-[#1a2a3e] text-[#5dade2]" },
+  child: { label: "子のみ", color: "bg-[#1a3e2a] text-[#58d68d]" },
 };
 
 const PRIORITY_LABELS: Record<string, { label: string; color: string }> = {
-  normal: { label: "通常", color: "bg-gray-100 text-gray-600" },
-  important: { label: "重要", color: "bg-yellow-100 text-yellow-700" },
-  urgent: { label: "緊急", color: "bg-red-100 text-red-700" },
+  normal: { label: "通常", color: "bg-muted text-muted-foreground" },
+  important: { label: "重要", color: "bg-[#3d2663] text-[#ffd700]" },
+  urgent: { label: "緊急", color: "bg-[#3e1a2a] text-[#ff6b6b]" },
 };
 
 export default function AdminPage() {
@@ -366,7 +366,7 @@ export default function AdminPage() {
   if (!authorized) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl animate-pulse text-slate-500">読み込み中...</div>
+        <div className="text-xl animate-pulse text-muted-foreground">読み込み中...</div>
       </div>
     );
   }
@@ -374,13 +374,13 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-slate-200 px-4 py-3">
+      <header className="bg-card border-b border-border px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🔧</span>
-            <h1 className="text-lg font-bold text-slate-700">管理者ダッシュボード</h1>
+            <h1 className="text-lg font-bold text-foreground">管理者ダッシュボード</h1>
           </div>
-          <Button variant="outline" size="sm" className="border-slate-300 text-slate-500 hover:bg-slate-100" onClick={handleLogout}>
+          <Button variant="outline" size="sm" className="border-border text-muted-foreground hover:bg-muted" onClick={handleLogout}>
             ログアウト
           </Button>
         </div>
@@ -389,36 +389,36 @@ export default function AdminPage() {
       <main className="max-w-4xl mx-auto p-4 space-y-6">
         {/* 統計カード */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Card className="border-slate-200">
+          <Card className="border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <div className="text-2xl font-bold text-blue-600">{stats.totalFamilies}</div>
-              <div className="text-xs text-slate-500 mt-1">🏠 総家族数</div>
+              <div className="text-xs text-muted-foreground mt-1">🏠 総家族数</div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card className="border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <div className="text-2xl font-bold text-emerald-600">{stats.totalParents + stats.totalChildren}</div>
-              <div className="text-xs text-slate-500 mt-1">👥 ユーザー（親{stats.totalParents} / 子{stats.totalChildren}）</div>
+              <div className="text-xs text-muted-foreground mt-1">👥 ユーザー（親{stats.totalParents} / 子{stats.totalChildren}）</div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card className="border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <div className="text-2xl font-bold text-amber-600">{stats.activeTasks}</div>
-              <div className="text-xs text-slate-500 mt-1">⚔️ アクティブクエスト</div>
+              <div className="text-xs text-muted-foreground mt-1">⚔️ アクティブクエスト</div>
             </CardContent>
           </Card>
-          <Card className="border-slate-200">
+          <Card className="border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <div className="text-2xl font-bold text-violet-600">{stats.approvedToday}</div>
-              <div className="text-xs text-slate-500 mt-1">✅ 本日の承認数</div>
+              <div className="text-xs text-muted-foreground mt-1">✅ 本日の承認数</div>
             </CardContent>
           </Card>
         </div>
 
         {/* 家族一覧 */}
-        <Card className="border-slate-200">
+        <Card className="border-border">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-base text-slate-700">🏠 家族一覧</CardTitle>
+            <CardTitle className="text-base text-foreground">🏠 家族一覧</CardTitle>
             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setShowAddFamily(true)}>
               ＋ 家族追加
             </Button>
@@ -446,7 +446,7 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-slate-500">
+                  <tr className="border-b border-border text-left text-muted-foreground">
                     <th className="pb-2 font-medium">家族名</th>
                     <th className="pb-2 font-medium text-center">メンバー</th>
                     <th className="pb-2 font-medium">作成日</th>
@@ -455,10 +455,10 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {families.map((f) => (
-                    <tr key={f.id} className="border-b border-slate-100 last:border-0">
-                      <td className="py-3 font-medium text-slate-700">{f.name}</td>
-                      <td className="py-3 text-center text-slate-600">{f.memberCount}名</td>
-                      <td className="py-3 text-slate-500">{new Date(f.created_at).toLocaleDateString("ja-JP")}</td>
+                    <tr key={f.id} className="border-b border-border/50 last:border-0">
+                      <td className="py-3 font-medium text-foreground">{f.name}</td>
+                      <td className="py-3 text-center text-muted-foreground">{f.memberCount}名</td>
+                      <td className="py-3 text-muted-foreground">{new Date(f.created_at).toLocaleDateString("ja-JP")}</td>
                       <td className="py-3 text-center">
                         {f.name !== "山田家" && (
                           <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-600 hover:bg-red-50" onClick={() => setDeleteTarget(f)}>🗑️</Button>
@@ -467,7 +467,7 @@ export default function AdminPage() {
                     </tr>
                   ))}
                   {families.length === 0 && (
-                    <tr><td colSpan={4} className="py-6 text-center text-slate-400">家族データがありません</td></tr>
+                    <tr><td colSpan={4} className="py-6 text-center text-muted-foreground/70">家族データがありません</td></tr>
                   )}
                 </tbody>
               </table>
@@ -476,9 +476,9 @@ export default function AdminPage() {
         </Card>
 
         {/* お知らせ管理 */}
-        <Card className="border-slate-200">
+        <Card className="border-border">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-base text-slate-700">📢 お知らせ管理</CardTitle>
+            <CardTitle className="text-base text-foreground">📢 お知らせ管理</CardTitle>
             <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={openCreateForm}>
               ＋ お知らせ作成
             </Button>
@@ -487,7 +487,7 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-slate-500">
+                  <tr className="border-b border-border text-left text-muted-foreground">
                     <th className="pb-2 font-medium">タイトル</th>
                     <th className="pb-2 font-medium text-center">対象</th>
                     <th className="pb-2 font-medium text-center">優先度</th>
@@ -498,8 +498,8 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {announcements.map((a) => (
-                    <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="py-3 font-medium text-slate-700 max-w-48 truncate">{a.title}</td>
+                    <tr key={a.id} className="border-b border-border/50 last:border-0">
+                      <td className="py-3 font-medium text-foreground max-w-48 truncate">{a.title}</td>
                       <td className="py-3 text-center">
                         <Badge variant="secondary" className={TARGET_LABELS[a.target_role].color}>
                           {TARGET_LABELS[a.target_role].label}
@@ -512,13 +512,13 @@ export default function AdminPage() {
                       </td>
                       <td className="py-3 text-center">
                         <button
-                          className={`text-xs px-2 py-1 rounded-full font-medium ${a.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"}`}
+                          className={`text-xs px-2 py-1 rounded-full font-medium ${a.is_active ? "bg-[#1a3e2a] text-[#58d68d]" : "bg-muted text-muted-foreground"}`}
                           onClick={() => toggleAnnouncementActive(a)}
                         >
                           {a.is_active ? "🟢 ON" : "⚪ OFF"}
                         </button>
                       </td>
-                      <td className="py-3 text-slate-500 text-xs">{new Date(a.created_at).toLocaleDateString("ja-JP")}</td>
+                      <td className="py-3 text-muted-foreground text-xs">{new Date(a.created_at).toLocaleDateString("ja-JP")}</td>
                       <td className="py-3 text-center space-x-1">
                         <Button variant="ghost" size="sm" className="text-blue-500 hover:text-blue-700" onClick={() => openEditForm(a)}>✏️</Button>
                         <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-600" onClick={() => setDeleteAnnouncementTarget(a)}>🗑️</Button>
@@ -526,7 +526,7 @@ export default function AdminPage() {
                     </tr>
                   ))}
                   {announcements.length === 0 && (
-                    <tr><td colSpan={6} className="py-6 text-center text-slate-400">お知らせはありません</td></tr>
+                    <tr><td colSpan={6} className="py-6 text-center text-muted-foreground/70">お知らせはありません</td></tr>
                   )}
                 </tbody>
               </table>
@@ -535,9 +535,9 @@ export default function AdminPage() {
         </Card>
 
         {/* メンテナンスモード */}
-        <Card className="border-slate-200">
+        <Card className="border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base text-slate-700 flex items-center justify-between">
+            <CardTitle className="text-base text-foreground flex items-center justify-between">
               <span>🔧 メンテナンスモード</span>
               <span className={`text-sm font-normal ${maintenanceEnabled ? "text-red-600" : "text-green-600"}`}>
                 {maintenanceEnabled ? "🔴 メンテナンス中" : "🟢 通常運用"}
@@ -547,7 +547,7 @@ export default function AdminPage() {
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3">
               <button
-                className={`relative w-14 h-7 rounded-full transition-colors ${maintenanceEnabled ? "bg-red-500" : "bg-gray-300"}`}
+                className={`relative w-14 h-7 rounded-full transition-colors ${maintenanceEnabled ? "bg-destructive" : "bg-muted"}`}
                 onClick={() => {
                   if (!maintenanceEnabled) {
                     setShowMaintenanceConfirm(true);
@@ -557,14 +557,14 @@ export default function AdminPage() {
                 }}
                 disabled={maintenanceSaving}
               >
-                <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${maintenanceEnabled ? "translate-x-7" : "translate-x-0.5"}`} />
+                <span className={`absolute top-0.5 w-6 h-6 bg-foreground rounded-full shadow transition-transform ${maintenanceEnabled ? "translate-x-7" : "translate-x-0.5"}`} />
               </button>
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-muted-foreground">
                 {maintenanceEnabled ? "ONにすると管理者以外アクセス不可" : "OFFで通常運用"}
               </span>
             </div>
             <div>
-              <Label className="text-sm text-slate-600">ユーザーへのメッセージ</Label>
+              <Label className="text-sm text-muted-foreground">ユーザーへのメッセージ</Label>
               <textarea
                 className="w-full border rounded-md p-2 text-sm min-h-16 resize-y mt-1"
                 value={maintenanceMessage}
@@ -572,7 +572,7 @@ export default function AdminPage() {
               />
             </div>
             <div>
-              <Label className="text-sm text-slate-600">終了予定時刻（任意）</Label>
+              <Label className="text-sm text-muted-foreground">終了予定時刻（任意）</Label>
               <Input
                 type="datetime-local"
                 value={maintenanceEnd}
@@ -592,11 +592,11 @@ export default function AdminPage() {
         </Card>
 
         {/* 株価マスタ管理 */}
-        <Card className="border-slate-200">
+        <Card className="border-border">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-base text-slate-700">📈 株価マスタ管理</CardTitle>
+            <CardTitle className="text-base text-foreground">📈 株価マスタ管理</CardTitle>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="border-slate-300" onClick={() => setShowStockForm(true)}>＋ 銘柄追加</Button>
+              <Button size="sm" variant="outline" className="border-border" onClick={() => setShowStockForm(true)}>＋ 銘柄追加</Button>
               <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={handleSyncAll} disabled={!!syncProgress || stocks.length === 0}>
                 🔄 全銘柄更新
               </Button>
@@ -623,7 +623,7 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-slate-500">
+                  <tr className="border-b border-border text-left text-muted-foreground">
                     <th className="pb-2 font-medium"></th>
                     <th className="pb-2 font-medium">シンボル</th>
                     <th className="pb-2 font-medium">名前</th>
@@ -637,10 +637,10 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {stocks.map((s) => (
-                    <tr key={s.id} className="border-b border-slate-100 last:border-0">
+                    <tr key={s.id} className="border-b border-border/50 last:border-0">
                       <td className="py-2">{s.icon}</td>
-                      <td className="py-2 font-mono text-xs text-slate-600">{s.symbol}</td>
-                      <td className="py-2 text-slate-700">{s.name_ja || s.name}</td>
+                      <td className="py-2 font-mono text-xs text-muted-foreground">{s.symbol}</td>
+                      <td className="py-2 text-foreground">{s.name_ja || s.name}</td>
                       <td className="py-2 text-center">
                         <Badge variant="secondary" className={
                           s.category === "index" ? "bg-purple-100 text-purple-700" :
@@ -657,14 +657,14 @@ export default function AdminPage() {
                       <td className={`py-2 text-right text-xs font-medium ${s.change_percent >= 0 ? "text-green-600" : "text-red-600"}`}>
                         {s.change_percent >= 0 ? "▲" : "▼"}{Math.abs(s.change_percent).toFixed(2)}%
                       </td>
-                      <td className="py-2 text-xs text-slate-400">{timeAgo(s.updated_at)}</td>
+                      <td className="py-2 text-xs text-muted-foreground/70">{timeAgo(s.updated_at)}</td>
                       <td className="py-2 text-center">
                         <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-600" onClick={() => setDeleteStockTarget(s)}>🗑️</Button>
                       </td>
                     </tr>
                   ))}
                   {stocks.length === 0 && (
-                    <tr><td colSpan={9} className="py-6 text-center text-slate-400">銘柄が登録されていません</td></tr>
+                    <tr><td colSpan={9} className="py-6 text-center text-muted-foreground/70">銘柄が登録されていません</td></tr>
                   )}
                 </tbody>
               </table>
@@ -676,7 +676,7 @@ export default function AdminPage() {
       {/* お知らせ作成/編集ダイアログ */}
       {showAnnouncementForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg border-blue-200 bg-white shadow-2xl">
+          <Card className="w-full max-w-lg border-border bg-card shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-blue-700">
                 {editingAnnouncement ? "📢 お知らせ編集" : "📢 お知らせ作成"}
@@ -684,11 +684,11 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <Label className="text-sm text-slate-600">タイトル</Label>
+                <Label className="text-sm text-muted-foreground">タイトル</Label>
                 <Input value={announcementForm.title} onChange={(e) => setAnnouncementForm({ ...announcementForm, title: e.target.value })} placeholder="お知らせタイトル" />
               </div>
               <div>
-                <Label className="text-sm text-slate-600">本文</Label>
+                <Label className="text-sm text-muted-foreground">本文</Label>
                 <textarea
                   className="w-full border rounded-md p-2 text-sm min-h-24 resize-y"
                   value={announcementForm.body}
@@ -698,7 +698,7 @@ export default function AdminPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-sm text-slate-600">対象</Label>
+                  <Label className="text-sm text-muted-foreground">対象</Label>
                   <select className="w-full border rounded-md p-2 text-sm" value={announcementForm.target_role} onChange={(e) => setAnnouncementForm({ ...announcementForm, target_role: e.target.value })}>
                     <option value="all">全員</option>
                     <option value="parent">親のみ</option>
@@ -706,7 +706,7 @@ export default function AdminPage() {
                   </select>
                 </div>
                 <div>
-                  <Label className="text-sm text-slate-600">優先度</Label>
+                  <Label className="text-sm text-muted-foreground">優先度</Label>
                   <select className="w-full border rounded-md p-2 text-sm" value={announcementForm.priority} onChange={(e) => setAnnouncementForm({ ...announcementForm, priority: e.target.value })}>
                     <option value="normal">通常</option>
                     <option value="important">重要</option>
@@ -715,7 +715,7 @@ export default function AdminPage() {
                 </div>
               </div>
               <div>
-                <Label className="text-sm text-slate-600">有効期限（任意）</Label>
+                <Label className="text-sm text-muted-foreground">有効期限（任意）</Label>
                 <Input type="datetime-local" value={announcementForm.expires_at} onChange={(e) => setAnnouncementForm({ ...announcementForm, expires_at: e.target.value })} />
               </div>
               <div className="flex gap-2 pt-2">
@@ -732,7 +732,7 @@ export default function AdminPage() {
       {/* お知らせ削除確認 */}
       {deleteAnnouncementTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
+          <Card className="w-full max-w-sm border-destructive/60 bg-card shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-red-700">🗑️ お知らせ削除</CardTitle>
             </CardHeader>
@@ -750,34 +750,34 @@ export default function AdminPage() {
       {/* 銘柄追加ダイアログ */}
       {showStockForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg border-blue-200 bg-white shadow-2xl">
+          <Card className="w-full max-w-lg border-border bg-card shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-blue-700">📈 銘柄追加</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-sm text-slate-600">シンボル</Label>
+                  <Label className="text-sm text-muted-foreground">シンボル</Label>
                   <Input value={stockForm.symbol} onChange={(e) => setStockForm({ ...stockForm, symbol: e.target.value })} placeholder="例: 7203.T, AAPL" />
                 </div>
                 <div>
-                  <Label className="text-sm text-slate-600">英語名</Label>
+                  <Label className="text-sm text-muted-foreground">英語名</Label>
                   <Input value={stockForm.name} onChange={(e) => setStockForm({ ...stockForm, name: e.target.value })} placeholder="Toyota Motor" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-sm text-slate-600">日本語名</Label>
+                  <Label className="text-sm text-muted-foreground">日本語名</Label>
                   <Input value={stockForm.name_ja} onChange={(e) => setStockForm({ ...stockForm, name_ja: e.target.value })} placeholder="トヨタ自動車" />
                 </div>
                 <div>
-                  <Label className="text-sm text-slate-600">アイコン（絵文字）</Label>
+                  <Label className="text-sm text-muted-foreground">アイコン（絵文字）</Label>
                   <Input value={stockForm.icon} onChange={(e) => setStockForm({ ...stockForm, icon: e.target.value })} placeholder="🚗" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-sm text-slate-600">カテゴリ</Label>
+                  <Label className="text-sm text-muted-foreground">カテゴリ</Label>
                   <select className="w-full border rounded-md p-2 text-sm" value={stockForm.category} onChange={(e) => setStockForm({ ...stockForm, category: e.target.value })}>
                     <option value="index">指数（ETF）</option>
                     <option value="jp_stock">日本株</option>
@@ -785,7 +785,7 @@ export default function AdminPage() {
                   </select>
                 </div>
                 <div>
-                  <Label className="text-sm text-slate-600">通貨</Label>
+                  <Label className="text-sm text-muted-foreground">通貨</Label>
                   <select className="w-full border rounded-md p-2 text-sm" value={stockForm.currency} onChange={(e) => setStockForm({ ...stockForm, currency: e.target.value })}>
                     <option value="JPY">JPY（円）</option>
                     <option value="USD">USD（ドル）</option>
@@ -793,7 +793,7 @@ export default function AdminPage() {
                 </div>
               </div>
               <div>
-                <Label className="text-sm text-slate-600">子供向け説明</Label>
+                <Label className="text-sm text-muted-foreground">子供向け説明</Label>
                 <textarea className="w-full border rounded-md p-2 text-sm min-h-16 resize-y" value={stockForm.description_kids} onChange={(e) => setStockForm({ ...stockForm, description_kids: e.target.value })} placeholder="子供にわかりやすい説明" />
               </div>
               <div className="flex gap-2 pt-2">
@@ -810,7 +810,7 @@ export default function AdminPage() {
       {/* 銘柄削除確認 */}
       {deleteStockTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
+          <Card className="w-full max-w-sm border-destructive/60 bg-card shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-red-700">🗑️ 銘柄削除</CardTitle>
             </CardHeader>
@@ -828,7 +828,7 @@ export default function AdminPage() {
       {/* メンテナンスON確認 */}
       {showMaintenanceConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
+          <Card className="w-full max-w-sm border-destructive/60 bg-card shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-red-700">🔧 メンテナンスモードON</CardTitle>
             </CardHeader>
@@ -850,7 +850,7 @@ export default function AdminPage() {
       {/* 家族削除確認ダイアログ */}
       {deleteTarget && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-sm border-red-300 bg-white shadow-2xl">
+          <Card className="w-full max-w-sm border-destructive/60 bg-card shadow-2xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-base text-red-700 flex items-center gap-2">🗑️ 家族データの削除</CardTitle>
             </CardHeader>

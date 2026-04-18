@@ -22,6 +22,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { R } from "@/components/ruby-text";
+import { PixelLightbulbIcon, PixelChatIcon, PixelLetterIcon, PixelPencilIcon, PixelCrossedSwordsIcon } from "@/components/pixel-icons";
 
 type Mode = "quest" | "message";
 
@@ -207,7 +208,7 @@ export function SelfQuestForm({
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>
-            {mode === "quest" ? <>✨ <R k="自分" r="じぶん" />クエストを <R k="作" r="つく" />る</> : <>💬 <R k="親" r="おや" />に メッセージ</>}
+            {mode === "quest" ? <span className="flex items-center gap-1"><PixelLightbulbIcon size={18} /> <R k="自分" r="じぶん" />クエストを <R k="作" r="つく" />る</span> : <span className="flex items-center gap-1"><PixelChatIcon size={18} /> <R k="親" r="おや" />に メッセージ</span>}
           </DialogTitle>
           <DialogDescription>
             {mode === "quest"
@@ -225,7 +226,7 @@ export function SelfQuestForm({
               className={mode === "quest" ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}
               onClick={() => switchMode("quest")}
             >
-              ✨ クエスト
+              <span className="flex items-center gap-0.5"><PixelCrossedSwordsIcon size={12} /> クエスト</span>
             </Button>
             <Button
               variant={mode === "message" ? "default" : "outline"}
@@ -240,7 +241,7 @@ export function SelfQuestForm({
 
         {success ? (
           <div className="text-center py-6">
-            <div className="text-6xl mb-3 animate-bounce">📨</div>
+            <div className="mb-3 flex justify-center"><PixelLetterIcon size={48} /></div>
             <p className="font-bold text-lg text-emerald-700">
               <R k="親" r="おや" />に <R k="送" r="おく" />ったよ！
             </p>
@@ -271,7 +272,7 @@ export function SelfQuestForm({
                   ))}
                   <SelectSeparator />
                   <SelectItem value={CUSTOM_VALUE}>
-                    ✏️ その<R k="他" r="ほか" />（<R k="自分" r="じぶん" />で <R k="書" r="か" />く）
+                    <span className="flex items-center gap-0.5"><PixelPencilIcon size={12} /> その<R k="他" r="ほか" />（<R k="自分" r="じぶん" />で <R k="書" r="か" />く）</span>
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -378,7 +379,7 @@ export function SelfQuestForm({
               {loading ? (
                 <span className="animate-pulse">おくりちゅう...</span>
               ) : (
-                "親に クエストを 送る 📨"
+                "親に クエストを 送る"
               )}
             </Button>
           </div>
@@ -432,7 +433,7 @@ export function SelfQuestForm({
               {loading ? (
                 <span className="animate-pulse">おくりちゅう...</span>
               ) : (
-                "親に 送る 📨"
+                "親に 送る"
               )}
             </Button>
           </div>

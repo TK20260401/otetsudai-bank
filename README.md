@@ -361,6 +361,16 @@ parent/child: 家族ベース認証
 | v0.10.2 | 2026-04-15 | Web版親ダッシュボードに週次サマリーカード追加。クエストクリア時の励ましメッセージ8種に拡充＋漢字化。ランディングページにストリーク・レベルアップ・装備コレクション訴求セクション追加 |
 | v0.10.3 | 2026-04-16 | デザイン一貫性改善。dead code(colors.ts)削除、テーマボタンをパレット参照+タッチターゲット拡大、モーダルオーバーレイ/入力フィールド/ボタンスタイル統一、fontWeight統一(bold)、親カードシャドウ追加、全画面インラインスタイルをStyleSheet移行。Web版に週次サマリー・日付表示追加 |
 | v0.11.0 | 2026-04-16 | モバイル版: ルビ根本修正（tightStyle）、親画面ルビ全解除、reducedMotion対応、スキルツリーUI、じぶんクエスト提案機能（子→親） |
+| v0.12.0 | 2026-04-16 | TestFlightフィードバック#1対応。モバイル版: 投資画面新規追加、貯金目標バリデーション、useFocusEffectフリーズ修正、カレンダーspinner化、ルビ距離修正(iOS marginTop:-2)、辞書大量追加、DB description_kids漢字化、💰→🪙統一、画面縦固定、ログイン親子分離、新規登録、フォームアイコン統一 |
+| v0.12.0 | 2026-04-16 | Web版: 貯金目標バリデーション、💰→🪙統一、ログインモード選択UI、フォームアイコン統一、報酬直接編集 |
+| v0.12.3 | 2026-04-17 | 家族管理削除機能、RLSポリシー追加(admin用)、AppAlertプレーンText化、辞書「下→した」削除(誤変換防止)、バッジラベル漢字化 |
+| v0.13.0 | 2026-04-17 | ファミリースタンプリレー（親⇔子・兄弟間エール送信、パーティチャット風UI）、ふやすの木（投資残高に応じた木成長メタファー: たね→ふたば→わかぎ→たいぼく）。RLSセキュリティ修正（4テーブル有効化） |
+| v0.14.0 | 2026-04-17 | 月次レポート（子供ごとの成長統計+自動コメント）、ファミリーダッシュボード（冒険の地図）、家族チャレンジウィーク（協力型週間目標+進捗バー+達成ボーナス） |
+| v0.15.0 | 2026-04-17 | Habitica風ピクセルアートSVG全画面導入。PixelIcons(38種)+PixelHeroSvg(戦士・魔法使い)をモバイル・Web両版に追加。全UIアイコンをSVGピクセルアートに置換 |
+| v0.16.0 | 2026-04-18 | RPG演出強化。CharacterSvg(7段階レベルキャラ)・MoneyTree SVG(4段階成長)をWeb版に移植、LevelUpModal/BadgeUnlockModalのSVG化(ピクセルスパークル・メダルフレーム・RPGバナー)、FamilyChallengeCardにボスモンスターSVG、FamilyAdventureMapにワールドマップ背景SVG、クエストクリアバナーRPG化、Web版LevelDisplayにCharacterSvg+RPG風EXPバー導入。TestFlightフィードバック#1全項目完了確認+ドキュメント同期 |
+| v0.18.0 | 2026-04-18 | Habitica風ペットシステム。クエストクリア時20%で卵ドロップ→3クエストで孵化→餌やり成長(baby→child→adult)。6種のペット(竜/鳳凰/ユニコーン/猫/犬/うさぎ)×4成長段階のピクセルアートSVG。幸福度システム(3日減衰)、アクティブペット切替、卵ドロップ演出。DBテーブル(otetsudai_pets)+RLS+ペットロジック(lib/pets.ts) |
+| v0.17.0 | 2026-04-18 | Habitica風リッチRPG SVG全面実装。アイテムSVG基盤(金銀銅貨・宝石3色・鍵・宝袋)、RPGクエストカードフレーム(bronze/silver/gold 3段階装飾ボーダー)、HP/MP/EXPゲージ(3色RPGステータスバー)、装備ステータス表示(ATK/DEF/LCK)、宝箱オープン演出、バトルシーン+小モンスター4種(スライム/コウモリ/ゴブリン/キノコ)、RPG報酬シーケンス(バトル→宝箱→獲得表示)、ダンジョンフロア進行マップ(ボス/宝物/通常フロア)。全8機能をモバイル・Web両版で同時実装。RPGステータス算出ロジック(rpg-stats.ts)追加 |
+| v0.19.0 | 2026-04-18 | Habitica風ダークテーマ完全移行+優先度C機能+絵文字全SVG化。**ダーク化**: ダンジョンパレット(#1f0f31ダークパープル+#ffa623ゴールド)を全画面に適用、RpgCard/RpgButton/GameStatusHeader両版新設、ハードコード白背景(p.white/#fff/bg-white/text-slate-*等)を全トークン化。**優先度C**: PetManagementモーダル(名前変更・アクティブ切替)、トロフィーケース(バッジ一覧・シルエット・獲得日時)、デイリーログインボーナス(7日サイクル5〜50円・wallet取得後自動起動)、ショップ(称号8種・装備表示・キャラ横バッジ)。**親画面UI**: クエスト・承認・値上げ・提案・最近承認の全カードをQuestCardFrame(bronze/silver/gold)でSVG枠化、子画面と一貫性確保。**絵文字→SVG化**: PixelIcons.tsx に22種新規追加(犬/猫/風呂/皿/ほうき/ベッド/車/シャツ/靴/花/鍋/ランドセル/歯ブラシ/トロフィー/ショップ/肉球/洗濯/スポンジ/窓/トイレ/家族/リサイクル)、TaskIconSvg新設(タスク名→SVG自動マッピング)、Parent/Child Dashboardの🪙/🧒/✏️/⏳/📝/🎁/🏆/🏪/🐾を全てPixelIcon化、モーダルヘッダーもSVG化。**子ども選択刷新**: 8種emoji picker→ChildCharacterSvg 3択(男の子/女の子/どちらでもない、6x8ピクセルアート、Habitica方針準拠の中性デザイン含む)、DBはキー保存(boy/girl/other)+legacy emoji resolver。**認証・ナビ**: こどもモード「だれかな？」に親口座非表示(role=child フィルタ)でPIN試行事故防止、起動時セッション自動ログイン廃止(QR起動時も必ずLanding経由)、GameStatusHeaderに「🏠TOP」戻るボタン追加(両版・枠線付き視認性UP)。**インフラ**: Supabase migration 3本実行済(otetsudai_daily_logins/otetsudai_shop_purchases/otetsudai_pets)、Vercel自動デプロイ反映、Web signup/complete/terms/privacy/help/adminのlight色をCSS変数に |
 
 ## Getting Started
 

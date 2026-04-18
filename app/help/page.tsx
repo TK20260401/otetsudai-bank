@@ -14,20 +14,20 @@ export default function HelpPage() {
         <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
           ← もどる
         </Button>
-        <h1 className="text-2xl font-bold text-emerald-800">📖 <R k="使" r="つか" />い<R k="方" r="かた" /></h1>
+        <h1 className="text-2xl font-bold text-primary">📖 <R k="使" r="つか" />い<R k="方" r="かた" /></h1>
       </div>
 
       {/* クイックスタート */}
-      <Card className="mb-6 border-amber-300 bg-amber-50">
+      <Card className="mb-6 border-primary/40 bg-primary/10">
         <CardHeader>
-          <CardTitle className="text-lg text-amber-800">
+          <CardTitle className="text-lg text-primary">
             🚀 かんたん3ステップ
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                 1
               </div>
               <div>
@@ -38,7 +38,7 @@ export default function HelpPage() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                 2
               </div>
               <div>
@@ -49,7 +49,7 @@ export default function HelpPage() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                 3
               </div>
               <div>
@@ -64,9 +64,9 @@ export default function HelpPage() {
       </Card>
 
       {/* こども向け */}
-      <Card className="mb-4 border-amber-200">
+      <Card className="mb-4 border-primary/30">
         <CardHeader>
-          <CardTitle className="text-base text-amber-700">
+          <CardTitle className="text-base text-primary">
             🧒 <R k="子" r="こ" />どもの<R k="画面" r="がめん" />
           </CardTitle>
         </CardHeader>
@@ -120,9 +120,9 @@ export default function HelpPage() {
       </Card>
 
       {/* おや向け */}
-      <Card className="mb-4 border-violet-200">
+      <Card className="mb-4 border-accent/30">
         <CardHeader>
-          <CardTitle className="text-base text-violet-700">
+          <CardTitle className="text-base text-accent">
             👨‍👩‍👧‍👦 おやの画面
           </CardTitle>
         </CardHeader>
@@ -137,7 +137,7 @@ export default function HelpPage() {
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <span className="text-lg">💰</span>
+            <span className="text-lg">🪙</span>
             <div>
               <p className="font-semibold">子どもの残高</p>
               <p className="text-muted-foreground">
@@ -167,9 +167,9 @@ export default function HelpPage() {
       </Card>
 
       {/* FAQ */}
-      <Card className="mb-4 border-gray-200">
+      <Card className="mb-4 border-border">
         <CardHeader>
-          <CardTitle className="text-base text-gray-700">
+          <CardTitle className="text-base text-muted-foreground">
             ❓ よくあるしつもん
           </CardTitle>
         </CardHeader>
@@ -217,7 +217,7 @@ export default function HelpPage() {
 
       <div className="text-center pb-8">
         <Button
-          className="bg-amber-500 hover:bg-amber-600 text-white"
+          className="bg-primary hover:bg-accent text-primary-foreground"
           onClick={() => router.push("/")}
         >
           トップにもどる

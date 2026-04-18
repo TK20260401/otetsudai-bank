@@ -4,6 +4,7 @@ import { useState } from "react";
 import { STAMPS, type Stamp } from "@/lib/stamps";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PixelCrossedSwordsIcon, PixelCheckIcon } from "@/components/pixel-icons";
 import {
   Dialog,
   DialogContent,
@@ -56,7 +57,7 @@ export function ApprovalDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>⚔️ クエスト承認</DialogTitle>
+          <DialogTitle><span className="flex items-center gap-1"><PixelCrossedSwordsIcon size={18} /> クエスト承認</span></DialogTitle>
           <DialogDescription>
             {childName}の「{taskTitle}」（¥{reward.toLocaleString()}）
           </DialogDescription>
@@ -132,7 +133,7 @@ export function ApprovalDialog({
             className="flex-1 bg-green-500 hover:bg-green-600 text-white"
             onClick={handleSubmit}
           >
-            ✓ おくって承認
+            <span className="flex items-center gap-1"><PixelCheckIcon size={14} /> おくって承認</span>
           </Button>
         </div>
       </DialogContent>

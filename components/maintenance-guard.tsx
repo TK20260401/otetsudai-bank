@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
+import { PixelShieldIcon, PixelRefreshIcon } from "@/components/pixel-icons";
 
 type MaintenanceData = {
   enabled: boolean;
@@ -80,7 +81,7 @@ export function MaintenanceGuard({ children }: { children: React.ReactNode }) {
           )}
           <div className="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200 mb-4">
             <p className="text-sm text-muted-foreground">
-              🛡️ データはすべてあんぜんです
+              <span className="flex items-center gap-1"><PixelShieldIcon size={14} /> データはすべてあんぜんです</span>
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               メンテナンスがおわったら、またあそべるようになります
@@ -95,7 +96,7 @@ export function MaintenanceGuard({ children }: { children: React.ReactNode }) {
               window.location.reload();
             }}
           >
-            🔄 さいどくみこみ
+            <span className="flex items-center gap-1"><PixelRefreshIcon size={14} /> さいどくみこみ</span>
           </Button>
         </div>
       </div>

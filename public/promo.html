@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おこづかいクエスト PR動画</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100vh;
+    background: #0a0618;
+    font-family: "Noto Sans JP", system-ui, sans-serif;
+    overflow: hidden;
+  }
+  .stage {
+    position: relative;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+  }
+
+  /* 共通シーン制御：各シーンは順番に表示 */
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  /* 総尺30秒: Title 0-3s, Problem 3-8s, Quest 8-14s, Split 14-19s, LevelPet 19-24s, CTA 24-30s */
+  .scene-title    { animation: showScene 30s linear 0s infinite; }
+  .scene-problem  { animation: showScene2 30s linear 0s infinite; }
+  .scene-quest    { animation: showScene3 30s linear 0s infinite; }
+  .scene-split    { animation: showScene4 30s linear 0s infinite; }
+  .scene-levelpet { animation: showScene5 30s linear 0s infinite; }
+  .scene-cta      { animation: showScene6 30s linear 0s infinite; }
+
+  @keyframes showScene   { 0%,10%{opacity:1} 11%,100%{opacity:0} }
+  @keyframes showScene2  { 10%,26.67%{opacity:1} 0%,9.9%,27.67%,100%{opacity:0} }
+  @keyframes showScene3  { 26.67%,46.67%{opacity:1} 0%,26.57%,47.67%,100%{opacity:0} }
+  @keyframes showScene4  { 46.67%,63.33%{opacity:1} 0%,46.57%,64.33%,100%{opacity:0} }
+  @keyframes showScene5  { 63.33%,80%{opacity:1} 0%,63.23%,81%,100%{opacity:0} }
+  @keyframes showScene6  { 80%,100%{opacity:1} 0%,79.9%{opacity:0} }
+
+  /* Scene 1: Title */
+  .scene-title {
+    background: radial-gradient(ellipse at center, #2a1a4d 0%, #1f0f31 70%, #150a24 100%);
+  }
+  .scene-title::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(79,42,147,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,42,147,0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .title-logo {
+    font-size: clamp(40px, 8vw, 96px); font-weight: 900;
+    color: #ffa623;
+    text-shadow: 0 0 30px #ffa623, 0 4px 0 #8a5200;
+    letter-spacing: -0.02em;
+    animation: titleBounce 3s ease-out;
+  }
+  .title-tagline {
+    font-size: clamp(18px, 3vw, 36px); font-weight: 700;
+    color: #f5f5f5; margin-top: 16px;
+    animation: fadeInUp 3s ease-out 0.4s both;
+  }
+  @keyframes titleBounce {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 舞うコイン */
+  .coin {
+    position: absolute;
+    width: 48px; height: 48px;
+    background: radial-gradient(circle, #FFE066 30%, #FFA623 70%, #8A5200 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ffa62388;
+    animation: coinFloat 4s ease-in-out infinite;
+  }
+  .coin::after {
+    content: "¥"; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #8a5200; font-weight: 900; font-size: 24px;
+  }
+  @keyframes coinFloat {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+  }
+
+  /* Scene 2: Problem */
+  .scene-problem {
+    background: linear-gradient(180deg, #1f0f31 0%, #2a1a4d 100%);
+  }
+  .problem-bubbles {
+    position: absolute; top: 25%; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 24px;
+  }
+  .bubble {
+    background: #36205d; border: 3px solid #4f2a93;
+    border-radius: 20px; padding: 14px 22px;
+    color: #e0d8f0; font-weight: 700;
+    animation: bubbleFloat 2s ease-in-out infinite;
+  }
+  .bubble:nth-child(2) { animation-delay: 0.3s; }
+  .bubble:nth-child(3) { animation-delay: 0.6s; }
+  @keyframes bubbleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .problem-headline { font-size: clamp(32px, 6vw, 72px); font-weight: 900; color: #f5f5f5; text-align: center; }
+  .problem-sub { font-size: clamp(18px, 3vw, 32px); color: #a090c0; margin-top: 16px; }
+
+  /* Scene 3: Quest */
+  .scene-quest {
+    background: linear-gradient(180deg, #2a1a4d 0%, #1f0f31 100%);
+    justify-content: flex-start; padding-top: 10%;
+  }
+  .quest-headline {
+    font-size: clamp(32px, 5vw, 60px); font-weight: 900; color: #ffa623;
+    text-shadow: 0 0 20px rgba(255,166,35,0.4);
+    margin-bottom: 32px;
+  }
+  .phone-mockup {
+    width: clamp(280px, 40vw, 380px);
+    height: clamp(560px, 70vh, 720px);
+    background: #0a0a0a; border-radius: 32px;
+    padding: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    position: relative;
+  }
+  .phone-screen {
+    width: 100%; height: 100%; border-radius: 24px;
+    background: #1f0f31; padding: 20px; overflow: hidden;
+  }
+  .quest-card {
+    background: #2a1a4d; border: 2px solid;
+    border-radius: 12px; margin-bottom: 12px;
+    overflow: hidden;
+    animation: slideInRight 0.5s ease-out backwards;
+  }
+  .quest-card.bronze { border-color: #A87044; animation-delay: 0.2s; }
+  .quest-card.silver { border-color: #A8B0BC; animation-delay: 0.4s; }
+  .quest-card.gold   { border-color: #DAA520; animation-delay: 0.6s; }
+  .quest-card .bar { height: 6px; }
+  .quest-card.bronze .bar { background: linear-gradient(90deg,#6B4430,#A87044,#D8A878,#A87044,#6B4430); }
+  .quest-card.silver .bar { background: linear-gradient(90deg,#6B7580,#A8B0BC,#E0E8F0,#A8B0BC,#6B7580); }
+  .quest-card.gold   .bar { background: linear-gradient(90deg,#B8860B,#DAA520,#FFE066,#DAA520,#B8860B); }
+  .quest-body {
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    color: #f5f5f5;
+  }
+  .quest-icon {
+    width: 36px; height: 36px; background: #36205d;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .quest-info { flex: 1; }
+  .quest-title { font-size: 14px; font-weight: 700; }
+  .quest-reward { font-size: 12px; color: #ffa623; margin-top: 2px; }
+  .quest-btn {
+    background: #ffa623; color: #1f0f31;
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 900;
+  }
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Scene 4: Split */
+  .scene-split {
+    background: linear-gradient(135deg, #1f0f31 0%, #2a1a4d 100%);
+  }
+  .split-headline { font-size: clamp(32px, 5vw, 60px); font-weight: 900; color: #f5f5f5; }
+  .split-sub { font-size: clamp(18px, 3vw, 28px); color: #a090c0; margin: 12px 0 40px; }
+  .buckets { display: flex; gap: 40px; }
+  .bucket {
+    width: 160px; height: 160px; border-radius: 24px;
+    border: 4px solid; display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 20px;
+    font-size: 28px; font-weight: 900;
+    animation: bucketPop 1s cubic-bezier(0.68,-0.55,0.265,1.55) backwards;
+  }
+  .bucket.spend {
+    background: rgba(231,76,60,0.2); border-color: #e74c3c; color: #e74c3c;
+    box-shadow: 0 0 30px rgba(231,76,60,0.4), inset 0 -8px 0 rgba(231,76,60,0.4);
+    animation-delay: 0.2s;
+  }
+  .bucket.save {
+    background: rgba(52,152,219,0.2); border-color: #3498db; color: #3498db;
+    box-shadow: 0 0 30px rgba(52,152,219,0.4), inset 0 -8px 0 rgba(52,152,219,0.4);
+    animation-delay: 0.4s;
+  }
+  .bucket.invest {
+    background: rgba(46,204,113,0.2); border-color: #2ecc71; color: #2ecc71;
+    box-shadow: 0 0 30px rgba(46,204,113,0.4), inset 0 -8px 0 rgba(46,204,113,0.4);
+    animation-delay: 0.6s;
+  }
+  @keyframes bucketPop {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* Scene 5: LevelPet */
+  .scene-levelpet {
+    background: radial-gradient(circle at center, #2a1a4d 0%, #1f0f31 100%);
+  }
+  .levelpet-headline { font-size: clamp(32px, 5vw, 60px); font-weight: 900; color: #ffa623; margin-bottom: 12px; }
+  .levelpet-sub { font-size: clamp(18px, 3vw, 28px); color: #a090c0; margin-bottom: 60px; }
+  .levelpet-row { display: flex; gap: 80px; align-items: center; }
+  .level-badge {
+    background: linear-gradient(180deg, #FFE066 0%, #ffa623 50%, #8a5200 100%);
+    border: 5px solid #f9c33b; border-radius: 16px;
+    padding: 24px 36px;
+    text-align: center; color: #1f0f31;
+    box-shadow: 0 0 40px rgba(255,166,35,0.6);
+    animation: levelPulse 1.5s ease-in-out infinite;
+  }
+  .level-label { font-size: 18px; font-weight: 900; }
+  .level-num { font-size: 60px; font-weight: 900; line-height: 1; }
+  .level-title { font-size: 16px; font-weight: 700; margin-top: 6px; }
+  @keyframes levelPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .pet-container {
+    width: 200px; height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .pet-stage { position: absolute; animation: petCycle 5s linear infinite; }
+  .pet-stage.egg    { animation-delay: 0s; }
+  .pet-stage.baby   { animation-delay: 1.67s; }
+  .pet-stage.adult  { animation-delay: 3.33s; }
+  @keyframes petCycle {
+    0%,33% { opacity: 1; transform: scale(1); }
+    34%,100% { opacity: 0; transform: scale(0.5); }
+  }
+  .pet-egg {
+    width: 100px; height: 130px; border-radius: 50%;
+    background: linear-gradient(180deg, #FFE4A3, #E4B844);
+    border: 3px solid #8A5200;
+  }
+  .pet-baby {
+    width: 130px; height: 130px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #FFE066, #E4B844);
+    border: 3px solid #D4A030;
+    position: relative;
+  }
+  .pet-baby::before, .pet-baby::after {
+    content: ""; position: absolute; width: 8px; height: 8px;
+    background: #000; border-radius: 50%; top: 40%;
+  }
+  .pet-baby::before { left: 35%; }
+  .pet-baby::after { right: 35%; }
+  .pet-adult {
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, #C39BD3, #8E44AD);
+    border: 3px solid #5B2C6F;
+    border-radius: 50%;
+    position: relative;
+  }
+  .pet-adult::before {
+    content: "★"; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #F9C33B; font-size: 60px;
+  }
+
+  /* Scene 6: CTA */
+  .scene-cta {
+    background: radial-gradient(ellipse at center, #2a1a4d 0%, #1f0f31 60%, #150a24 100%);
+  }
+  .cta-headline { font-size: clamp(36px, 6vw, 72px); font-weight: 900; color: #f5f5f5; text-shadow: 0 0 30px #ffa623; margin-bottom: 40px; }
+  .cta-button {
+    background: linear-gradient(180deg, #FFE066 0%, #ffa623 50%, #8a5200 100%);
+    border: 5px solid #f9c33b; border-radius: 24px;
+    padding: 28px 70px;
+    font-size: clamp(28px, 4vw, 56px); font-weight: 900;
+    color: #1f0f31;
+    box-shadow: 0 0 60px rgba(255,166,35,0.8), inset 0 -10px 0 rgba(138,82,0,0.4);
+    animation: ctaPulse 1s ease-in-out infinite;
+  }
+  @keyframes ctaPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  .cta-footer {
+    margin-top: 50px; display: flex; align-items: center; gap: 20px;
+  }
+  .cta-qr {
+    width: 120px; height: 120px; background: #fff; padding: 8px;
+    border-radius: 12px; border: 3px solid #ffa623;
+  }
+  .cta-qr-pattern {
+    width: 100%; height: 100%;
+    background-image:
+      radial-gradient(circle at 15% 15%, #000 3%, transparent 3%),
+      radial-gradient(circle at 85% 15%, #000 3%, transparent 3%),
+      radial-gradient(circle at 15% 85%, #000 3%, transparent 3%),
+      linear-gradient(90deg, #000 50%, transparent 50%),
+      linear-gradient(0deg, #000 50%, transparent 50%);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 6px 6px, 6px 6px;
+    background-color: #fff;
+  }
+  .cta-url { color: #ffa623; font-size: clamp(18px, 2.5vw, 26px); font-weight: 900; text-shadow: 0 0 12px rgba(255,166,35,0.6); }
+  .cta-note { color: #a090c0; font-size: clamp(14px, 2vw, 20px); font-weight: 700; }
+
+  /* 再生コントロール */
+  .controls {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.7); color: #fff; padding: 8px 16px; border-radius: 20px;
+    font-size: 12px; z-index: 100; backdrop-filter: blur(8px);
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <!-- Scene 1: Title -->
+  <div class="scene scene-title">
+    <!-- 舞うコイン -->
+    <div class="coin" style="left:10%;animation-delay:0s"></div>
+    <div class="coin" style="left:25%;animation-delay:0.3s"></div>
+    <div class="coin" style="left:45%;animation-delay:0.8s"></div>
+    <div class="coin" style="left:65%;animation-delay:0.1s"></div>
+    <div class="coin" style="left:85%;animation-delay:0.5s"></div>
+    <h1 class="title-logo">おこづかいクエスト</h1>
+    <p class="title-tagline">お手伝いをクエストに</p>
+  </div>
+
+  <!-- Scene 2: Problem -->
+  <div class="scene scene-problem">
+    <div class="problem-bubbles">
+      <div class="bubble">どうやって?</div>
+      <div class="bubble">いくら?</div>
+      <div class="bubble">教育的?</div>
+    </div>
+    <h2 class="problem-headline">お手伝い、どう教える？</h2>
+    <p class="problem-sub">報酬も、しつけも、むずかしい</p>
+  </div>
+
+  <!-- Scene 3: Quest -->
+  <div class="scene scene-quest">
+    <h2 class="quest-headline">お手伝い = クエスト</h2>
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div style="text-align:center;color:#ffa623;font-weight:700;margin-bottom:14px;font-size:15px">🗡 クエスト一覧</div>
+        <div class="quest-card bronze">
+          <div class="bar"></div>
+          <div class="quest-body">
+            <div class="quest-icon">🍽</div>
+            <div class="quest-info">
+              <div class="quest-title">お皿あらい</div>
+              <div class="quest-reward">¥100</div>
+            </div>
+            <div class="quest-btn">クリア</div>
+          </div>
+        </div>
+        <div class="quest-card silver">
+          <div class="bar"></div>
+          <div class="quest-body">
+            <div class="quest-icon">🛁</div>
+            <div class="quest-info">
+              <div class="quest-title">おふろそうじ</div>
+              <div class="quest-reward">¥200</div>
+            </div>
+            <div class="quest-btn">クリア</div>
+          </div>
+        </div>
+        <div class="quest-card gold">
+          <div class="bar"></div>
+          <div class="quest-body">
+            <div class="quest-icon">🐕</div>
+            <div class="quest-info">
+              <div class="quest-title">犬のさんぽ</div>
+              <div class="quest-reward">¥300</div>
+            </div>
+            <div class="quest-btn">クリア</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 4: Split -->
+  <div class="scene scene-split">
+    <h2 class="split-headline">稼ぐだけじゃない</h2>
+    <p class="split-sub">3分割で金融リテラシー</p>
+    <div class="buckets">
+      <div class="bucket spend">つかう</div>
+      <div class="bucket save">ためる</div>
+      <div class="bucket invest">ふやす</div>
+    </div>
+  </div>
+
+  <!-- Scene 5: LevelPet -->
+  <div class="scene scene-levelpet">
+    <h2 class="levelpet-headline">育てて、まもる</h2>
+    <p class="levelpet-sub">レベル・ペット・仲間</p>
+    <div class="levelpet-row">
+      <div class="level-badge">
+        <div class="level-label">LEVEL UP !</div>
+        <div class="level-num">Lv.5</div>
+        <div class="level-title">勇者見習い</div>
+      </div>
+      <div class="pet-container">
+        <div class="pet-stage egg"><div class="pet-egg"></div></div>
+        <div class="pet-stage baby"><div class="pet-baby"></div></div>
+        <div class="pet-stage adult"><div class="pet-adult"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 6: CTA -->
+  <div class="scene scene-cta">
+    <h2 class="cta-headline">いますぐ はじめよう</h2>
+    <button class="cta-button">無料ではじめる</button>
+    <div class="cta-footer">
+      <div class="cta-qr"><div class="cta-qr-pattern"></div></div>
+      <div>
+        <div class="cta-note">QRコードから登録</div>
+        <div class="cta-url">otetsudai-bank-beta.vercel.app</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">🔁 30秒ループ再生中 · ブラウザで自動再生</div>
+</div>
+</body>
+</html>

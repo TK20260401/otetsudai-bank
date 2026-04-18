@@ -50,12 +50,12 @@ export default function RootLayout({
           <div className="flex-1">
             {children}
           </div>
-          <footer className="py-4 text-center text-xs text-gray-400 space-x-3">
-            <Link href="/terms" className="hover:text-gray-600 hover:underline">利用規約</Link>
+          <footer className="py-4 text-center text-xs text-muted-foreground space-x-3">
+            <Link href="/terms" className="hover:text-primary hover:underline">利用規約</Link>
             <span>|</span>
-            <Link href="/privacy" className="hover:text-gray-600 hover:underline">プライバシーポリシー</Link>
+            <Link href="/privacy" className="hover:text-primary hover:underline">プライバシーポリシー</Link>
             <span>|</span>
-            <Link href="/help" className="hover:text-gray-600 hover:underline">ヘルプ</Link>
+            <Link href="/help" className="hover:text-primary hover:underline">ヘルプ</Link>
           </footer>
           <GlobalChat />
         </MaintenanceGuard>

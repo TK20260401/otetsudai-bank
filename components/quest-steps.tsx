@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PixelSeedlingIcon, PixelCheckIcon, PixelConfettiIcon, PixelCrossedSwordsIcon } from "@/components/pixel-icons";
 
 /**
  * クエスト構造化UI：準備→実行→完了の3ステップ
@@ -188,7 +189,7 @@ export default function QuestSteps({
                 : "bg-gray-200 text-gray-400"
           }`}
         >
-          {completed ? "✅ クリア！" : allChecked ? "⚔️ クリア！" : "⚔️ クリア！"}
+          {completed ? <span className="flex items-center gap-1"><PixelCheckIcon size={14} /> クリア！</span> : <span className="flex items-center gap-1"><PixelCrossedSwordsIcon size={14} /> クリア！</span>}
         </Button>
       </div>
 

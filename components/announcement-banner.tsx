@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PixelLightbulbIcon, PixelWarningIcon, PixelCrossIcon } from "@/components/pixel-icons";
 
 type Announcement = {
   id: string;
@@ -17,10 +18,10 @@ const PRIORITY_STYLES = {
   urgent: "bg-red-50 border-red-200 text-red-800",
 };
 
-const PRIORITY_ICONS = {
-  normal: "ℹ️",
-  important: "⚠️",
-  urgent: "🚨",
+const PRIORITY_ICON_COMPONENTS = {
+  normal: <PixelLightbulbIcon size={16} />,
+  important: <PixelWarningIcon size={16} />,
+  urgent: <PixelWarningIcon size={16} />,
 };
 
 export function AnnouncementBanner({ role }: { role: "parent" | "child" }) {
@@ -67,7 +68,7 @@ export function AnnouncementBanner({ role }: { role: "parent" | "child" }) {
           className={`border rounded-lg px-3 py-2 ${PRIORITY_STYLES[a.priority]}`}
         >
           <div className="flex items-center gap-2">
-            <span className="flex-shrink-0">{PRIORITY_ICONS[a.priority]}</span>
+            <span className="flex-shrink-0">{PRIORITY_ICON_COMPONENTS[a.priority]}</span>
             <button
               className="flex-1 text-left text-sm font-medium truncate"
               onClick={() => setExpanded(expanded === a.id ? null : a.id)}
@@ -84,7 +85,7 @@ export function AnnouncementBanner({ role }: { role: "parent" | "child" }) {
               onClick={() => handleDismiss(a.id)}
               aria-label="閉じる"
             >
-              ✕
+              <PixelCrossIcon size={12} />
             </button>
           </div>
           {expanded === a.id && (

@@ -26,6 +26,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { PixelCrossedSwordsIcon, PixelScrollIcon, PixelCoinIcon, PixelRefreshIcon, PixelPersonIcon, PixelPencilIcon, PixelPauseIcon, PixelPlayIcon, PixelTrashIcon } from "@/components/pixel-icons";
+import QuestCardFrame from "@/components/quest-card-frame";
 
 const RECURRENCE_LABELS: Record<string, string> = {
   once: "1回",
@@ -146,7 +148,7 @@ export default function TaskManagement() {
               ← もどる
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-emerald-800">⚔️ クエスト管理</h1>
+          <h1 className="text-2xl font-bold text-emerald-800 flex items-center gap-2"><PixelCrossedSwordsIcon size={24} /> クエスト管理</h1>
         </div>
         <Button
           className="bg-amber-500 hover:bg-amber-600 text-white"
@@ -163,7 +165,7 @@ export default function TaskManagement() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="title">クエスト名</Label>
+                <Label htmlFor="title"><span className="flex items-center gap-1"><PixelCrossedSwordsIcon size={14} /> クエスト名</span></Label>
                 <Input
                   id="title"
                   value={form.title}
@@ -172,7 +174,7 @@ export default function TaskManagement() {
                 />
               </div>
               <div>
-                <Label htmlFor="description">せつめい（任意）</Label>
+                <Label htmlFor="description"><span className="flex items-center gap-1"><PixelScrollIcon size={14} /> せつめい（任意）</span></Label>
                 <Textarea
                   id="description"
                   value={form.description}
@@ -185,7 +187,7 @@ export default function TaskManagement() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="reward">ごほうび (¥)</Label>
+                  <Label htmlFor="reward"><span className="flex items-center gap-1"><PixelCoinIcon size={14} /> ごほうび (¥)</span></Label>
                   <Input
                     id="reward"
                     type="number"
@@ -201,7 +203,7 @@ export default function TaskManagement() {
                   />
                 </div>
                 <div>
-                  <Label>くりかえし</Label>
+                  <Label><span className="flex items-center gap-1"><PixelRefreshIcon size={14} /> くりかえし</span></Label>
                   <Select
                     value={form.recurrence}
                     onValueChange={(v) =>
@@ -223,7 +225,7 @@ export default function TaskManagement() {
                 </div>
               </div>
               <div>
-                <Label>だれのクエスト？</Label>
+                <Label><span className="flex items-center gap-1"><PixelPersonIcon size={14} /> だれのクエスト？</span></Label>
                 <Select
                   value={form.assigned_child_id}
                   onValueChange={(v) =>
@@ -267,12 +269,18 @@ export default function TaskManagement() {
             const assignedChild = children.find(
               (c) => c.id === task.assigned_child_id
             );
+            const tier: "bronze" | "silver" | "gold" = task.is_special
+              ? "gold"
+              : task.recurrence === "weekly"
+                ? "silver"
+                : "bronze";
             return (
-              <Card
+              <div
                 key={task.id}
-                className={`border-amber-200 ${!task.is_active ? "opacity-50" : ""}`}
+                className={!task.is_active ? "opacity-50" : ""}
               >
-                <CardContent className="p-4">
+                <QuestCardFrame tier={tier}>
+                  <div className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -298,9 +306,13 @@ export default function TaskManagement() {
                         </p>
                       )}
                       <div className="flex items-center gap-3 text-sm">
-                        <span className="text-amber-600 font-semibold">
-                          ¥{task.reward_amount.toLocaleString()}
-                        </span>
+                        <button
+                          type="button"
+                          className="text-amber-600 font-semibold hover:underline cursor-pointer"
+                          onClick={() => openEdit(task)}
+                        >
+                          <span className="flex items-center gap-0.5"><PixelCoinIcon size={14} /> ¥{task.reward_amount.toLocaleString()}</span>
+                        </button>
                         {assignedChild && (
                           <span className="text-muted-foreground">
                             🧒 {assignedChild.name}
@@ -314,14 +326,14 @@ export default function TaskManagement() {
                         size="sm"
                         onClick={() => openEdit(task)}
                       >
-                        ✏️
+                        <PixelPencilIcon size={16} />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleToggleActive(task)}
                       >
-                        {task.is_active ? "⏸" : "▶️"}
+                        {task.is_active ? <PixelPauseIcon size={16} /> : <PixelPlayIcon size={16} />}
                       </Button>
                       <Button
                         variant="ghost"
@@ -329,12 +341,13 @@ export default function TaskManagement() {
                         className="text-red-500"
                         onClick={() => handleDelete(task.id)}
                       >
-                        🗑
+                        <PixelTrashIcon size={16} />
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  </div>
+                </QuestCardFrame>
+              </div>
             );
           })
         )}

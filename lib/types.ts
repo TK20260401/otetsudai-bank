@@ -142,6 +142,47 @@ export type StockPrice = {
   updated_at: string;
 };
 
+export type FamilyChallenge = {
+  id: string;
+  family_id: string;
+  title: string;
+  target_quests: number;
+  bonus_amount: number;
+  start_date: string;
+  end_date: string;
+  is_achieved: boolean;
+  achieved_at: string | null;
+  created_at: string;
+};
+
+export type FamilyMessage = {
+  id: string;
+  family_id: string;
+  sender_id: string;
+  recipient_id: string;
+  stamp_id: string | null;
+  message: string | null;
+  created_at: string;
+  sender?: User;
+  recipient?: User;
+};
+
+export type Pet = {
+  id: string;
+  child_id: string;
+  family_id: string;
+  pet_type: "dragon" | "phoenix" | "unicorn" | "cat" | "dog" | "rabbit";
+  name: string | null;
+  growth_stage: "egg" | "baby" | "child" | "adult";
+  hatched_at: string | null;
+  fed_count: number;
+  happiness: number;
+  is_active: boolean;
+  quests_since_acquired: number;
+  last_fed_at: string | null;
+  created_at: string;
+};
+
 export type InvestOrder = {
   id: string;
   child_id: string;

@@ -4,10 +4,11 @@ import { useRouter } from "next/navigation";
 import { clearSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PixelDoorIcon } from "@/components/pixel-icons";
 import type { ReactNode } from "react";
 
 type Props = {
-  title: string;
+  title: ReactNode;
   userName?: string;
   backHref?: string;
   pendingCount?: number;
@@ -22,7 +23,7 @@ export default function CommonHeader({ title, userName, backHref, pendingCount, 
       <div className="flex items-center gap-2">
         {backHref && (
           <Button variant="ghost" size="sm" onClick={() => router.push(backHref)}>
-            ←
+            <PixelDoorIcon size={14} />
           </Button>
         )}
         <div>
@@ -47,7 +48,7 @@ export default function CommonHeader({ title, userName, backHref, pendingCount, 
             router.push("/login");
           }}
         >
-          ログアウト
+          <span className="flex items-center gap-1"><PixelDoorIcon size={16} /> ログアウト</span>
         </Button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { R } from "@/components/ruby-text";
+import { PixelPiggyIcon, PixelSeedlingIcon } from "@/components/pixel-icons";
 
 /**
  * 報酬自動分配スライダー（UD対応）
@@ -84,12 +85,12 @@ export default function RewardSplitSlider({
           <span className="text-lg font-bold text-red-700">{spendRatio}%</span>
         </div>
         <div className="flex flex-col items-center gap-1">
-          <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center text-white text-sm" aria-hidden="true">🐷</div>
+          <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center" aria-hidden="true"><PixelPiggyIcon size={16} /></div>
           <span className="text-xs font-bold text-blue-600"><R k="貯" r="た" />める</span>
           <span className="text-lg font-bold text-blue-700">{saveRatio}%</span>
         </div>
         <div className="flex flex-col items-center gap-1">
-          <div className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center text-white text-sm" aria-hidden="true">🌱</div>
+          <div className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center" aria-hidden="true"><PixelSeedlingIcon size={16} /></div>
           <span className="text-xs font-bold text-green-600"><R k="増" r="ふ" />やす</span>
           <span className="text-lg font-bold text-green-700">{investRatio}%</span>
         </div>
@@ -99,7 +100,7 @@ export default function RewardSplitSlider({
       <div className="space-y-3">
         <div>
           <label className="flex items-center gap-2 text-sm font-semibold text-blue-700 mb-1">
-            <span className="w-5 h-5 rounded-full bg-blue-400 inline-flex items-center justify-center text-white text-xs" aria-hidden="true">🐷</span>
+            <span className="w-5 h-5 rounded-full bg-blue-400 inline-flex items-center justify-center" aria-hidden="true"><PixelPiggyIcon size={10} /></span>
             <R k="貯" r="た" />める: {saveRatio}%
           </label>
           <input
@@ -116,7 +117,7 @@ export default function RewardSplitSlider({
         </div>
         <div>
           <label className="flex items-center gap-2 text-sm font-semibold text-green-700 mb-1">
-            <span className="w-5 h-5 rounded-full bg-green-400 inline-flex items-center justify-center text-white text-xs" aria-hidden="true">🌱</span>
+            <span className="w-5 h-5 rounded-full bg-green-400 inline-flex items-center justify-center" aria-hidden="true"><PixelSeedlingIcon size={10} /></span>
             <R k="増" r="ふ" />やす: {investRatio}%
           </label>
           <input

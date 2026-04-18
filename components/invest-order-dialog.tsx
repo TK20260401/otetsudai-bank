@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { R } from "@/components/ruby-text";
+import { PixelBarChartIcon, PixelSeedlingIcon, PixelLightbulbIcon } from "@/components/pixel-icons";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +26,7 @@ type Props = {
 };
 
 const CATEGORIES = [
-  { key: "index", label: "📊 インデックス", desc: "はじめての ひとに おすすめ" },
+  { key: "index", label: "インデックス", desc: "はじめての ひとに おすすめ" },
   { key: "jp_stock", label: "🇯🇵 にほん", desc: "" },
   { key: "us_stock", label: "🇺🇸 アメリカ", desc: "" },
 ] as const;
@@ -125,7 +126,7 @@ export function InvestOrderDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>🌱 <R k="株" r="かぶ" />を <R k="買" r="か" />いたい！</DialogTitle>
+          <DialogTitle><span className="flex items-center gap-1"><PixelSeedlingIcon size={18} /> <R k="株" r="かぶ" />を <R k="買" r="か" />いたい！</span></DialogTitle>
           <DialogDescription>
             <R k="増" r="ふ" />やすウォレットの お<R k="金" r="かね" />で <R k="株" r="かぶ" />を <R k="買" r="か" />えるよ
           </DialogDescription>
@@ -133,7 +134,7 @@ export function InvestOrderDialog({
 
         {success ? (
           <div className="text-center py-6">
-            <div className="text-6xl mb-3 animate-bounce">📈</div>
+            <div className="mb-3 flex justify-center"><PixelSeedlingIcon size={48} /></div>
             <p className="font-bold text-lg text-green-700">
               <R k="親" r="おや" />に お<R k="願" r="ねが" />いしたよ！
             </p>
@@ -226,7 +227,7 @@ export function InvestOrderDialog({
                 )}
               </div>
               <p className="text-[10px] text-muted-foreground text-center mt-2 leading-relaxed">
-                💡 <R k="買" r="か" />いたい <R k="株" r="かぶ" />が ないときは、おうちの <R k="人" r="ひと" />に <R k="伝" r="つた" />えるか <R k="相談" r="そうだん" />してね
+                <span className="inline-flex items-start gap-1"><PixelLightbulbIcon size={14} /> <R k="買" r="か" />いたい <R k="株" r="かぶ" />が ないときは、おうちの <R k="人" r="ひと" />に <R k="伝" r="つた" />えるか <R k="相談" r="そうだん" />してね</span>
               </p>
             </div>
 
@@ -260,7 +261,7 @@ export function InvestOrderDialog({
               {loading ? (
                 <span className="animate-pulse"><R k="送" r="おく" />り<R k="中" r="ちゅう" />...</span>
               ) : (
-                "親に お願いする 📈"
+                "親に お願いする"
               )}
             </Button>
           </div>

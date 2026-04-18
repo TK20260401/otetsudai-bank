@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { getStampById } from "@/lib/stamps";
 import { Card, CardContent } from "@/components/ui/card";
 import { R } from "@/components/ruby-text";
+import { PixelLetterIcon } from "@/components/pixel-icons";
 
 type StampNotification = {
   id: string;
@@ -55,7 +56,7 @@ export function StampNotifications({ childId }: Props) {
     <Card className="mb-4 border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50">
       <CardContent className="p-4">
         <p className="text-sm font-bold text-amber-700 mb-2">
-          💌 <R k="親" r="おや" />からの メッセージ
+          <span className="flex items-center gap-1"><PixelLetterIcon size={16} /> <R k="親" r="おや" />からの メッセージ</span>
         </p>
         <div className="space-y-2">
           {notifications.map((n) => {

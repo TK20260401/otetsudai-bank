@@ -2,19 +2,19 @@ import Link from "next/link";
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen p-4 max-w-2xl mx-auto py-8 bg-white">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">プライバシーポリシー</h1>
+    <div className="min-h-screen p-4 max-w-2xl mx-auto py-8 bg-background">
+      <h1 className="text-2xl font-bold text-primary mb-2 drop-shadow-[0_1px_4px_rgba(255,166,35,0.35)]">プライバシーポリシー</h1>
       <p className="text-sm text-muted-foreground mb-6">最終更新日: 2026年4月9日</p>
 
-      <div className="space-y-6 text-sm text-gray-700 leading-relaxed">
+      <div className="space-y-6 text-sm text-card-foreground leading-relaxed">
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">1. はじめに</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">1. はじめに</h2>
           <p>おこづかいクエスト（以下「本アプリ」）は、お子様の金融教育を目的としたアプリケーションです。本プライバシーポリシーは、本アプリが収集する情報とその利用方法について説明します。お子様のプライバシー保護を最優先とし、個人情報保護法およびCOPPA（児童オンラインプライバシー保護法）の趣旨に配慮して運営しています。</p>
         </section>
 
         {/* ===== 収集するデータ ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">2. 収集する情報</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">2. 収集する情報</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li><strong>家族情報</strong>: 家族名（ニックネーム可）</li>
             <li><strong>保護者の情報</strong>: メールアドレス、パスワード（暗号化保存）、表示名</li>
@@ -25,10 +25,10 @@ export default function PrivacyPage() {
 
         {/* ===== 収集しないデータ ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">3. 収集しない情報</h2>
-          <div className="rounded-lg border border-green-200 bg-green-50 p-3">
-            <p className="font-semibold text-green-800 mb-2">以下の情報は一切収集しません:</p>
-            <ul className="list-disc pl-6 space-y-1 text-green-800">
+          <h2 className="text-lg font-semibold text-primary mb-2">3. 収集しない情報</h2>
+          <div className="rounded-lg border border-[#2ecc71]/40 bg-card p-3">
+            <p className="font-semibold text-[#58d68d] mb-2">以下の情報は一切収集しません:</p>
+            <ul className="list-disc pl-6 space-y-1 text-card-foreground">
               <li>銀行口座情報・口座番号</li>
               <li>クレジットカード情報</li>
               <li>マイナンバー（個人番号）</li>
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
 
         {/* ===== 利用目的 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">4. 情報の利用目的</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">4. 情報の利用目的</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>アカウント認証およびサービス提供</li>
             <li>お手伝い管理・ウォレット機能の運営</li>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
 
         {/* ===== データ保存 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">5. データの保存・管理</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">5. データの保存・管理</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li><strong>保存場所</strong>: Supabase（AWSインフラ上）に暗号化して保存</li>
             <li><strong>通信</strong>: すべての通信はTLS（SSL）で暗号化</li>
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
 
         {/* ===== 第三者提供 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">6. 第三者提供</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">6. 第三者提供</h2>
           <p>本アプリは、法令に基づく場合を除き、ユーザーの個人情報を第三者に提供しません。</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
             <li><strong>広告</strong>: 本アプリに広告は掲載していません</li>
@@ -74,10 +74,10 @@ export default function PrivacyPage() {
 
         {/* ===== 子供のプライバシー ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">7. お子様のプライバシー保護</h2>
-          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-            <p className="font-semibold text-blue-800 mb-2">お子様の個人情報保護を最優先としています:</p>
-            <ul className="list-disc pl-6 space-y-1 text-blue-800">
+          <h2 className="text-lg font-semibold text-primary mb-2">7. お子様のプライバシー保護</h2>
+          <div className="rounded-lg border border-[#3498db]/40 bg-card p-3">
+            <p className="font-semibold text-[#5dade2] mb-2">お子様の個人情報保護を最優先としています:</p>
+            <ul className="list-disc pl-6 space-y-1 text-card-foreground">
               <li>お子様のアカウントは保護者のみが作成できます</li>
               <li>お子様の表示名はニックネームの使用を推奨しています</li>
               <li>お子様の情報は暗号化して保存されます</li>
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
 
         {/* ===== Cookie ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">8. Cookieの使用</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">8. Cookieの使用</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>本アプリはCookieを使用しません</li>
             <li>セッション管理にはlocalStorageを使用しています</li>
@@ -101,7 +101,7 @@ export default function PrivacyPage() {
 
         {/* ===== データ削除 ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">9. データの削除</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">9. データの削除</h2>
           <ul className="list-disc pl-6 space-y-1">
             <li>保護者は、アプリ内の「アカウント削除」機能からいつでもアカウントと関連データを削除できます</li>
             <li>削除されたデータは30日後に完全に消去されます</li>
@@ -111,16 +111,16 @@ export default function PrivacyPage() {
 
         {/* ===== お問い合わせ ===== */}
         <section>
-          <h2 className="text-lg font-semibold text-emerald-800 mb-2">10. お問い合わせ</h2>
+          <h2 className="text-lg font-semibold text-primary mb-2">10. お問い合わせ</h2>
           <p>プライバシーに関するお問い合わせは、アプリ内のヘルプページからご連絡ください。</p>
         </section>
       </div>
 
       <div className="mt-8 flex justify-center gap-4">
-        <Link href="/terms" className="text-sm text-emerald-600 hover:underline">
+        <Link href="/terms" className="text-sm text-primary hover:underline">
           利用規約 →
         </Link>
-        <Link href="/" className="text-sm text-emerald-600 hover:underline">
+        <Link href="/" className="text-sm text-primary hover:underline">
           ← トップにもどる
         </Link>
       </div>
