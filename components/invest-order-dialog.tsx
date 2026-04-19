@@ -26,8 +26,8 @@ type Props = {
 };
 
 const CATEGORIES = [
-  { key: "index", label: "インデックス", desc: "はじめての ひとに おすすめ" },
-  { key: "jp_stock", label: "🇯🇵 にほん", desc: "" },
+  { key: "index", label: "インデックス", desc: "初めての人におすすめ" },
+  { key: "jp_stock", label: "🇯🇵 日本", desc: "" },
   { key: "us_stock", label: "🇺🇸 アメリカ", desc: "" },
 ] as const;
 

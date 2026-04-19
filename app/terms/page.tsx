@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function TermsPage() {
   return (
     <div className="min-h-screen p-4 max-w-2xl mx-auto py-8 bg-background">
-      <h1 className="text-2xl font-bold text-primary mb-2 drop-shadow-[0_1px_4px_rgba(255,166,35,0.35)]">利用規約</h1>
+      <h1 className="text-2xl font-bold text-primary mb-2 drop-shadow-[0_1px_4px_rgba(255,166,35,0.35)] whitespace-nowrap truncate">利用規約</h1>
       <p className="text-sm text-muted-foreground mb-6">最終更新日: 2026年4月9日</p>
 
       <div className="space-y-6 text-sm text-card-foreground leading-relaxed">
@@ -140,11 +140,12 @@ export default function TermsPage() {
         </section>
       </div>
 
-      <div className="mt-8 flex justify-center gap-4">
-        <Link href="/privacy" className="text-sm text-primary hover:underline">
-          プライバシーポリシー →
-        </Link>
-        <Link href="/" className="text-sm text-primary hover:underline">
+      <div className="mt-10 flex justify-center">
+        <Link
+          href="/"
+          replace
+          className="inline-flex items-center gap-2 rounded-xl border-2 border-primary bg-card px-6 py-3 text-sm font-bold text-primary shadow-[0_0_10px_rgba(255,166,35,0.25)] hover:bg-primary hover:text-primary-foreground transition-colors"
+        >
           ← トップにもどる
         </Link>
       </div>

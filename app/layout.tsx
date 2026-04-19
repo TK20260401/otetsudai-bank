@@ -73,7 +73,7 @@ export default function RootLayout({
       lang="ja"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-gradient-to-b from-emerald-50 to-amber-50">
+      <body className="min-h-full flex flex-col bg-background">
         <ReloadGuard />
         <MaintenanceGuard>
           <div className="flex-1">
