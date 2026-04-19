@@ -23,6 +23,14 @@ export function MoneyTree({ investBalance, isParent }: Props) {
         boxShadow: "0 0 16px rgba(46,204,113,0.28), inset 0 0 0 1px rgba(94,232,158,0.2)",
       }}
     >
+      {/* アニメーション用スタイル */}
+      {!treeKfInjected && (
+        <style
+          dangerouslySetInnerHTML={{ __html: TREE_KF }}
+          ref={() => { treeKfInjected = true; }}
+        />
+      )}
+
       {/* 木のビジュアル（SVG） */}
       <div className="relative mb-2">
         <MoneyTreeSvg stage={stage} size={120} />
@@ -68,6 +76,22 @@ export function MoneyTree({ investBalance, isParent }: Props) {
     </div>
   );
 }
+
+const TREE_KF = `
+@keyframes leafFlutter {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1.5deg); }
+  75% { transform: rotate(-1.5deg); }
+}
+@keyframes fruitGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaf-flutter, .fruit-glow { animation: none !important; }
+}
+`;
+let treeKfInjected = false;
 
 function MoneyTreeSvg({ stage, size = 140 }: { stage: TreeStage; size?: number }) {
   return (
@@ -146,11 +170,11 @@ function SaplingStage() {
       <rect x="66" y="68" width="8" height="44" rx="3" fill="url(#mt-trunk)" />
       <path d="M66 80 Q54 72 58 82" fill="none" stroke="#A0724A" strokeWidth={3} strokeLinecap="round" />
       <path d="M74 75 Q86 67 82 77" fill="none" stroke="#A0724A" strokeWidth={3} strokeLinecap="round" />
-      <ellipse cx="70" cy="58" rx="28" ry="22" fill="url(#mt-leafGlow)" />
-      <ellipse cx="56" cy="66" rx="14" ry="10" fill="#5CB85C" />
-      <ellipse cx="84" cy="64" rx="12" ry="9" fill="#5CB85C" />
-      <circle cx="58" cy="56" r="4" fill="url(#mt-goldFruit)" />
-      <circle cx="82" cy="54" r="3.5" fill="url(#mt-goldFruit)" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3s ease-in-out infinite", transformOrigin: "70px 58px" }} cx="70" cy="58" rx="28" ry="22" fill="url(#mt-leafGlow)" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3.5s ease-in-out infinite 0.3s", transformOrigin: "56px 66px" }} cx="56" cy="66" rx="14" ry="10" fill="#5CB85C" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3.2s ease-in-out infinite 0.6s", transformOrigin: "84px 64px" }} cx="84" cy="64" rx="12" ry="9" fill="#5CB85C" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite" }} cx="58" cy="56" r="4" fill="url(#mt-goldFruit)" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite 0.5s" }} cx="82" cy="54" r="3.5" fill="url(#mt-goldFruit)" />
       <text x="70" y="30" fontSize="11" fontWeight="bold" fill="#2E7D32" textAnchor="middle">
         わかぎ
       </text>
@@ -166,16 +190,16 @@ function TreeStage() {
       <path d="M78 112 Q90 116 92 112" fill="none" stroke="#7B5530" strokeWidth={3} strokeLinecap="round" />
       <path d="M64 78 Q46 66 50 76" fill="none" stroke="#A0724A" strokeWidth={4} strokeLinecap="round" />
       <path d="M76 72 Q94 60 90 70" fill="none" stroke="#A0724A" strokeWidth={4} strokeLinecap="round" />
-      <ellipse cx="70" cy="44" rx="38" ry="28" fill="url(#mt-leafGlow)" />
-      <ellipse cx="50" cy="56" rx="18" ry="14" fill="#4CAF50" />
-      <ellipse cx="90" cy="52" rx="16" ry="12" fill="#4CAF50" />
-      <ellipse cx="70" cy="32" rx="22" ry="14" fill="#66BB6A" />
-      <circle cx="52" cy="42" r="5" fill="url(#mt-goldFruit)" />
-      <circle cx="88" cy="38" r="5" fill="url(#mt-goldFruit)" />
-      <circle cx="70" cy="30" r="5.5" fill="url(#mt-goldFruit)" />
-      <circle cx="60" cy="52" r="4" fill="url(#mt-goldFruit)" />
-      <circle cx="80" cy="50" r="4.5" fill="url(#mt-goldFruit)" />
-      <circle cx="44" cy="54" r="3.5" fill="url(#mt-goldFruit)" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3s ease-in-out infinite", transformOrigin: "70px 44px" }} cx="70" cy="44" rx="38" ry="28" fill="url(#mt-leafGlow)" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3.4s ease-in-out infinite 0.2s", transformOrigin: "50px 56px" }} cx="50" cy="56" rx="18" ry="14" fill="#4CAF50" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3.2s ease-in-out infinite 0.5s", transformOrigin: "90px 52px" }} cx="90" cy="52" rx="16" ry="12" fill="#4CAF50" />
+      <ellipse className="leaf-flutter" style={{ animation: "leafFlutter 3.6s ease-in-out infinite 0.8s", transformOrigin: "70px 32px" }} cx="70" cy="32" rx="22" ry="14" fill="#66BB6A" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite" }} cx="52" cy="42" r="5" fill="url(#mt-goldFruit)" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite 0.3s" }} cx="88" cy="38" r="5" fill="url(#mt-goldFruit)" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite 0.6s" }} cx="70" cy="30" r="5.5" fill="url(#mt-goldFruit)" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite 0.9s" }} cx="60" cy="52" r="4" fill="url(#mt-goldFruit)" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite 1.2s" }} cx="80" cy="50" r="4.5" fill="url(#mt-goldFruit)" />
+      <circle className="fruit-glow" style={{ animation: "fruitGlow 2s ease-in-out infinite 1.5s" }} cx="44" cy="54" r="3.5" fill="url(#mt-goldFruit)" />
       <circle cx="68" cy="28" r="2" fill="#FFF8DC" opacity={0.5} />
       <circle cx="50" cy="40" r="1.5" fill="#FFF8DC" opacity={0.5} />
       {/* 王冠（SVGで描画） */}

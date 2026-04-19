@@ -35,7 +35,7 @@ export default function PetDisplay({ pet, onTapEgg, onManage }: Props) {
           onClick={ready ? onTapEgg : undefined}
           className={`transition-transform ${ready ? "animate-bounce cursor-pointer" : ""}`}
         >
-          <PetSvg type={pet.pet_type} stage="egg" size={36} />
+          <PetSvg type={pet.pet_type} stage="egg" size={36} animated />
         </button>
         <div className="w-16 mt-0.5">
           <Progress value={(pet.quests_since_acquired / HATCH_QUESTS_REQUIRED) * 100} className="h-1" />
@@ -57,7 +57,7 @@ export default function PetDisplay({ pet, onTapEgg, onManage }: Props) {
 
   return (
     <button onClick={onManage} className="flex flex-col items-center mt-1 cursor-pointer hover:opacity-80 transition-opacity">
-      <PetSvg type={pet.pet_type} stage={pet.growth_stage} happiness={happiness} size={36} />
+      <PetSvg type={pet.pet_type} stage={pet.growth_stage} happiness={happiness} size={36} animated />
       {pet.name && <p className="text-[8px] font-bold text-amber-700 mt-0.5">{pet.name}</p>}
       <p className="text-[7px] text-gray-400">{info.nameJa}</p>
       {nextThreshold && (

@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
 
 type Props = {
   level: number;
   mood: "active" | "normal" | "lonely";
   size?: number;
+  animated?: boolean;
 };
 
 type EyeExpr = "happy" | "sad" | "normal";
@@ -20,10 +22,10 @@ type EyeExpr = "happy" | "sad" | "normal";
  * Lv6: 輝く鎧+賢者の杖
  * Lv7: 王冠+聖剣の伝説の勇者
  */
-export default function CharacterSvg({ level, mood, size = 120 }: Props) {
+export default function CharacterSvg({ level, mood, size = 120, animated = false }: Props) {
   const eyeExpr: EyeExpr = mood === "active" ? "happy" : mood === "lonely" ? "sad" : "normal";
 
-  return (
+  const svgEl = (
     <svg width={size} height={size} viewBox="0 0 120 120">
       {commonDefs()}
       {level === 1 && renderLv1(eyeExpr)}
@@ -34,6 +36,14 @@ export default function CharacterSvg({ level, mood, size = 120 }: Props) {
       {level === 6 && renderLv6(eyeExpr)}
       {level >= 7 && renderLv7(eyeExpr)}
     </svg>
+  );
+
+  if (!animated) return svgEl;
+
+  return (
+    <IdleAnimationWrapper type="sway" duration={4}>
+      {svgEl}
+    </IdleAnimationWrapper>
   );
 }
 

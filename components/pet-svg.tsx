@@ -3,6 +3,7 @@
 import React from "react";
 
 import type { PetType, GrowthStage } from "@/lib/pets";
+import IdleAnimationWrapper, { type IdleAnimationType } from "@/components/idle-animation-wrapper";
 
 const PX = 3;
 type PixelDef = [number, number, string];
@@ -12,6 +13,7 @@ type Props = {
   stage: GrowthStage;
   happiness?: number;
   size?: number;
+  animated?: boolean;
 };
 
 function PixelGrid({ pixels, gridW, gridH, size }: { pixels: PixelDef[]; gridW: number; gridH: number; size: number }) {
@@ -246,11 +248,18 @@ const PET_DATA: Record<string, Record<string, PetPixelData>> = {
   },
 };
 
-export default function PetSvg({ type, stage, happiness = 100, size = 48 }: Props) {
+const STAGE_ANIMATION: Record<string, IdleAnimationType> = {
+  egg: "pulse",
+  baby: "bounce",
+  child: "bob",
+  adult: "breathe",
+};
+
+export default function PetSvg({ type, stage, happiness = 100, size = 48, animated = false }: Props) {
   const data = PET_DATA[type]?.[stage] || PET_DATA[type]?.egg || { pixels: EGG, gridW: 8, gridH: 8 };
   // 低幸福度でグレーアウト
   const opacity = happiness < 30 ? 0.6 : 1;
-  return (
+  const svgEl = (
     <svg width={size} height={size * (data.gridH / data.gridW)} viewBox={`0 0 ${data.gridW * PX} ${data.gridH * PX}`} opacity={opacity}>
       <g>
         {data.pixels.map(([x, y, color], i) => (
@@ -259,6 +268,28 @@ export default function PetSvg({ type, stage, happiness = 100, size = 48 }: Prop
       </g>
     </svg>
   );
+
+  if (!animated) return svgEl;
+
+  const animType = STAGE_ANIMATION[stage] || "bob";
+  const baseDuration = undefined; // use default from IdleAnimationWrapper
+  const duration = happiness < 30 ? (baseDuration ?? getDefaultIdleDuration(animType)) * 2 : baseDuration;
+
+  return (
+    <IdleAnimationWrapper type={animType} duration={duration}>
+      {svgEl}
+    </IdleAnimationWrapper>
+  );
+}
+
+function getDefaultIdleDuration(type: IdleAnimationType): number {
+  switch (type) {
+    case "bob": return 3;
+    case "breathe": return 3;
+    case "bounce": return 2;
+    case "pulse": return 2;
+    default: return 3;
+  }
 }
 
 function desaturate(hex: string): string {

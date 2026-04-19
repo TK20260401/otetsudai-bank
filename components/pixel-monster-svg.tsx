@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import IdleAnimationWrapper, { type IdleAnimationType } from "@/components/idle-animation-wrapper";
 
 type MonsterType = "slime" | "bat" | "goblin" | "mushroom";
 
@@ -8,6 +9,7 @@ type Props = {
   type: MonsterType;
   defeated?: boolean;
   size?: number;
+  animated?: boolean;
 };
 
 const PX = 3;
@@ -85,8 +87,23 @@ const MONSTERS: Record<MonsterType, { pixels: PixelDef[]; gridW: number; gridH: 
 
 export const MONSTER_TYPES: MonsterType[] = ["slime", "bat", "goblin", "mushroom"];
 
-export default function PixelMonsterSvg({ type, defeated = false, size = 48 }: Props) {
+const MONSTER_ANIM: Record<MonsterType, IdleAnimationType> = {
+  slime: "bob",
+  bat: "flutter",
+  goblin: "sway",
+  mushroom: "breathe",
+};
+
+export default function PixelMonsterSvg({ type, defeated = false, size = 48, animated = false }: Props) {
   const m = MONSTERS[type];
   const grey = defeated ? 0.35 : 1;
-  return <PixelGrid pixels={m.pixels} gridW={m.gridW} gridH={m.gridH} size={size} opacity={grey} />;
+  const grid = <PixelGrid pixels={m.pixels} gridW={m.gridW} gridH={m.gridH} size={size} opacity={grey} />;
+
+  if (!animated) return grid;
+
+  return (
+    <IdleAnimationWrapper type={MONSTER_ANIM[type]} paused={defeated}>
+      {grid}
+    </IdleAnimationWrapper>
+  );
 }

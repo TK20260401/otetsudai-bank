@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
+import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
 
 type HeroType = "warrior" | "mage";
 
 type Props = {
   type: HeroType;
   size?: number;
+  animated?: boolean;
 };
 
 /** 1ピクセル = 4pt のグリッドで描画 */
@@ -104,14 +106,14 @@ const MAGE_PIXELS: PixelDef[] = [
  * Habitica風ピクセルアートキャラクター
  * ランディング画面・ログイン画面用
  */
-export default function PixelHeroSvg({ type, size = 60 }: Props) {
+export default function PixelHeroSvg({ type, size = 60, animated = false }: Props) {
   const pixels = type === "warrior" ? WARRIOR_PIXELS : MAGE_PIXELS;
   const gridW = 13;
   const gridH = 13;
   const vw = gridW * PX;
   const vh = gridH * PX;
 
-  return (
+  const svgEl = (
     <svg width={size} height={size} viewBox={`0 0 ${vw} ${vh}`}>
       <g>
         {pixels.map(([x, y, color], i) => (
@@ -126,5 +128,13 @@ export default function PixelHeroSvg({ type, size = 60 }: Props) {
         ))}
       </g>
     </svg>
+  );
+
+  if (!animated) return svgEl;
+
+  return (
+    <IdleAnimationWrapper type="breathe">
+      {svgEl}
+    </IdleAnimationWrapper>
   );
 }

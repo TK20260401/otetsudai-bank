@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { R } from "@/components/ruby-text";
 import { PixelTargetIcon, PixelConfettiIcon, PixelCrownIcon, PixelCheckIcon } from "@/components/pixel-icons";
+import SavingGoalMilestone from "@/components/saving-goal-milestone";
 
 type Props = {
   childId: string;
@@ -84,11 +85,7 @@ export default function SavingGoalSection({ childId, savingBalance, goals, onUpd
           </div>
           <Progress value={progress} className="h-3 mb-1" />
           <p className="text-xs text-muted-foreground text-right">{progress}%</p>
-          {progress >= 100 && (
-            <div className="text-center mt-2 text-lg animate-bounce text-[#58d68d] font-bold drop-shadow-[0_1px_6px_rgba(46,204,113,0.5)]">
-              <span className="flex items-center justify-center gap-1"><PixelConfettiIcon size={14} /> <R k="目標達成" r="もくひょうたっせい" />！すごい！</span>
-            </div>
-          )}
+          <SavingGoalMilestone show={progress >= 100} goalTitle={activeGoal.title} onComplete={() => {}} />
         </div>
       ) : (
         <div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
 
 const PX = 4;
 type PixelDef = [number, number, string];
@@ -31,8 +32,10 @@ const GOLD_COIN: PixelDef[] = [
   [2,7,"#B8860B"],[3,7,"#B8860B"],[4,7,"#B8860B"],[5,7,"#B8860B"],
 ];
 
-export function GoldCoinIcon({ size = 32 }: { size?: number }) {
-  return <PixelGrid pixels={GOLD_COIN} gridW={8} gridH={8} size={size} />;
+export function GoldCoinIcon({ size = 32, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={GOLD_COIN} gridW={8} gridH={8} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="spin">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -49,8 +52,10 @@ const SILVER_COIN: PixelDef[] = [
   [2,7,"#808890"],[3,7,"#808890"],[4,7,"#808890"],[5,7,"#808890"],
 ];
 
-export function SilverCoinIcon({ size = 32 }: { size?: number }) {
-  return <PixelGrid pixels={SILVER_COIN} gridW={8} gridH={8} size={size} />;
+export function SilverCoinIcon({ size = 32, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={SILVER_COIN} gridW={8} gridH={8} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="spin">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -67,8 +72,10 @@ const BRONZE_COIN: PixelDef[] = [
   [2,7,"#6B4430"],[3,7,"#6B4430"],[4,7,"#6B4430"],[5,7,"#6B4430"],
 ];
 
-export function BronzeCoinIcon({ size = 32 }: { size?: number }) {
-  return <PixelGrid pixels={BRONZE_COIN} gridW={8} gridH={8} size={size} />;
+export function BronzeCoinIcon({ size = 32, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={BRONZE_COIN} gridW={8} gridH={8} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="spin">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -84,8 +91,10 @@ const RUBY: PixelDef[] = [
   [3,6,"#922B21"],
 ];
 
-export function RubyIcon({ size = 28 }: { size?: number }) {
-  return <PixelGrid pixels={RUBY} gridW={7} gridH={7} size={size} />;
+export function RubyIcon({ size = 28, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={RUBY} gridW={7} gridH={7} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="pulse">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -101,8 +110,10 @@ const SAPPHIRE: PixelDef[] = [
   [3,6,"#1A5276"],
 ];
 
-export function SapphireIcon({ size = 28 }: { size?: number }) {
-  return <PixelGrid pixels={SAPPHIRE} gridW={7} gridH={7} size={size} />;
+export function SapphireIcon({ size = 28, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={SAPPHIRE} gridW={7} gridH={7} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="pulse">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -118,8 +129,10 @@ const EMERALD: PixelDef[] = [
   [3,6,"#196F3D"],
 ];
 
-export function EmeraldIcon({ size = 28 }: { size?: number }) {
-  return <PixelGrid pixels={EMERALD} gridW={7} gridH={7} size={size} />;
+export function EmeraldIcon({ size = 28, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={EMERALD} gridW={7} gridH={7} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="pulse">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================

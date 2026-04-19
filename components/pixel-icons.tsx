@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
 
 /** 1ピクセル = PX pt */
 const PX = 4;
@@ -145,8 +146,10 @@ const STAR_PIXELS: PixelDef[] = [
   [0,5,"#DAA520"],[1,5,"#DAA520"],[5,5,"#DAA520"],[6,5,"#DAA520"],
 ];
 
-export function PixelStarIcon({ size = 28 }: { size?: number }) {
-  return <PixelGrid pixels={STAR_PIXELS} gridW={7} gridH={6} size={size} />;
+export function PixelStarIcon({ size = 28, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={STAR_PIXELS} gridW={7} gridH={6} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="pulse">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -160,8 +163,10 @@ const COIN_PIXELS: PixelDef[] = [
   [1,4,"#DAA520"],[2,4,"#DAA520"],[3,4,"#DAA520"],
 ];
 
-export function PixelCoinIcon({ size = 20 }: { size?: number }) {
-  return <PixelGrid pixels={COIN_PIXELS} gridW={5} gridH={5} size={size} />;
+export function PixelCoinIcon({ size = 20, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={COIN_PIXELS} gridW={5} gridH={5} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="spin">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -253,8 +258,10 @@ const HOURGLASS_PIXELS: PixelDef[] = [
   [0,4,"#DAA520"],[1,4,"#F5D6A0"],[2,4,"#F5D6A0"],[3,4,"#F5D6A0"],[4,4,"#DAA520"],
 ];
 
-export function PixelHourglassIcon({ size = 20 }: { size?: number }) {
-  return <PixelGrid pixels={HOURGLASS_PIXELS} gridW={5} gridH={5} size={size} />;
+export function PixelHourglassIcon({ size = 20, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={HOURGLASS_PIXELS} gridW={5} gridH={5} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="spin" duration={4}>{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -284,8 +291,10 @@ const FLAME_PIXELS: PixelDef[] = [
   [1,5,"#C0392B"],[2,5,"#E74C3C"],[3,5,"#C0392B"],
 ];
 
-export function PixelFlameIcon({ size = 20 }: { size?: number }) {
-  return <PixelGrid pixels={FLAME_PIXELS} gridW={5} gridH={6} size={size} />;
+export function PixelFlameIcon({ size = 20, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={FLAME_PIXELS} gridW={5} gridH={6} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="flicker">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================
@@ -613,8 +622,10 @@ const CONFETTI_PIXELS: PixelDef[] = [
   [0,4,"#FFD700"],[3,4,"#3498DB"],[4,4,"#2ECC71"],
 ];
 
-export function PixelConfettiIcon({ size = 20 }: { size?: number }) {
-  return <PixelGrid pixels={CONFETTI_PIXELS} gridW={5} gridH={5} size={size} />;
+export function PixelConfettiIcon({ size = 20, animated = false }: { size?: number; animated?: boolean }) {
+  const grid = <PixelGrid pixels={CONFETTI_PIXELS} gridW={5} gridH={5} size={size} />;
+  if (!animated) return grid;
+  return <IdleAnimationWrapper type="flutter">{grid}</IdleAnimationWrapper>;
 }
 
 // ============================================================

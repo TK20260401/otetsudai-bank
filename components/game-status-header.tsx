@@ -4,6 +4,7 @@ import React, { useId } from "react";
 import { useRouter } from "next/navigation";
 import { clearSession } from "@/lib/session";
 import CharacterSvg from "@/components/character-svg";
+import AnimatedValue from "@/components/animated-value";
 import { Badge } from "@/components/ui/badge";
 import { PixelDoorIcon, PixelCoinIcon, PixelHouseIcon } from "@/components/pixel-icons";
 import { Button } from "@/components/ui/button";
@@ -120,9 +121,7 @@ export default function GameStatusHeader({
           {gold !== undefined && (
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 border border-primary/50">
               <PixelCoinIcon size={12} />
-              <span className="text-[11px] font-bold text-accent tabular-nums">
-                {gold.toLocaleString()}
-              </span>
+              <AnimatedValue value={gold} className="text-[11px] font-bold text-accent tabular-nums" />
             </div>
           )}
           <div className="flex items-center gap-1">
@@ -146,6 +145,12 @@ export default function GameStatusHeader({
   );
 }
 
+const BAR_FILL_KF = `
+@keyframes barFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .bar-fill { animation: none !important; } }
+`;
+let barFillInjected = false;
+
 function MiniGauge({
   label,
   value,
@@ -162,6 +167,12 @@ function MiniGauge({
   const pct = Math.min(100, Math.max(0, value));
   return (
     <div className="flex items-center gap-1">
+      {!barFillInjected && (
+        <style
+          dangerouslySetInnerHTML={{ __html: BAR_FILL_KF }}
+          ref={() => { barFillInjected = true; }}
+        />
+      )}
       <span className="text-[8px] font-bold w-5 tabular-nums" style={{ color: color1 }}>
         {label}
       </span>
@@ -173,8 +184,10 @@ function MiniGauge({
           </linearGradient>
         </defs>
         <rect x={0} y={0} width={100} height={6} rx={2} fill="#1A0F2E" />
-        <rect x={0} y={0} width={pct} height={6} rx={2} fill={`url(#${uid})`} />
-        <rect x={0} y={0} width={pct} height={2} rx={1} fill="#ffffff" opacity={0.3} />
+        <g className="bar-fill" style={{ animation: "barFill 0.6s ease-out forwards", transformOrigin: "0 0" }}>
+          <rect x={0} y={0} width={pct} height={6} rx={2} fill={`url(#${uid})`} />
+          <rect x={0} y={0} width={pct} height={2} rx={1} fill="#ffffff" opacity={0.3} />
+        </g>
       </svg>
     </div>
   );
