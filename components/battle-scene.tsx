@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import BackgroundAmbient from "@/components/background-ambient";
 import CharacterSvg from "@/components/character-svg";
 import PixelMonsterSvg, { MONSTER_TYPES } from "@/components/pixel-monster-svg";
 import { GoldCoinIcon } from "@/components/pixel-item-icons";
@@ -61,6 +62,9 @@ export default function BattleScene({ show, level, onComplete }: Props) {
           <rect x={0} y={160} width={300} height={3} fill="#4A6A30" />
         </svg>
 
+        {/* 背景アンビエント */}
+        <BackgroundAmbient preset="dungeon" />
+
         {/* キャラクター（左側） */}
         <div
           className="absolute bottom-[44px] transition-all duration-300 ease-out"
@@ -69,7 +73,7 @@ export default function BattleScene({ show, level, onComplete }: Props) {
             opacity: phase === "enter" ? 0 : 1,
           }}
         >
-          <CharacterSvg level={Math.min(level, 7)} mood="active" size={64} />
+          <CharacterSvg level={Math.min(level, 7)} mood="active" size={64} animated mode={phase === "enter" ? "walk" : "idle"} />
         </div>
 
         {/* 斬撃エフェクト */}

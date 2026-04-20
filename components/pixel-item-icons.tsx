@@ -6,9 +6,12 @@ import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
 const PX = 4;
 type PixelDef = [number, number, string];
 
+const MIN_SIZE = 20;
+
 function PixelGrid({ pixels, gridW, gridH, size }: { pixels: PixelDef[]; gridW: number; gridH: number; size: number }) {
+  const clamped = Math.max(MIN_SIZE, size);
   return (
-    <svg width={size} height={size * (gridH / gridW)} viewBox={`0 0 ${gridW * PX} ${gridH * PX}`}>
+    <svg width={clamped} height={clamped * (gridH / gridW)} viewBox={`0 0 ${gridW * PX} ${gridH * PX}`} shapeRendering="crispEdges" style={{ imageRendering: "pixelated" }}>
       <g>
         {pixels.map(([x, y, color], i) => (
           <rect key={i} x={x * PX} y={y * PX} width={PX} height={PX} fill={color} />

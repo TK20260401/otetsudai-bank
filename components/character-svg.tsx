@@ -2,12 +2,14 @@
 
 import React from "react";
 import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
+import WalkAnimationWrapper from "@/components/walk-animation-wrapper";
 
 type Props = {
   level: number;
   mood: "active" | "normal" | "lonely";
   size?: number;
   animated?: boolean;
+  mode?: "idle" | "walk";
 };
 
 type EyeExpr = "happy" | "sad" | "normal";
@@ -22,27 +24,37 @@ type EyeExpr = "happy" | "sad" | "normal";
  * Lv6: 輝く鎧+賢者の杖
  * Lv7: 王冠+聖剣の伝説の勇者
  */
-export default function CharacterSvg({ level, mood, size = 120, animated = false }: Props) {
+export default function CharacterSvg({ level, mood, size = 120, animated = false, mode = "idle" }: Props) {
   const eyeExpr: EyeExpr = mood === "active" ? "happy" : mood === "lonely" ? "sad" : "normal";
 
-  const svgEl = (
+  const renderBody = (legOffset: number = 0) => (
     <svg width={size} height={size} viewBox="0 0 120 120">
       {commonDefs()}
-      {level === 1 && renderLv1(eyeExpr)}
-      {level === 2 && renderLv2(eyeExpr)}
-      {level === 3 && renderLv3(eyeExpr)}
-      {level === 4 && renderLv4(eyeExpr)}
-      {level === 5 && renderLv5(eyeExpr)}
-      {level === 6 && renderLv6(eyeExpr)}
-      {level >= 7 && renderLv7(eyeExpr)}
+      {level === 1 && renderLv1(eyeExpr, legOffset)}
+      {level === 2 && renderLv2(eyeExpr, legOffset)}
+      {level === 3 && renderLv3(eyeExpr, legOffset)}
+      {level === 4 && renderLv4(eyeExpr, legOffset)}
+      {level === 5 && renderLv5(eyeExpr, legOffset)}
+      {level === 6 && renderLv6(eyeExpr, legOffset)}
+      {level >= 7 && renderLv7(eyeExpr, legOffset)}
     </svg>
   );
 
-  if (!animated) return svgEl;
+  if (!animated) return renderBody();
+
+  if (mode === "walk") {
+    return (
+      <WalkAnimationWrapper
+        mode="walk"
+        frameA={renderBody(-2)}
+        frameB={renderBody(2)}
+      />
+    );
+  }
 
   return (
     <IdleAnimationWrapper type="sway" duration={4}>
-      {svgEl}
+      {renderBody()}
     </IdleAnimationWrapper>
   );
 }
@@ -104,17 +116,17 @@ function face(eyeExpr: EyeExpr, yOff = 0) {
   );
 }
 
-function renderLv1(eyeExpr: EyeExpr) {
+function renderLv1(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <rect x={42} y={52} width={36} height={35} rx={8} fill="#C4A96A" />
       <rect x={46} y={52} width={28} height={10} rx={4} fill="#D4B97A" />
       <rect x={32} y={55} width={12} height={20} rx={6} fill="url(#char-skin)" />
       <rect x={76} y={55} width={12} height={20} rx={6} fill="url(#char-skin)" />
-      <rect x={46} y={85} width={10} height={16} rx={5} fill="url(#char-skin)" />
-      <rect x={64} y={85} width={10} height={16} rx={5} fill="url(#char-skin)" />
-      <ellipse cx={51} cy={100} rx={7} ry={5} fill="#8B6D4A" />
-      <ellipse cx={69} cy={100} rx={7} ry={5} fill="#8B6D4A" />
+      <rect x={46} y={85 + legOffset} width={10} height={16} rx={5} fill="url(#char-skin)" />
+      <rect x={64} y={85 - legOffset} width={10} height={16} rx={5} fill="url(#char-skin)" />
+      <ellipse cx={51} cy={100 + legOffset} rx={7} ry={5} fill="#8B6D4A" />
+      <ellipse cx={69} cy={100 - legOffset} rx={7} ry={5} fill="#8B6D4A" />
       {face(eyeExpr)}
       <rect x={84} y={48} width={3} height={22} rx={1} fill="#8B6D4A" />
       <rect x={80} y={68} width={11} height={3} rx={1} fill="#A08060" />
@@ -122,7 +134,7 @@ function renderLv1(eyeExpr: EyeExpr) {
   );
 }
 
-function renderLv2(eyeExpr: EyeExpr) {
+function renderLv2(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <rect x={42} y={52} width={36} height={35} rx={6} fill="#8B5E3C" />
@@ -131,10 +143,10 @@ function renderLv2(eyeExpr: EyeExpr) {
       <circle cx={60} cy={72} r={3} fill="#D4A030" />
       <rect x={30} y={55} width={14} height={22} rx={7} fill="#8B5E3C" />
       <rect x={76} y={55} width={14} height={22} rx={7} fill="#8B5E3C" />
-      <rect x={45} y={85} width={11} height={18} rx={5} fill="#5C3A1E" />
-      <rect x={64} y={85} width={11} height={18} rx={5} fill="#5C3A1E" />
-      <ellipse cx={50} cy={102} rx={8} ry={5} fill="#5C3A1E" />
-      <ellipse cx={70} cy={102} rx={8} ry={5} fill="#5C3A1E" />
+      <rect x={45} y={85 + legOffset} width={11} height={18} rx={5} fill="#5C3A1E" />
+      <rect x={64} y={85 - legOffset} width={11} height={18} rx={5} fill="#5C3A1E" />
+      <ellipse cx={50} cy={102 + legOffset} rx={8} ry={5} fill="#5C3A1E" />
+      <ellipse cx={70} cy={102 - legOffset} rx={8} ry={5} fill="#5C3A1E" />
       {face(eyeExpr)}
       <ellipse cx={30} cy={68} rx={10} ry={12} fill="#A0704C" />
       <ellipse cx={30} cy={68} rx={7} ry={9} fill="#8B5E3C" />
@@ -143,7 +155,7 @@ function renderLv2(eyeExpr: EyeExpr) {
   );
 }
 
-function renderLv3(eyeExpr: EyeExpr) {
+function renderLv3(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <defs>
@@ -156,10 +168,10 @@ function renderLv3(eyeExpr: EyeExpr) {
       <path d="M46,54 L60,60 L74,54 L74,66 L60,72 L46,66 Z" fill="#8090A0" />
       <rect x={28} y={54} width={14} height={24} rx={7} fill="url(#char-iron)" />
       <rect x={78} y={54} width={14} height={24} rx={7} fill="url(#char-iron)" />
-      <rect x={44} y={86} width={12} height={18} rx={5} fill="#6B7580" />
-      <rect x={64} y={86} width={12} height={18} rx={5} fill="#6B7580" />
-      <ellipse cx={50} cy={103} rx={9} ry={5} fill="#6B7580" />
-      <ellipse cx={70} cy={103} rx={9} ry={5} fill="#6B7580" />
+      <rect x={44} y={86 + legOffset} width={12} height={18} rx={5} fill="#6B7580" />
+      <rect x={64} y={86 - legOffset} width={12} height={18} rx={5} fill="#6B7580" />
+      <ellipse cx={50} cy={103 + legOffset} rx={9} ry={5} fill="#6B7580" />
+      <ellipse cx={70} cy={103 - legOffset} rx={9} ry={5} fill="#6B7580" />
       {face(eyeExpr)}
       <rect x={86} y={38} width={4} height={30} rx={1} fill="#A8B0B8" />
       <rect x={82} y={66} width={12} height={4} rx={2} fill="#6B7580" />
@@ -170,7 +182,7 @@ function renderLv3(eyeExpr: EyeExpr) {
   );
 }
 
-function renderLv4(eyeExpr: EyeExpr) {
+function renderLv4(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <defs>
@@ -187,10 +199,10 @@ function renderLv4(eyeExpr: EyeExpr) {
       <ellipse cx={82} cy={54} rx={8} ry={5} fill="url(#char-silver)" />
       <rect x={26} y={56} width={14} height={24} rx={7} fill="url(#char-silver)" />
       <rect x={80} y={56} width={14} height={24} rx={7} fill="url(#char-silver)" />
-      <rect x={44} y={86} width={12} height={18} rx={5} fill="#A0A8B0" />
-      <rect x={64} y={86} width={12} height={18} rx={5} fill="#A0A8B0" />
-      <ellipse cx={50} cy={103} rx={9} ry={5} fill="#A0A8B0" />
-      <ellipse cx={70} cy={103} rx={9} ry={5} fill="#A0A8B0" />
+      <rect x={44} y={86 + legOffset} width={12} height={18} rx={5} fill="#A0A8B0" />
+      <rect x={64} y={86 - legOffset} width={12} height={18} rx={5} fill="#A0A8B0" />
+      <ellipse cx={50} cy={103 + legOffset} rx={9} ry={5} fill="#A0A8B0" />
+      <ellipse cx={70} cy={103 - legOffset} rx={9} ry={5} fill="#A0A8B0" />
       {face(eyeExpr)}
       <rect x={88} y={34} width={4} height={34} rx={1} fill="#D0D8E0" />
       <rect x={84} y={66} width={12} height={4} rx={2} fill="#A0A8B0" />
@@ -199,7 +211,7 @@ function renderLv4(eyeExpr: EyeExpr) {
   );
 }
 
-function renderLv5(eyeExpr: EyeExpr) {
+function renderLv5(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <defs>
@@ -217,10 +229,10 @@ function renderLv5(eyeExpr: EyeExpr) {
       <ellipse cx={84} cy={53} rx={10} ry={6} fill="url(#char-gold)" />
       <rect x={24} y={56} width={14} height={24} rx={7} fill="url(#char-gold)" />
       <rect x={82} y={56} width={14} height={24} rx={7} fill="url(#char-gold)" />
-      <rect x={44} y={86} width={12} height={18} rx={5} fill="#DAA520" />
-      <rect x={64} y={86} width={12} height={18} rx={5} fill="#DAA520" />
-      <ellipse cx={50} cy={103} rx={9} ry={5} fill="#DAA520" />
-      <ellipse cx={70} cy={103} rx={9} ry={5} fill="#DAA520" />
+      <rect x={44} y={86 + legOffset} width={12} height={18} rx={5} fill="#DAA520" />
+      <rect x={64} y={86 - legOffset} width={12} height={18} rx={5} fill="#DAA520" />
+      <ellipse cx={50} cy={103 + legOffset} rx={9} ry={5} fill="#DAA520" />
+      <ellipse cx={70} cy={103 - legOffset} rx={9} ry={5} fill="#DAA520" />
       {face(eyeExpr)}
       <rect x={90} y={28} width={5} height={40} rx={2} fill="#FFD700" />
       <rect x={85} y={66} width={15} height={5} rx={2} fill="#DAA520" />
@@ -230,7 +242,7 @@ function renderLv5(eyeExpr: EyeExpr) {
   );
 }
 
-function renderLv6(eyeExpr: EyeExpr) {
+function renderLv6(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <defs>
@@ -252,10 +264,10 @@ function renderLv6(eyeExpr: EyeExpr) {
       <ellipse cx={84} cy={53} rx={10} ry={7} fill="url(#char-platinum)" />
       <rect x={24} y={56} width={14} height={24} rx={7} fill="url(#char-platinum)" />
       <rect x={82} y={56} width={14} height={24} rx={7} fill="url(#char-platinum)" />
-      <rect x={44} y={86} width={12} height={18} rx={5} fill="#90B0E0" />
-      <rect x={64} y={86} width={12} height={18} rx={5} fill="#90B0E0" />
-      <ellipse cx={50} cy={103} rx={9} ry={5} fill="#90B0E0" />
-      <ellipse cx={70} cy={103} rx={9} ry={5} fill="#90B0E0" />
+      <rect x={44} y={86 + legOffset} width={12} height={18} rx={5} fill="#90B0E0" />
+      <rect x={64} y={86 - legOffset} width={12} height={18} rx={5} fill="#90B0E0" />
+      <ellipse cx={50} cy={103 + legOffset} rx={9} ry={5} fill="#90B0E0" />
+      <ellipse cx={70} cy={103 - legOffset} rx={9} ry={5} fill="#90B0E0" />
       {face(eyeExpr)}
       <rect x={16} y={24} width={4} height={55} rx={2} fill="#6B4C8A" />
       <circle cx={18} cy={22} r={8} fill="#9B59B6" opacity={0.7} />
@@ -265,7 +277,7 @@ function renderLv6(eyeExpr: EyeExpr) {
   );
 }
 
-function renderLv7(eyeExpr: EyeExpr) {
+function renderLv7(eyeExpr: EyeExpr, legOffset: number = 0) {
   return (
     <g>
       <defs>
@@ -289,10 +301,10 @@ function renderLv7(eyeExpr: EyeExpr) {
       <ellipse cx={86} cy={52} rx={12} ry={8} fill="url(#char-holy)" />
       <rect x={22} y={54} width={14} height={26} rx={7} fill="url(#char-holy)" />
       <rect x={84} y={54} width={14} height={26} rx={7} fill="url(#char-holy)" />
-      <rect x={44} y={86} width={12} height={18} rx={5} fill="#DAA520" />
-      <rect x={64} y={86} width={12} height={18} rx={5} fill="#DAA520" />
-      <ellipse cx={50} cy={103} rx={9} ry={5} fill="#DAA520" />
-      <ellipse cx={70} cy={103} rx={9} ry={5} fill="#DAA520" />
+      <rect x={44} y={86 + legOffset} width={12} height={18} rx={5} fill="#DAA520" />
+      <rect x={64} y={86 - legOffset} width={12} height={18} rx={5} fill="#DAA520" />
+      <ellipse cx={50} cy={103 + legOffset} rx={9} ry={5} fill="#DAA520" />
+      <ellipse cx={70} cy={103 - legOffset} rx={9} ry={5} fill="#DAA520" />
       {face(eyeExpr)}
       <path d="M44,12 L48,22 L54,14 L60,24 L66,14 L72,22 L76,12 L78,26 L42,26 Z" fill="#FFD700" />
       <rect x={42} y={24} width={36} height={4} rx={2} fill="#DAA520" />

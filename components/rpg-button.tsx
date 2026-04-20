@@ -2,6 +2,7 @@
 
 import React, { useId } from "react";
 import { cn } from "@/lib/utils";
+import TapFeedback from "@/components/tap-feedback";
 
 type Tier = "gold" | "silver" | "violet" | "emerald" | "ruby" | "sapphire";
 type Size = "sm" | "md" | "lg";
@@ -56,6 +57,7 @@ export default function RpgButton({
   const shineId = `rpgbtn-shine-${uid}`;
 
   return (
+    <TapFeedback disabled={disabled}>
     <button
       type={type}
       onClick={onClick}
@@ -63,8 +65,8 @@ export default function RpgButton({
       title={title}
       aria-label={ariaLabel}
       className={cn(
-        "relative inline-flex items-center justify-center font-bold rounded-lg overflow-hidden select-none transition-transform",
-        "active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed",
+        "relative inline-flex items-center justify-center font-bold rounded-lg overflow-hidden select-none",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:ring-accent",
         SIZE_CLASSES[size],
         fullWidth && "w-full",
@@ -121,5 +123,6 @@ export default function RpgButton({
         {children}
       </span>
     </button>
+    </TapFeedback>
   );
 }

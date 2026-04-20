@@ -2,6 +2,7 @@
 
 import React from "react";
 import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
+import WalkAnimationWrapper from "@/components/walk-animation-wrapper";
 
 type HeroType = "warrior" | "mage";
 
@@ -9,6 +10,7 @@ type Props = {
   type: HeroType;
   size?: number;
   animated?: boolean;
+  mode?: "idle" | "walk";
 };
 
 /** 1ピクセル = 4pt のグリッドで描画 */
@@ -106,31 +108,46 @@ const MAGE_PIXELS: PixelDef[] = [
  * Habitica風ピクセルアートキャラクター
  * ランディング画面・ログイン画面用
  */
-export default function PixelHeroSvg({ type, size = 60, animated = false }: Props) {
-  const pixels = type === "warrior" ? WARRIOR_PIXELS : MAGE_PIXELS;
+export default function PixelHeroSvg({ type, size = 60, animated = false, mode = "idle" }: Props) {
+  const basePixels = type === "warrior" ? WARRIOR_PIXELS : MAGE_PIXELS;
   const gridW = 13;
   const gridH = 13;
   const vw = gridW * PX;
   const vh = gridH * PX;
 
-  const svgEl = (
-    <svg width={size} height={size} viewBox={`0 0 ${vw} ${vh}`}>
-      <g>
-        {pixels.map(([x, y, color], i) => (
-          <rect
-            key={i}
-            x={x * PX}
-            y={y * PX}
-            width={PX}
-            height={PX}
-            fill={color}
-          />
-        ))}
-      </g>
-    </svg>
-  );
+  // 足ピクセルのy位置をoffsetで調整（walk frame生成用）
+  const LEG_ROWS = type === "warrior" ? [10, 11, 12] : [11, 12];
+  const renderWithLegOffset = (offset: number) => {
+    const pixels = basePixels.map(([x, y, color]) => {
+      if (!LEG_ROWS.includes(y)) return [x, y, color] as PixelDef;
+      // 左足(x<=6): +offset、右足(x>=7): -offset
+      const dy = x <= 6 ? offset : -offset;
+      return [x, y + dy * 0.25, color] as PixelDef; // 0.25 = 1px in grid coords (PX=4)
+    });
+    return (
+      <svg width={size} height={size} viewBox={`0 0 ${vw} ${vh}`}>
+        <g>
+          {pixels.map(([x, y, color], i) => (
+            <rect key={i} x={x * PX} y={y * PX} width={PX} height={PX} fill={color} />
+          ))}
+        </g>
+      </svg>
+    );
+  };
+
+  const svgEl = renderWithLegOffset(0);
 
   if (!animated) return svgEl;
+
+  if (mode === "walk") {
+    return (
+      <WalkAnimationWrapper
+        mode="walk"
+        frameA={renderWithLegOffset(-1)}
+        frameB={renderWithLegOffset(1)}
+      />
+    );
+  }
 
   return (
     <IdleAnimationWrapper type="breathe">

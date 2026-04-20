@@ -11,6 +11,8 @@ const IDLE_TYPES = [
   "pulse",
   "spin",
   "flicker",
+  "jump",
+  "shake",
 ] as const;
 
 export type IdleAnimationType = (typeof IDLE_TYPES)[number];
@@ -19,6 +21,8 @@ type Props = {
   type: IdleAnimationType;
   duration?: number;
   paused?: boolean;
+  /** "subtle" = duration 2x for background/non-focus elements */
+  intensity?: "normal" | "subtle";
   children: ReactNode;
   className?: string;
 };
@@ -59,6 +63,17 @@ const KEYFRAMES = `
   50% { opacity: 1; transform: scale(1.05); }
   75% { opacity: 0.9; transform: scale(0.98); }
 }
+@keyframes idle-jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+@keyframes idle-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(5deg); }
+  40% { transform: rotate(-5deg); }
+  60% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+}
 @media (prefers-reduced-motion: reduce) {
   .idle-anim { animation: none !important; }
 }
@@ -70,10 +85,12 @@ export default function IdleAnimationWrapper({
   type,
   duration,
   paused = false,
+  intensity = "normal",
   children,
   className = "",
 }: Props) {
-  const dur = duration ?? getDefaultDuration(type);
+  const baseDur = duration ?? getDefaultDuration(type);
+  const dur = intensity === "subtle" ? baseDur * 2 : baseDur;
 
   return (
     <>
@@ -118,5 +135,9 @@ function getDefaultDuration(type: IdleAnimationType): number {
       return 2;
     case "flicker":
       return 0.8;
+    case "jump":
+      return 0.4;
+    case "shake":
+      return 0.3;
   }
 }

@@ -6,8 +6,8 @@ import IdleAnimationWrapper from "@/components/idle-animation-wrapper";
 /** 1ピクセル = PX pt */
 const PX = 4;
 
-/** ピクセルアートが潰れない最小サイズ下限 */
-const MIN_SIZE = 16;
+/** ピクセルアートが潰れない最小サイズ下限（5x5グリッドで1セル4px=20px） */
+const MIN_SIZE = 20;
 
 type PixelDef = [number, number, string]; // [x, y, color]
 
