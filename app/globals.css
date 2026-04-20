@@ -66,6 +66,7 @@
   --accent: #f9c33b;
   --accent-foreground: #0a0618;
   --accent-gold: #ffd166;          /* 強調ゴールド: on bg 11.2:1 AAA */
+  --ruby-color: #f0c060;           /* ルビ文字色: on bg #1a0f2e 8.6:1 AAA — 漢字(白)と区別 */
   --destructive: #e74c3c;
   --border: #4a3a5e;
   --input: #2a1a3e;
@@ -131,6 +132,12 @@
   }
   html {
     @apply font-sans;
+  }
+
+  /* ── ルビ文字色（漢字と区別、アクセシビリティ配慮）── */
+  rt {
+    color: var(--ruby-color);
+    font-size: 0.55em;
   }
 
   /* ── 入力フィールド（ダンジョン・ダークモード視認性担保）── */
