@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { PixelChatIcon, PixelLetterIcon } from "@/components/pixel-icons";
+import StampSvg from "@/components/stamp-svg";
 import { R } from "@/components/ruby-text";
 
 type Props = {
@@ -115,7 +116,7 @@ export function FamilyStampRelay({ userId, familyId, isParent }: Props) {
                         <span className="font-bold">{recipientIcon} {recipientName}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        {stamp && <span className="text-2xl">{stamp.emoji}</span>}
+                        {stamp && <StampSvg id={stamp.id} size={28} />}
                         <div>
                           {stamp && <p className="text-sm font-bold text-gray-800">{stamp.label}</p>}
                           {msg.message && <p className="text-xs text-gray-600">「{msg.message}」</p>}
@@ -186,7 +187,7 @@ export function FamilyStampRelay({ userId, familyId, isParent }: Props) {
                     }`}
                     onClick={() => setSelectedStamp(selectedStamp === s.id ? null : s.id)}
                   >
-                    <span className="text-xl">{s.emoji}</span>
+                    <StampSvg id={s.id} size={24} />
                     <span className="text-[10px] mt-1">{s.label}</span>
                   </button>
                 ))}

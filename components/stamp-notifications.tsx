@@ -6,6 +6,7 @@ import { getStampById } from "@/lib/stamps";
 import { Card, CardContent } from "@/components/ui/card";
 import { R } from "@/components/ruby-text";
 import { PixelLetterIcon } from "@/components/pixel-icons";
+import StampSvg from "@/components/stamp-svg";
 
 type StampNotification = {
   id: string;
@@ -67,7 +68,7 @@ export function StampNotifications({ childId }: Props) {
                 className="flex items-center gap-3 bg-white/70 rounded-xl p-2 border border-amber-100"
               >
                 {stamp && (
-                  <span className="text-3xl flex-shrink-0">{stamp.emoji}</span>
+                  <span className="flex-shrink-0"><StampSvg id={stamp.id} size={32} /></span>
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-amber-800">

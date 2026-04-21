@@ -5,6 +5,7 @@ import { STAMPS, type Stamp } from "@/lib/stamps";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PixelCrossedSwordsIcon, PixelCheckIcon } from "@/components/pixel-icons";
+import StampSvg from "@/components/stamp-svg";
 import {
   Dialog,
   DialogContent,
@@ -84,7 +85,7 @@ export function ApprovalDialog({
                     : "bg-gray-50 hover:bg-gray-100"
                 }`}
               >
-                <span className="text-3xl">{stamp.emoji}</span>
+                <StampSvg id={stamp.id} size={32} />
                 <span className="text-[9px] text-muted-foreground mt-0.5 leading-tight">
                   {stamp.label}
                 </span>
@@ -108,7 +109,7 @@ export function ApprovalDialog({
         {(selectedStamp || message) && (
           <div className="bg-amber-50 rounded-xl p-3 text-center border border-amber-200">
             {selectedStamp && (
-              <span className="text-5xl block mb-1">{selectedStamp.emoji}</span>
+              <span className="block mb-1"><StampSvg id={selectedStamp.id} size={48} /></span>
             )}
             {selectedStamp && (
               <p className="text-sm font-semibold text-amber-700">

@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { getSession, clearSession } from "@/lib/session";
 import type { Task, TaskLog, Wallet, Transaction, SpendRequest, SavingGoal, Badge as BadgeType } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getTaskIcon } from "@/lib/task-icons";
+import TaskIconSvg from "@/components/task-icon-svg";
 
 import GameStatusHeader from "@/components/game-status-header";
 import RpgCard from "@/components/rpg-card";
@@ -613,7 +613,7 @@ export default function ChildDashboard({
               {todayTasks.map((task) => (
                 <div key={task.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{getTaskIcon(task.title)}</span>
+                    <TaskIconSvg title={task.title} size={24} />
                     <span className="text-sm font-medium text-card-foreground"><AutoRuby text={task.title} /></span>
                   </div>
                   <RpgButton
@@ -674,7 +674,7 @@ export default function ChildDashboard({
               <QuestCardFrame key={task.id} tier={getQuestCardTier(task)}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-start gap-3">
-                      <span className="text-3xl mt-0.5">{getTaskIcon(task.title)}</span>
+                      <span className="mt-0.5"><TaskIconSvg title={task.title} size={32} /></span>
                       <div>
                         <p className="font-semibold text-lg"><AutoRuby text={task.title} /></p>
                         {task.description && (

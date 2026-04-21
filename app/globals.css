@@ -168,6 +168,7 @@
   ruby {
     ruby-position: over;
     line-height: 1;
+    ruby-align: center;
   }
   rt {
     font-size: 0.55em;
@@ -175,5 +176,6 @@
     opacity: 0.7;
     font-weight: normal;
     user-select: none;
+    transform: translateY(2px);
   }
 }
