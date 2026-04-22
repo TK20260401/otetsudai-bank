@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+function getSupabaseAdmin() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key);
+}
 
 /**
  * 家族データの完全削除（開発用）
@@ -18,7 +19,7 @@ export async function DELETE(request: Request) {
   }
 
   // 家族に属するユーザーIDを取得
-  const { data: users } = await supabaseAdmin
+  const { data: users } = await getSupabaseAdmin()
     .from("otetsudai_users")
     .select("id")
     .eq("family_id", family_id);
@@ -26,12 +27,12 @@ export async function DELETE(request: Request) {
 
   if (userIds.length === 0) {
     // ユーザーがいなくても家族レコードは削除
-    await supabaseAdmin.from("otetsudai_families").delete().eq("id", family_id);
+    await getSupabaseAdmin().from("otetsudai_families").delete().eq("id", family_id);
     return NextResponse.json({ success: true });
   }
 
   // ウォレットIDを取得（トランザクション削除用）
-  const { data: wallets } = await supabaseAdmin
+  const { data: wallets } = await getSupabaseAdmin()
     .from("otetsudai_wallets")
     .select("id")
     .in("child_id", userIds);
@@ -64,7 +65,7 @@ export async function DELETE(request: Request) {
   ];
 
   for (const step of deleteSteps) {
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from(step.table)
       .delete()
       .in(step.filter.col, step.filter.values);
@@ -78,13 +79,13 @@ export async function DELETE(request: Request) {
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
     // auth_idを持つユーザーを検索
     for (const userId of userIds) {
-      const { data: user } = await supabaseAdmin
+      const { data: user } = await getSupabaseAdmin()
         .from("otetsudai_users")
         .select("auth_id")
         .eq("id", userId)
         .single();
       if (user?.auth_id) {
-        const { error: authErr } = await supabaseAdmin.auth.admin.deleteUser(user.auth_id);
+        const { error: authErr } = await getSupabaseAdmin().auth.admin.deleteUser(user.auth_id);
         if (authErr) {
           errors.push(`auth.users(${user.auth_id}): ${authErr.message}`);
           console.error(`[family-delete] auth user error:`, authErr.message);
@@ -94,7 +95,7 @@ export async function DELETE(request: Request) {
   }
 
   // ユーザー削除
-  const { error: userError } = await supabaseAdmin
+  const { error: userError } = await getSupabaseAdmin()
     .from("otetsudai_users")
     .delete()
     .eq("family_id", family_id);
@@ -103,7 +104,7 @@ export async function DELETE(request: Request) {
   }
 
   // 家族削除
-  const { error: familyError } = await supabaseAdmin
+  const { error: familyError } = await getSupabaseAdmin()
     .from("otetsudai_families")
     .delete()
     .eq("id", family_id);

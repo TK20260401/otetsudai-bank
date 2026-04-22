@@ -6,10 +6,9 @@ import { NextResponse } from "next/server";
  * 管理者アカウント初期セットアップ（1回限り使用）
  */
 export async function POST() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) return NextResponse.json({ error: "SUPABASE_SERVICE_ROLE_KEY is not set" }, { status: 500 });
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key);
 
   const email = "admin@snafty.io";
   const password = "20260410@snafty";

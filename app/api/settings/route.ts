@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+function getSupabaseAdmin() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key);
+}
 
 /** GET: 設定値取得 */
 export async function GET(request: NextRequest) {
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "key is required" }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from("otetsudai_settings")
     .select("*")
     .eq("key", key)
@@ -35,7 +36,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   // admin検証
-  const { data: admin } = await supabaseAdmin
+  const { data: admin } = await getSupabaseAdmin()
     .from("otetsudai_users")
     .select("id")
     .eq("id", _sessionUserId)
@@ -46,7 +47,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "管理者権限がありません" }, { status: 403 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from("otetsudai_settings")
     .update({ value, updated_at: new Date().toISOString(), updated_by: _sessionUserId })
     .eq("key", key)

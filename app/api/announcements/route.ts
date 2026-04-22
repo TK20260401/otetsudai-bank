@@ -1,17 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+function getSupabaseAdmin() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key);
+}
 
 /** セッションからadminロールを検証 */
 async function verifyAdmin(request: NextRequest): Promise<string | null> {
   const body = await request.clone().json().catch(() => ({}));
   const sessionUserId = body._sessionUserId;
   if (!sessionUserId) return null;
-  const { data } = await supabaseAdmin
+  const { data } = await getSupabaseAdmin()
     .from("otetsudai_users")
     .select("id, role")
     .eq("id", sessionUserId)
@@ -22,7 +23,7 @@ async function verifyAdmin(request: NextRequest): Promise<string | null> {
 
 /** GET: アクティブなお知らせ取得 */
 export async function GET() {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from("otetsudai_announcements")
     .select("*")
     .eq("is_active", true)
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
   if (!adminId) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
   }
-  const { data: admin } = await supabaseAdmin
+  const { data: admin } = await getSupabaseAdmin()
     .from("otetsudai_users")
     .select("id")
     .eq("id", adminId)
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "必須項目が不足しています" }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from("otetsudai_announcements")
     .insert({
       title,
@@ -94,7 +95,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "idが必要です" }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from("otetsudai_announcements")
     .update(updates)
     .eq("id", id)
@@ -119,7 +120,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "idが必要です" }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin
+  const { error } = await getSupabaseAdmin()
     .from("otetsudai_announcements")
     .delete()
     .eq("id", body.id);

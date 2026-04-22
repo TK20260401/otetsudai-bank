@@ -67,6 +67,9 @@ export default function LandingPage() {
 
         </div>
       </section>
+      <footer className="text-center text-[9px] text-muted-foreground/70 pb-4">
+        CC BY-NC-SA 4.0 Snafty inc.
+      </footer>
     </div>
   );
 }
