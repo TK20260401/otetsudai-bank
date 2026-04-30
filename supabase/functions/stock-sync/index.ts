@@ -70,8 +70,8 @@ async function fetchYahooQuote(
 async function fetchUsdJpy(): Promise<number> {
   const quote = await fetchYahooQuote("JPY=X");
   if (quote && quote.price > 0) return quote.price;
-  console.warn("[stock-sync] USD/JPY fetch failed, using fallback 150");
-  return 150;
+  console.warn("[stock-sync] USD/JPY fetch failed, using fallback 152");
+  return 152;
 }
 
 Deno.serve(async (req) => {
