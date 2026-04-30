@@ -66,6 +66,68 @@ async function fetchYahooQuote(
   }
 }
 
+/**
+ * Stooq から価格取得（Yahoo に存在しない指数・特殊シンボル用フォールバック）
+ * - ^TPX (TOPIX 指数) など Yahoo Global API が返さないシンボルに対応
+ * - CSV 形式で軽量、認証不要
+ */
+async function fetchStooqQuote(
+  symbol: string
+): Promise<{ price: number; changePercent: number; currency: string } | null> {
+  // Stooq は小文字記号、^ プレフィックスは保持
+  const stooqSym = symbol.toLowerCase();
+  const url = `https://stooq.com/q/l/?s=${encodeURIComponent(stooqSym)}&f=sd2t2ohlcv&h&e=csv`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error(`[stock-sync] Stooq ${symbol}: HTTP ${res.status}`);
+      return null;
+    }
+    const csv = await res.text();
+    const lines = csv.trim().split("\n");
+    if (lines.length < 2) {
+      console.error(`[stock-sync] Stooq ${symbol}: empty response`);
+      return null;
+    }
+    const fields = lines[1].split(",");
+    // Symbol,Date,Time,Open,High,Low,Close,Volume
+    if (fields.length < 7) {
+      console.error(`[stock-sync] Stooq ${symbol}: malformed CSV`);
+      return null;
+    }
+    const open = parseFloat(fields[3]);
+    const close = parseFloat(fields[6]);
+    if (!close || close <= 0) {
+      console.error(`[stock-sync] Stooq ${symbol}: invalid close`, fields);
+      return null;
+    }
+    const changePercent = open > 0 ? ((close - open) / open) * 100 : 0;
+    // ^TPX は JPY 指数（他の Stooq 銘柄を将来追加するときは要分岐）
+    return { price: close, changePercent, currency: "JPY" };
+  } catch (err) {
+    console.error(`[stock-sync] Stooq ${symbol} error:`, err);
+    return null;
+  }
+}
+
+/**
+ * シンボルに応じて Yahoo / Stooq を使い分けて取得
+ * - ^TPX 等は Stooq から（Yahoo Global API は未対応）
+ * - その他は Yahoo から、失敗時 Stooq にフォールバック
+ */
+async function fetchQuote(
+  symbol: string
+): Promise<{ price: number; changePercent: number; currency: string } | null> {
+  // ^TPX (TOPIX 指数) は Stooq 専用
+  if (symbol.toUpperCase() === "^TPX") {
+    return await fetchStooqQuote(symbol);
+  }
+  // 通常は Yahoo を試し、失敗時 Stooq にフォールバック
+  const yahoo = await fetchYahooQuote(symbol);
+  if (yahoo) return yahoo;
+  return await fetchStooqQuote(symbol);
+}
+
 /** Yahoo Finance で USD/JPY レートを取得 */
 async function fetchUsdJpy(): Promise<number> {
   const quote = await fetchYahooQuote("JPY=X");
@@ -126,7 +188,7 @@ Deno.serve(async (req) => {
 
     // 3. 全銘柄を並列取得（Yahoo はレート制限が緩いため Promise.all で並列化）
     const quotes = await Promise.all(
-      stocks.map((s: { symbol: string }) => fetchYahooQuote(s.symbol))
+      stocks.map((s: { symbol: string }) => fetchQuote(s.symbol))
     );
 
     // 4. DB を更新
