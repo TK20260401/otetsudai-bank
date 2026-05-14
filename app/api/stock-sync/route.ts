@@ -1,16 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+function getSupabaseAdmin() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key);
+}
 
 /**
  * GET /api/stock-sync
  * DBから最新の株価を取得するだけ（高速）
  */
 export async function GET() {
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("otetsudai_stock_prices")
     .select("symbol, price, price_jpy, change_percent, updated_at")
@@ -34,6 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "ALPHA_VANTAGE_API_KEY未設定" }, { status: 500 });
   }
 
+  const supabase = getSupabaseAdmin();
   const body = await request.json().catch(() => ({}));
   const symbols: string[] = body.symbols || [];
 

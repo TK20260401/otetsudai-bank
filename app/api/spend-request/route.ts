@@ -1,13 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+function getSupabaseAdmin() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key);
+}
 
 // 支出申請を作成
 export async function POST(request: Request) {
+  const supabase = getSupabaseAdmin();
   const { child_id, wallet_id, amount, purpose } = await request.json();
 
   if (!child_id || !wallet_id || !amount || !purpose) {
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
 
 // 承認・却下
 export async function PUT(request: Request) {
+  const supabase = getSupabaseAdmin();
   const { id, action, approved_by, reject_reason, payment_method } = await request.json();
 
   if (action === "approve") {
