@@ -37,6 +37,7 @@ export function FamilyStampRelay({ userId, familyId, isParent }: Props) {
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     const [membersRes, msgRes] = await Promise.all([
@@ -61,22 +62,41 @@ export function FamilyStampRelay({ userId, familyId, isParent }: Props) {
   }, [loadData]);
 
   const recipients = members.filter((m) => m.id !== userId);
-  const canSend = selectedRecipient && (selectedStamp || messageText.trim().length > 0);
+  const trimmedMessage = messageText.trim();
+  const canSend =
+    !!selectedRecipient &&
+    selectedRecipient.length > 0 &&
+    (!!selectedStamp || trimmedMessage.length > 0);
 
   async function handleSend() {
     if (!canSend) return;
     setSending(true);
-    await supabase.from("otetsudai_family_messages").insert({
+    setSendError(null);
+
+    const payload = {
       family_id: familyId,
       sender_id: userId,
       recipient_id: selectedRecipient,
       stamp_id: selectedStamp,
-      message: messageText.trim() || null,
-    });
+      message: trimmedMessage.length > 0 ? trimmedMessage : null,
+    };
+
+    const { error } = await supabase
+      .from("otetsudai_family_messages")
+      .insert(payload);
+
     setSending(false);
+
+    if (error) {
+      console.error("[family-stamp] insert failed", { error, payload });
+      setSendError(error.message ?? "送信に失敗しました。もう一度お試しください。");
+      return;
+    }
+
     setSelectedRecipient(null);
     setSelectedStamp(null);
     setMessageText("");
+    setSendError(null);
     setDialogOpen(false);
     loadData();
   }
@@ -209,6 +229,12 @@ export function FamilyStampRelay({ userId, familyId, isParent }: Props) {
             >
               {sending ? "送信中..." : <span className="flex items-center gap-1"><PixelLetterIcon size={16} /> エールを送る！</span>}
             </Button>
+
+            {sendError && (
+              <p className="text-xs text-red-600 text-center font-bold">
+                {sendError}
+              </p>
+            )}
 
             <p className="text-[11px] text-muted-foreground text-center">
               ※ スタンプかメッセージのどちらかは入れてね
