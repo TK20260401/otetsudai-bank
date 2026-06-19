@@ -12,7 +12,7 @@
 > 「カードを持つ前の、0歳目の金融教育。家庭内で安全に、お手伝い→報酬→つかう/ためる/あげるを"クエスト"で身につける。漢字が読めない子・特別支援の子も置いていかない、日本でいちばんやさしいお小遣いアプリ。」
 
 ### リリース方針（時期）
-- **速やかに公開** を最優先とする。本体機能は v0.4 時点でほぼ揃っているため、次期版は「**公開ブロッカーの解消 → ストア公開 → 公開後すぐの改善**」の順で最小構成から出す。
+- **速やかに公開** を最優先とする。本体機能はv0.4時点でほぼ揃っているため、次期版は「**公開ブロッカーの解消 → ストア公開 → 公開後すぐの改善**」の順で最小構成から出す。
 - 公開ブロッカー（P0）を満たした時点で一般公開し、フリーミアム課金・週次レポート・特別支援拡張（P1）は公開直後の高速イテレーションで投入する。差別化軸は「最初から全部入り」ではなく「公開して回しながら厚くする」。
 
 ### 競合分析から確定した3つの差別化軸（全要件が従う北極星）
@@ -24,7 +24,7 @@
 
 ## 1. 機能要件（Functional Requirements）
 
-凡例: 優先度 = **P0**(次期リリース必須) / **P1**(次期で着手) / **P2**(将来) ／ 状態 = ✅実装済 / 🔄強化 / 🆕新規
+凡例： 優先度 = **P0**（次期リリース必須）/ **P1**（次期で着手）/ **P2**（将来）／ 状態 = ✅実装済 / 🔄強化 / 🆕新規
 
 ### 1-1. 認証・アカウント
 | ID | 要件 | 優先 | 状態 |
@@ -105,8 +105,8 @@
 
 ### 2-3. セキュリティ
 - **NFR-S01**: 全テーブルRLS有効化、`get_my_family_id()` で家族単位アクセス制御。
-- **NFR-S02**: PIN は bcrypt ハッシュ保存（平文非保持）。
-- **NFR-S03**: privateデータを操作するAPI Route は service_role_key を使用し、anon_key を使わない（サーバ側限定）。
+- **NFR-S02**: PINはbcryptハッシュ保存（平文非保持）。
+- **NFR-S03**: privateデータを操作するAPI Routeはservice_role_keyを使用し、anon_keyを使わない（サーバ側限定）。
 - **NFR-S04**: AIチャットへの入力に対するプロンプトインジェクション・不適切入力のガード（子ども利用前提）。
 
 ### 2-4. 性能・可用性・運用保守
@@ -131,8 +131,8 @@
 - AI＝Claude API（ANTHROPIC_API_KEY、サーバAPI Route経由）。
 
 ### 3-2. データモデル（既存9テーブル＋拡張）
-- 既存: `otetsudai_families` / `otetsudai_users` / `otetsudai_tasks` / `otetsudai_task_logs` / `otetsudai_wallets` / `otetsudai_transactions` / `otetsudai_spend_requests` / `otetsudai_badges` / `otetsudai_saving_goals`。
-- 次期追加候補: 課金プラン（subscription）、招待（family_invites）、特別支援設定（accessibility_prefs）、週次レポート集計（report_snapshots）。新規テーブルは作成時にRLS必須化（GRANT/REVOKE方針順守）。
+- 既存： `otetsudai_families` / `otetsudai_users` / `otetsudai_tasks` / `otetsudai_task_logs` / `otetsudai_wallets` / `otetsudai_transactions` / `otetsudai_spend_requests` / `otetsudai_badges` / `otetsudai_saving_goals`。
+- 次期追加候補： 課金プラン（subscription）、招待（family_invites）、特別支援設定（accessibility_prefs）、週次レポート集計（report_snapshots）。新規テーブルは作成時にRLS必須化（GRANT/REVOKE方針順守）。
 
 ### 3-3. 外部連携
 - **TR-E01**: 課金 — アプリストア内課金（モバイル）／Webは要検討（Stripe等）。フリーミアムの壁実装。
@@ -150,10 +150,10 @@
 
 ## 5. リリース前チェックリスト（次期版）
 - [ ] FR-Q04（承認ワンタップ/定期タスク）実装で継続率の離脱要因を除去
-- [ ] FR-P01/P02 のフリーミアム線引きを確定・課金導線実装
-- [ ] FR-R02 週次レポート（課金＋継続の核）を実装
-- [ ] FR-U02 特別支援拡張設定を有料中核バリューとして実装
-- [ ] NFR-L01 換金/送金不可をUI・規約・コードコメントで明示し原則逸脱を防止
+- [ ] FR-P01/P02のフリーミアム線引きを確定・課金導線実装
+- [ ] FR-R02週次レポート（課金＋継続の核）を実装
+- [ ] FR-U02特別支援拡張設定を有料中核バリューとして実装
+- [ ] NFR-L01換金/送金不可をUI・規約・コードコメントで明示し原則逸脱を防止
 - [ ] Web版・モバイル版の要件差分レビュー（dual update）
 
 ---
