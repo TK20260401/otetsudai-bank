@@ -101,7 +101,7 @@ export default function RewardSplitSlider({
         <div>
           <label className="flex items-center gap-2 text-sm font-semibold text-blue-700 mb-1">
             <span className="w-5 h-5 rounded-full bg-blue-400 inline-flex items-center justify-center" aria-hidden="true"><PixelPiggyIcon size={10} /></span>
-            <R k="貯" r="た" />める: {saveRatio}%
+            <R k="金" r="きん" /><R k="庫" r="こ" />（<R k="貯" r="た" />める）: {saveRatio}%
           </label>
           <input
             type="range"
@@ -112,13 +112,13 @@ export default function RewardSplitSlider({
             onChange={handleSaveChange}
             disabled={disabled}
             className="w-full h-3 rounded-full appearance-none cursor-pointer accent-blue-500 bg-blue-100"
-            aria-label={`ためる（貯金）の割合: ${saveRatio}パーセント`}
+            aria-label={`金庫（ためる・貯金）の割合: ${saveRatio}パーセント`}
           />
         </div>
         <div>
           <label className="flex items-center gap-2 text-sm font-semibold text-green-700 mb-1">
             <span className="w-5 h-5 rounded-full bg-green-400 inline-flex items-center justify-center" aria-hidden="true"><PixelSeedlingIcon size={10} /></span>
-            <R k="増" r="ふ" />やす: {investRatio}%
+            <R k="錬" r="れん" /><R k="成" r="せい" />（<R k="増" r="ふ" />やす）: {investRatio}%
           </label>
           <input
             type="range"
@@ -129,14 +129,14 @@ export default function RewardSplitSlider({
             onChange={handleInvestChange}
             disabled={disabled}
             className="w-full h-3 rounded-full appearance-none cursor-pointer accent-green-500 bg-green-100"
-            aria-label={`ふやす（投資）の割合: ${investRatio}パーセント`}
+            aria-label={`錬成（ふやす・投資）の割合: ${investRatio}パーセント`}
           />
         </div>
       </div>
 
       {/* ヒント */}
       <p className="text-xs text-muted-foreground text-center">
-        <R k="残" r="のこ" />り（<R k="使" r="つか" />うお<R k="金" r="かね" />）は <R k="自動" r="じどう" />で <R k="決" r="き" />まります
+        <R k="残" r="のこ" />り（<R k="取" r="とり" /><R k="引" r="ひき" />・<R k="使" r="つか" />うお<R k="金" r="かね" />）は <R k="自動" r="じどう" />で <R k="決" r="き" />まります
       </p>
     </div>
   );

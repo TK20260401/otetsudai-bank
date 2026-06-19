@@ -99,7 +99,7 @@ export default function ShopDialog({
         <DialogHeader>
           <DialogTitle>🏪 ショップ</DialogTitle>
           <DialogDescription>
-            しょうごうを かって キャラクターに つけよう！「つかう」のおかね: {spendingBalance.toLocaleString()}円
+            しょうごうを かって キャラクターに つけよう！「取引（つかう）」のおかね: {spendingBalance.toLocaleString()}円
           </DialogDescription>
         </DialogHeader>
 

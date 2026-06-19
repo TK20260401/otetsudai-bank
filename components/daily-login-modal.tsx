@@ -117,7 +117,7 @@ export default function DailyLoginModal({ open, onClose, childId, walletId, onCl
                   +{result.amount}円
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  「つかう」に ついかされたよ！
+                  「取引（つかう）」に ついかされたよ！
                 </p>
               </div>
             ) : status?.canClaimToday ? (

@@ -889,25 +889,25 @@ export default function ParentDashboard() {
                       )}
                     </div>
 
-                    {/* 3色残高 */}
+                    {/* 3色残高（RPG強テーマ並列表記） */}
                     <div className="grid grid-cols-3 gap-1.5 text-sm mb-3">
                       <div className="bg-secondary/60 rounded-lg p-2 text-center border border-[#e74c3c]/40">
                         <div className="text-base flex justify-center" aria-hidden="true"><PixelCoinIcon size={20} /></div>
-                        <p className="text-[10px] text-[#ff6b6b] font-semibold">使う</p>
+                        <p className="text-[10px] text-[#ff6b6b] font-semibold">取引（使う）</p>
                         <p className="font-bold text-[#ff6b6b] text-sm">
                           ¥{wallet?.spending_balance.toLocaleString() || 0}
                         </p>
                       </div>
                       <div className="bg-secondary/60 rounded-lg p-2 text-center border border-[#3498db]/40">
                         <div className="text-base flex justify-center" aria-hidden="true"><PixelPiggyIcon size={20} /></div>
-                        <p className="text-[10px] text-[#5dade2] font-semibold">貯める</p>
+                        <p className="text-[10px] text-[#5dade2] font-semibold">金庫（貯める）</p>
                         <p className="font-bold text-[#5dade2] text-sm">
                           ¥{wallet?.saving_balance.toLocaleString() || 0}
                         </p>
                       </div>
                       <div className="bg-secondary/60 rounded-lg p-2 text-center border border-[#2ecc71]/40">
                         <div className="text-base flex justify-center" aria-hidden="true"><PixelSeedlingIcon size={20} /></div>
-                        <p className="text-[10px] text-[#58d68d] font-semibold">増やす</p>
+                        <p className="text-[10px] text-[#58d68d] font-semibold">錬成（増やす）</p>
                         <p className="font-bold text-[#58d68d] text-sm">
                           ¥{wallet?.invest_balance?.toLocaleString() || 0}
                         </p>

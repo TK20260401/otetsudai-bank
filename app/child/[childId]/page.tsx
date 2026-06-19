@@ -517,11 +517,12 @@ export default function ChildDashboard({
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-secondary/60 rounded-xl p-2 border border-border">
               <p className="text-[10px] text-[#ff6b6b] font-semibold">
-                <span className="flex items-center gap-0.5"><PixelCartIcon size={12} /> <R k="使" r="つか" />う</span>
+                <span className="flex items-center gap-0.5"><PixelCartIcon size={12} /> <R k="取" r="とり" /><R k="引" r="ひき" /></span>
               </p>
               <p className="text-base font-bold text-[#ff6b6b]">
                 ¥{(wallet?.spending_balance ?? 0).toLocaleString()}
               </p>
+              <p className="text-[9px] text-muted-foreground leading-tight">しょうにんと とりひき</p>
               <RpgButton
                 tier="ruby"
                 size="sm"
@@ -534,19 +535,21 @@ export default function ChildDashboard({
             </div>
             <div className="bg-secondary/60 rounded-xl p-2 border border-border">
               <p className="text-[10px] text-[#5dade2] font-semibold">
-                <span className="flex items-center gap-0.5"><PixelPiggyIcon size={12} /> <R k="貯" r="た" />める</span>
+                <span className="flex items-center gap-0.5"><PixelPiggyIcon size={12} /> <R k="金" r="きん" /><R k="庫" r="こ" /></span>
               </p>
               <p className="text-base font-bold text-[#5dade2]">
                 ¥{(wallet?.saving_balance ?? 0).toLocaleString()}
               </p>
+              <p className="text-[9px] text-muted-foreground leading-tight">たからを しまう</p>
             </div>
             <div className="bg-secondary/60 rounded-xl p-2 border border-border">
               <p className="text-[10px] text-[#58d68d] font-semibold">
-                <span className="flex items-center gap-0.5"><PixelSeedlingIcon size={12} /> <R k="増" r="ふ" />やす</span>
+                <span className="flex items-center gap-0.5"><PixelSeedlingIcon size={12} /> <R k="錬" r="れん" /><R k="成" r="せい" /></span>
               </p>
               <p className="text-base font-bold text-[#58d68d]">
                 ¥{(wallet?.invest_balance ?? 0).toLocaleString()}
               </p>
+              <p className="text-[9px] text-muted-foreground leading-tight">お金を そだてる</p>
             </div>
           </div>
 
